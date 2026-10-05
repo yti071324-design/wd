@@ -134,8 +134,8 @@ img,svg{max-width:100%}
 
 <section class="wrap pt-9 pb-8 hero">
   <div>
-    <div class="inline-block b3 c-mint px-3 py-2 lbl mb-5" style="box-shadow:3px 3px 0 var(--ink)">WEDDING &amp; HOME PLANNER</div>
-    <h1 class="disp h1 text-[56px] leading-[.9] mb-5">Together<br>We Plan.</h1>
+    <div class="inline-block b3 c-mint px-3 py-2 lbl mb-5" style="box-shadow:3px 3px 0 var(--ink)">WEDDING &amp; HOUSE PLANNER</div>
+    <h1 class="disp h1 text-[56px] leading-[.9] mb-5">TAEIN&<br>GAHYUN</h1>
     <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[14px] font-bold" style="border-left:3px solid var(--ink);padding-left:10px">
       <span id="sync-txt">이 기기에만 저장돼요.</span>
       <button id="backup-open" class="und">공유 · 백업</button>
@@ -162,7 +162,7 @@ img,svg{max-width:100%}
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
       <div class="bhead">
         <div>
-          <div class="lbl mb-3">OUR BUDGET SO FAR</div>
+          <div class="lbl mb-3">OUR BUDGET</div>
           <label class="money"><span aria-hidden="true">₩</span><input id="total" inputmode="numeric" aria-label="총 예산" placeholder="예산 입력"></label>
           <p id="usage-desc" class="text-[14px] font-medium mt-2"></p>
         </div>
@@ -338,13 +338,13 @@ img,svg{max-width:100%}
 
 <script>
 (()=>{
-const CATS=['신혼집','결혼준비','혼수','신혼여행'];
+const CATS=['소라','결혼준비','혼수','신혼여행'];
 const ST=['구상 중','비교 중','예약/계약','완료'];
 const STC={'구상 중':'c-cream','비교 중':'c-yellow','예약/계약':'c-mint','완료':'c-green'};
-const CHD={'신혼집':'c-mint','결혼준비':'c-green','혼수':'c-lav','신혼여행':'c-peach'};
+const CHD={'소라':'c-mint','결혼준비':'c-green','혼수':'c-lav','신혼여행':'c-peach'};
 const SV=d=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
 const GL={
- '신혼집':SV('<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>'),
+ '소라':SV('<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>'),
  '결혼준비':SV('<path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z" fill="currentColor"/>'),
  '혼수':SV('<path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 16a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"/><path d="M4 18v2M20 18v2"/>'),
  '신혼여행':SV('<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>')
@@ -362,11 +362,11 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
 /* 기본 제공 데이터 설정 */
 const seed=()=>({
-  total:276400000, wdate:'', mu:0, del:{}, cat:{신혼집:250000000,결혼준비:14800000,혼수:7400000,신혼여행:4200000},
+  total:276400000, wdate:'', mu:0, del:{}, cat:{소라:250000000,결혼준비:14800000,혼수:7400000,신혼여행:420000},
   plans:[
     {id:uid(),cat:'결혼준비',status:'비교 중',name:'nu.noma',est:0,fix:4500000,due:'',memo:'드레스4벌, 캐주얼 1벌, 헤어3번(변형), 30장 리터칭, 액자24r 1개, 8r2개, 25p앨범',link:'',img:'',t:3},
     {id:uid(),cat:'혼수',status:'비교 중',name:'전자레인지',est:0,fix:164000,due:'',memo:'LG 디오스 오브제컬렉션 전자레인지 MW23FD',link:'https://www.lge.co.kr/',img:'',t:2},
-    {id:uid(),cat:'신혼집',status:'예약/계약',name:'전세 보증금 계약',est:0,fix:0,due:'',memo:'금액과 계약일을 입력해 주세요.',link:'',img:'',t:1}
+    {id:uid(),cat:'소라',status:'예약/계약',name:'전세 보증금 계약',est:0,fix:0,due:'',memo:'금액과 계약일을 입력해 주세요.',link:'',img:'',t:1}
   ]
 });
 
