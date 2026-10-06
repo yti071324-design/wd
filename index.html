@@ -473,7 +473,7 @@ function renderTop(){
  $('est-desc').textContent=`예상 포함 ${won(pl)} · 남은 예산 ${won(total-pl)}`;
  const ow=$('over-warn');
  if(total&&pl>total){ow.textContent=`예상 포함 금액이 총 예산을 ${won(pl-total)} 넘었어요. 예산이나 계획을 조정해 보세요.`;ow.style.display=''}else ow.style.display='none';
- const SC={'소라':'#b5c7e8ff','결혼준비':'#c1e9b5','혼수':'#d4c4f7','신혼여행':'#f6c9bd'};
+ const SC={'소라':'#b5c7e8ff','결혼준비':'#E6DDFB','혼수':'#FBE7A8','신혼여행':'#f6c9bd'};
  if(pl>0){
   $('share-bar').innerHTML=CATS.map(c=>{const v=planned(c);return v?`<i style="flex:${v};background:${SC[c]}"></i>`:''}).join('');
   $('share-leg').innerHTML=CATS.filter(c=>planned(c)).map(c=>`<span><i class="sw" style="background:${SC[c]}"></i>${lab(c)} ${Math.round(planned(c)/pl*100)}%</span>`).join('');
