@@ -394,7 +394,7 @@ img,svg{max-width:100%}
 const CATS=['소라','결혼준비','혼수','신혼여행'];
 const ST=['구상 중','비교 중','예약/계약','완료'];
 const STC={'구상 중':'c-cream','비교 중':'c-yellow','예약/계약':'c-mint','완료':'c-green'};
-const CHD={'소라':'c-mint','결혼준비':'c-green','혼수':'c-lav','신혼여행':'c-peach'};
+const CHD={'소라':'c-mint','결혼준비':'c-lav','혼수':'c-yellow','신혼여행':'c-peach'};
 const SV=d=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
 const GL={
  '소라':SV('<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>'),
@@ -473,7 +473,7 @@ function renderTop(){
  $('est-desc').textContent=`예상 포함 ${won(pl)} · 남은 예산 ${won(total-pl)}`;
  const ow=$('over-warn');
  if(total&&pl>total){ow.textContent=`예상 포함 금액이 총 예산을 ${won(pl-total)} 넘었어요. 예산이나 계획을 조정해 보세요.`;ow.style.display=''}else ow.style.display='none';
- const SC={'소라':'#111','결혼준비':'#c1e9b5','혼수':'#d4c4f7','신혼여행':'#f6c9bd'};
+ const SC={'소라':'#b5c7e8ff','결혼준비':'#c1e9b5','혼수':'#d4c4f7','신혼여행':'#f6c9bd'};
  if(pl>0){
   $('share-bar').innerHTML=CATS.map(c=>{const v=planned(c);return v?`<i style="flex:${v};background:${SC[c]}"></i>`:''}).join('');
   $('share-leg').innerHTML=CATS.filter(c=>planned(c)).map(c=>`<span><i class="sw" style="background:${SC[c]}"></i>${lab(c)} ${Math.round(planned(c)/pl*100)}%</span>`).join('');
