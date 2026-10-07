@@ -121,12 +121,15 @@ img,svg{max-width:100%}
 .quote{font-family:'Noto Serif KR','Nanum Myeongjo',serif;font-weight:400;font-size:24px;line-height:1.65;letter-spacing:-.02em;word-break:keep-all}
 .bgrid{display:block}.bleft{display:flex;flex-direction:column;gap:28px;padding:24px}
 .bhead{display:block}.bhead>div:first-child{min-width:0}
-.wday{display:inline-block;position:relative;cursor:pointer;border:0;border-radius:18px;background:#fff;padding:12px 16px;margin-top:20px}
+.wday{display:inline-block;position:relative;cursor:pointer;border:0;border-radius:18px;background:transparent;padding:12px 0;margin-top:20px}
 .bgcells{border-top:0;gap:12px;padding:0 24px 24px;grid-auto-rows:1fr}
 .plan{display:flex;flex-direction:column}.cbody{padding:20px;flex:1;display:flex;flex-direction:column}
 .plist{display:flex;flex-direction:column;gap:28px}
 .frow{display:flex;flex-direction:column;gap:16px}.srch{width:100%}
 @media (min-width:640px){.plist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pc-layout-grid { display: grid; grid-template-columns: 1fr 380px; gap: 40px; align-items: start; }
+.plan.card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.plan.card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(140,90,70,.15); }
 @media (min-width:1000px){
  .wrap{padding-left:24px;padding-right:24px}
  .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:56px;align-items:start;padding-top:56px}
@@ -219,6 +222,7 @@ img,svg{max-width:100%}
   </div>
 </section>
 
+<div class="wrap pc-layout-grid">
 <section id="plans" class="wrap pb-12 pt-4">
   <div class="flex justify-between items-start mb-5">
     <div><h2 class="disp text-[30px] leading-none pt-2">OUR PLANS <span id="count" style="color:var(--rust)"></span></h2>
@@ -246,6 +250,31 @@ img,svg{max-width:100%}
   <div id="list" class="plist"></div>
 </section>
 
+<section id="todo" class="wrap pb-14">
+  <div class="card" style="background:var(--cream)">
+    <div class="p-5 md:p-6">
+      <div class="flex justify-between items-start gap-3 mb-4">
+        <div>
+          <h2 class="disp text-[28px] leading-none">CHECKLIST <span id="todo-count" style="color:var(--rust)"></span></h2>
+          <div id="todo-sub" class="text-[13px] font-bold mt-2"></div>
+        </div>
+        <div class="flex flex-col items-end gap-2 text-[13px]">
+          <button id="todo-tpl" class="und">추천 체크리스트 넣기</button>
+          <button id="todo-clear" class="und">완료 항목 지우기</button>
+        </div>
+      </div>
+      <div class="track mb-5"><div id="todo-bar" style="width:0;background:var(--ink);transition:width .3s"></div></div>
+      <div class="todo-add mb-3">
+        <input id="todo-text" class="fld" style="margin-top:0" placeholder="할 일을 적고 추가를 눌러 주세요" maxlength="80" aria-label="할 일">
+        <input id="todo-due" type="date" class="fld" style="margin-top:0" aria-label="마감일(선택)">
+        <button id="todo-add" class="btn px-5 h-[46px] text-[15px]" style="background:var(--ink);color:#fff">추가</button>
+      </div>
+      <ul id="todo-list"></ul>
+    </div>
+  </div>
+</section>
+
+ 
 <div id="edit" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
   <div class="dlg">
     <div class="dlg-h"><h3 id="edit-title" class="disp text-[22px] leading-none">NEW OUR PLAN</h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div>
@@ -365,30 +394,6 @@ img,svg{max-width:100%}
 </div>
 
 <div id="toast" class="hidden fixed left-1/2 -translate-x-1/2 z-[70] b3 c-yellow px-4 py-2 text-sm font-bold text-center w-11/12 max-w-sm" style="bottom:calc(1.5rem + env(safe-area-inset-bottom,0px))"></div>
-<section id="todo" class="wrap pb-14">
-  <div class="card" style="background:var(--cream)">
-    <div class="p-5 md:p-6">
-      <div class="flex justify-between items-start gap-3 mb-4">
-        <div>
-          <h2 class="disp text-[28px] leading-none">CHECKLIST <span id="todo-count" style="color:var(--rust)"></span></h2>
-          <div id="todo-sub" class="text-[13px] font-bold mt-2"></div>
-        </div>
-        <div class="flex flex-col items-end gap-2 text-[13px]">
-          <button id="todo-tpl" class="und">추천 체크리스트 넣기</button>
-          <button id="todo-clear" class="und">완료 항목 지우기</button>
-        </div>
-      </div>
-      <div class="track mb-5"><div id="todo-bar" style="width:0;background:var(--ink);transition:width .3s"></div></div>
-      <div class="todo-add mb-3">
-        <input id="todo-text" class="fld" style="margin-top:0" placeholder="할 일을 적고 추가를 눌러 주세요" maxlength="80" aria-label="할 일">
-        <input id="todo-due" type="date" class="fld" style="margin-top:0" aria-label="마감일(선택)">
-        <button id="todo-add" class="btn px-5 h-[46px] text-[15px]" style="background:var(--ink);color:#fff">추가</button>
-      </div>
-      <ul id="todo-list"></ul>
-    </div>
-  </div>
-</section>
-
 </main>
 
 <script>
@@ -540,7 +545,7 @@ function renderList(){
     <hr class="rule mb-4">
     ${p.memo?`<p class="text-[16px] font-medium leading-[1.6] mb-4 break-keep whitespace-pre-wrap">${esc(p.memo)}</p>`:''}
     ${p.link?`<div class="flex items-center gap-2 text-[15px] font-bold mb-5">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+      <img src="https://www.google.com/s2/favicons?domain=${host}" width="16" height="16" alt="" style="border-radius:2px; flex-shrink:0;">
       <a href="${esc(p.link)}" target="_blank" rel="noopener noreferrer" class="min-w-0 truncate">${esc(host||p.link)}</a><span aria-hidden="true">↗</span></div>`:''}
     <div class="flex justify-end items-center gap-5 mt-auto pt-4">
      <button data-act="dup" class="und text-[15px]">복제</button>
