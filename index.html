@@ -147,6 +147,32 @@ img,svg{max-width:100%}
  .srch{width:320px;flex-shrink:0}.sgrp{justify-content:flex-end;flex:1}
  .dlg{max-width:560px}
 }
+/* 모바일 환경: 원래대로 하단 배치, 가로 스크롤 방지 */
+.pc-layout-grid {
+    display: block;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* PC 환경 (1000px 이상): 우측 여백에 체크리스트 배치, 카드 3열 유지 */
+@media (min-width: 1000px) {
+    .wrap.pc-layout-grid {
+        max-width: 1500px !important; /* 우측 빈 공간을 활용하도록 최대 너비 확장 */
+        display: grid;
+        grid-template-columns: 1fr 340px; /* 좌측 계획 1fr, 우측 여백 체크리스트 340px */
+        gap: 40px;
+        align-items: start;
+        overflow-x: visible;
+    }
+    
+    #plans .plist {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important; /* 카드 3열 복구 */
+    }
+    
+    #todo {
+        padding-top: 16px; /* 우측에 붙을 때 높이 밸런스 조정 */
+    }
+}
 </style>
 </head>
 <body class="antialiased">
