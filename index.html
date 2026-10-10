@@ -216,8 +216,8 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .opop b{font-weight:800;font-size:14px}
 .opop button{text-align:left;font:600 13px/1.4 var(--f-body);text-decoration:underline;text-underline-offset:3px;padding:2px 0}
 .opop .ol{display:flex;gap:12px;color:#6B625C}.opop .ol a{color:#6B625C;text-decoration:underline;text-underline-offset:3px}
-.nvpop{position:relative;background:#fff;border-radius:14px;box-shadow:0 8px 24px rgba(43,37,34,.28);padding:14px 30px 14px 16px;max-width:260px}
-.nvpop .nvx{position:absolute;top:4px;right:6px;width:26px;height:26px;font-size:18px;line-height:1;color:#6B625C}
+.gpin{position:absolute;width:34px;height:41px;cursor:pointer}
+.gm-style .gm-style-iw-c{border-radius:14px}
 .pres small em{font-style:normal;font-weight:800;color:#0a7a3d;margin-right:4px}
 .splc{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin-top:8px;font-size:12px;font-weight:700}
 .splb{display:inline-flex;gap:4px;align-items:center;font-weight:800;font-size:13px;color:var(--ink);text-align:left}
@@ -396,10 +396,10 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
       <label>제목<input id="s-title" class="fld" maxlength="60" placeholder="예: 첫 웨딩홀 투어"></label>
       <div>
         <div>장소 (선택)</div>
-        <div class="prow"><input id="s-place" class="fld" maxlength="60" placeholder="가본 곳 이름·주소 (예: 성수동 대림창고)" aria-label="장소"><button id="s-psearch" type="button" class="btn c-white px-4 h-[46px] text-[14px] shrink-0">주소 검색</button></div>
+        <div class="prow"><input id="s-place" class="fld" maxlength="60" placeholder="가게 이름·주소 (예: 성수 블루보틀)" aria-label="장소"><button id="s-psearch" type="button" class="btn c-white px-4 h-[46px] text-[14px] shrink-0">검색</button></div>
         <ul id="s-pres" class="pres" hidden></ul>
         <div id="s-pcur" class="pcur hidden"></div>
-        <button id="s-ppick" type="button" class="btn c-white block w-full px-4 py-3 text-[14px] text-center mt-2">📍 지도에서 직접 찍기 (가게 이름은 여기서)</button>
+        <button id="s-ppick" type="button" class="btn c-white block w-full px-4 py-3 text-[14px] text-center mt-2">📍 지도에서 직접 찍기</button>
         <div id="pk" class="hidden mt-2">
           <div id="pk-map"></div>
           <p id="pk-addr" style="font-size:13px;font-weight:700;margin:8px 0">지도를 눌러 위치를 골라 주세요.</p>
@@ -442,12 +442,12 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
         <div class="flex gap-2"><button id="c-copy" class="btn c-mint h-11 px-5 text-[15px] flex-1">링크 복사</button><button id="c-off" class="btn c-cream h-11 px-4 text-[15px]">연결 해제</button></div>
       </div>
       <hr class="rule">
-      <div id="nk-box" class="flex flex-col gap-2">
-        <span>네이버 지도 연동 (선택)</span>
-        <p class="text-[13px] font-medium break-keep leading-relaxed">네이버 클라우드 플랫폼 Maps 애플리케이션의 <b>Client ID</b>를 넣으면 우리 이야기 지도가 네이버 지도로 바뀌고, 주소 검색도 네이버로 돼요. 비밀 키(Client Secret)는 넣지 마세요.</p>
-        <input id="nk-id" class="fld" style="margin-top:0" placeholder="Client ID" autocomplete="off" autocapitalize="off" spellcheck="false">
-        <div class="flex gap-2"><button id="nk-save" class="btn c-mint h-11 px-5 text-[15px] flex-1">저장</button><button id="nk-off" class="btn c-cream h-11 px-4 text-[15px]">끄기</button></div>
-        <p id="nk-state" style="font-size:12px;font-weight:700"></p>
+      <div id="gk-box" class="flex flex-col gap-2">
+        <span>구글 지도 연동</span>
+        <p class="text-[13px] font-medium break-keep leading-relaxed">Google Cloud에서 만든 <b>API 키</b>(AIza…)를 넣으면 우리 이야기에 구글 지도가 보이고, 가게 이름으로 장소를 검색할 수 있어요. 한 번 넣으면 연결된 상대 기기에도 같이 적용돼요.</p>
+        <input id="gk-id" class="fld" style="margin-top:0" placeholder="AIza로 시작하는 API 키" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <div class="flex gap-2"><button id="gk-save" class="btn c-mint h-11 px-5 text-[15px] flex-1">저장</button><button id="gk-off" class="btn c-cream h-11 px-4 text-[15px]">끄기</button></div>
+        <p id="gk-state" style="font-size:12px;font-weight:700"></p>
       </div>
       <hr class="rule">
       <div class="flex flex-col gap-2">
@@ -1039,7 +1039,7 @@ function allocRest(){
 $('alloc-fields').addEventListener('input', e => { if(e.target.dataset.a){ e.target.value=num(e.target.value).toLocaleString('ko-KR'); allocRest(); }});
 $('alloc-save').onclick = () => { document.querySelectorAll('[data-a]').forEach(i=>S.cat[i.dataset.a]=num(i.value)); S.mu = Date.now(); save(); closeAll(); render(); };
 
-$('backup-open').onclick = () => { $('b-text').value = JSON.stringify(Object.assign({}, S, { bg: undefined, bgu: undefined, nk: undefined, nku: undefined })); renderCloudUI(); open_('backup'); };
+$('backup-open').onclick = () => { $('b-text').value = JSON.stringify(Object.assign({}, S, { bg: undefined, bgu: undefined, gk: undefined, gku: undefined, nk: undefined, nku: undefined })); renderCloudUI(); open_('backup'); };
 $('b-copy').onclick = async () => {
     const t = $('b-text'); t.select();
     try { await navigator.clipboard.writeText(t.value); toast('복사했어요.'); } 
@@ -1050,7 +1050,7 @@ $('b-load').onclick = () => {
         const d = JSON.parse($('b-text').value);
         if(!Array.isArray(d.plans) || typeof d.cat!=='object') throw 0;
         if(!confirm('현재 데이터가 불러온 내용으로 바뀌어요. 계속할까요?')) return;
-        d.bg = S.bg; d.bgu = S.bgu; d.nk = S.nk; d.nku = S.nku; if (!d.verse) { d.verse = S.verse; d.vu = S.vu; } if (!Array.isArray(d.todos)) d.todos = S.todos || []; S = d; S.del = S.del||{}; S.mu = Date.now(); save(); init(); closeAll(); toast('불러왔어요.');
+        d.bg = S.bg; d.bgu = S.bgu; d.gk = S.gk; d.gku = S.gku; if (!d.verse) { d.verse = S.verse; d.vu = S.vu; } if (!Array.isArray(d.todos)) d.todos = S.todos || []; S = d; S.del = S.del||{}; S.mu = Date.now(); save(); init(); closeAll(); toast('불러왔어요.');
     } catch(e) { toast('백업 내용을 읽을 수 없어요. 형식을 확인해 주세요.'); }
 };
 
@@ -1131,7 +1131,7 @@ function renderStory(){
   const cs=S.cmts.filter(c=>c.eid===e.id).sort((a,b)=>a.t-b.t), hn=Object.keys(e.hearts||{}), mine=hn.includes(me||'나');
   h+=`<article class="scard card${animList?' rise':''}" style="--i:${Math.min(i++,8)}" data-sid="${e.id}">`+(e.img?`<img class="simg" src="${e.img}" alt="" data-sact="zoom">`:'')+
   `<div class="sbody"><div class="flex justify-between items-start gap-3"><div class="min-w-0"><div class="sdate">${fmtDate(e.date)}</div><h3 class="sttl">${esc(e.title||'우리의 하루')}</h3></div><button data-sact="edit" class="und text-[13px] shrink-0">수정</button></div>`+
-  (e.place&&e.place.name?`<div class="splc"><button data-sact="loc" class="splb"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2.5\"/></svg> ${esc(e.place.name)}</button><a href="${naverUrl(e.place.name)}" target="_blank" rel="noopener noreferrer">네이버 지도</a></div>`:'')+
+  (e.place&&e.place.name?`<div class="splc"><button data-sact="loc" class="splb"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2.5\"/></svg> ${esc(e.place.name)}</button><a href="${gUrl(e.place)}" target="_blank" rel="noopener noreferrer">구글맵</a></div>`:'')+
   (e.text?`<p class="stxt whitespace-pre-wrap">${esc(e.text)}</p>`:'')+
   `<div class="srow"><button data-sact="heart" class="pill sm" aria-pressed="${mine}" style="${mine?'background:#F8CFC2':''}">♥ ${hn.length||''}</button><span>댓글 ${cs.length}</span></div>`+
   `<ul class="cm">${cs.map(c=>`<li data-cid="${c.id}"><b>${esc(c.by)}</b><span class="min-w-0">${esc(c.text)}</span><small>${sTime(c.t)}</small><button data-sact="cdel" aria-label="댓글 삭제">✕</button></li>`).join('')}</ul>`+
@@ -1150,18 +1150,18 @@ function openStory(en){
  $('s-title').value=en?en.title||'':''; $('s-text').value=en?en.text||'':''; sShow(); sPlaceInit(en); open_('sdlg');
 }
 
-/* ===== 우리 지도: 네이버 지도 (Maps JS v3 + geocoder) ===== */
-var NKEY='to-in-one-nkey',mfull=false,lastD=[],nvSt='idle',nvP=null,nvMap=null,nvMarks=[],nvIW=null,nvSig='',nvG=[],pkMap=null,pkMark=null,pkSel=null;
-function nvKey(){
- let k=''; try{k=(S&&S.nk)||''}catch(e){}
- if(!k){try{if(!(S&&S.nku))k=localStorage.getItem(NKEY)||''}catch(e){}}
- return (k||'').trim();
+/* ===== 우리 지도: 구글 지도 (Maps JavaScript API + Places API (New)) ===== */
+var mfull=false,lastD=[],gSt='idle',gP=null,gMap=null,gMarks=[],gIW=null,gSig='',gG=[],pkMap=null,pkMark=null,pkSel=null,GPin=null;
+function gKey(){let k='';try{k=(S&&S.gk)||''}catch(e){} return (k||'').trim()}
+function gUrl(p){
+ if(!p)return 'https://www.google.com/maps';
+ const q=Number.isFinite(p.lat)?p.lat+','+p.lng:(p.name||'');
+ return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.pid?(p.name||q):q)+(p.pid?'&query_place_id='+encodeURIComponent(p.pid):'');
 }
-function naverUrl(n){return 'https://map.naver.com/p/search/'+encodeURIComponent(n)}
 function mapGroups(D){
  const g=new Map();
  D.forEach(e=>{const p=e.place; if(!p||!Number.isFinite(p.lat)||!Number.isFinite(p.lng))return;
-  const k=p.lat.toFixed(4)+','+p.lng.toFixed(4); if(!g.has(k))g.set(k,{lat:p.lat,lng:p.lng,name:p.name||'',es:[]}); g.get(k).es.push(e)});
+  const k=p.lat.toFixed(4)+','+p.lng.toFixed(4); if(!g.has(k))g.set(k,{lat:p.lat,lng:p.lng,name:p.name||'',pid:p.pid||'',es:[]}); g.get(k).es.push(e)});
  return [...g.values()];
 }
 function popupFor(g){
@@ -1169,7 +1169,7 @@ function popupFor(g){
  const h=document.createElement('b'); h.textContent=g.name||'가본 곳'; box.append(h);
  g.es.slice(0,6).forEach(e=>{const b=document.createElement('button'); b.type='button'; b.textContent=((e.date||'').replace(/-/g,'.')+' '+(e.title||'우리의 하루')).trim(); b.onclick=()=>goStory(e.id); box.append(b)});
  const ol=document.createElement('div'); ol.className='ol';
- const a=document.createElement('a'); a.href=naverUrl(g.name||''); a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='네이버 지도에서 열기'; ol.append(a);
+ const a=document.createElement('a'); a.href=gUrl(g); a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='구글맵에서 열기'; ol.append(a);
  box.append(ol); return box;
 }
 function goStory(id){
@@ -1177,129 +1177,146 @@ function goStory(id){
  setTimeout(()=>{const el=document.querySelector('#st-list [data-sid="'+id+'"]'); if(!el)return; el.scrollIntoView({block:'center',behavior:'smooth'}); el.classList.remove('hl'); void el.offsetWidth; el.classList.add('hl')},80);
 }
 function applyMapMode(){
- if(!nvMap)return;
- const coarse=matchMedia('(pointer:coarse)').matches, free=mfull||!coarse;
- try{nvMap.setOptions({draggable:free,pinchZoom:true,scrollWheel:!coarse||mfull,keyboardShortcuts:free,disableDoubleTapZoom:!free,disableDoubleClickZoom:!free,disableTwoFingerTapZoom:false})}catch(e){}
+ if(!gMap)return;
+ const coarse=matchMedia('(pointer:coarse)').matches;
+ /* PC: 휠로 바로 확대 / 폰 작은 지도: 한 손가락=페이지 스크롤, 두 손가락=지도 확대·이동 / 크게 보기: 자유롭게 */
+ try{gMap.setOptions({gestureHandling:(coarse&&!mfull)?'cooperative':'greedy'})}catch(e){}
 }
 function setFull(on){
  mfull=!!on; $('mapcard').classList.toggle('full',mfull); $('mc-full').textContent=mfull?'닫기':'크게 보기';
- applyMapMode(); if(nvMap)setTimeout(()=>{try{naver.maps.Event.trigger(nvMap,'resize')}catch(e){}},60);
+ applyMapMode(); if(gMap)setTimeout(()=>{try{google.maps.event.trigger(gMap,'resize')}catch(e){}},60);
 }
 function renderMapNow(){renderMap(lastD)}
-function nvTeardown(){
- if(nvIW){try{nvIW.close()}catch(e){}} nvIW=null;
- if(nvMap){try{nvMap.destroy()}catch(e){}} nvMap=null; nvMarks=[]; nvSig=''; nvG=[];
+function gTeardown(){
+ if(gIW){try{gIW.close()}catch(e){}} gIW=null;
+ gMarks.forEach(m=>{try{m.setMap(null)}catch(e){}}); gMarks=[];
+ gMap=null; gSig=''; gG=[];
  const o=$('omap'); if(o)o.innerHTML='';
 }
-function nvFail(msg){
- nvSt='fail'; nvP=null; nvTeardown();
- if(msg)toast(msg); nkUI(); renderMapNow();
+function gFail(msg){
+ gSt='fail'; gP=null; gTeardown(); pkClose(); pkMap=null; const pm=$('pk-map'); if(pm)pm.innerHTML='';
+ if(msg)toast(msg); gkUI(); renderMapNow();
 }
-function nvLoad(){
- const k=nvKey(); if(!k||nvSt==='fail')return Promise.resolve(false);
- if(nvSt==='ready')return Promise.resolve(true);
- if(nvP)return nvP;
- nvSt='loading';
- nvP=new Promise(res=>{
-  window.navermap_authFailure=()=>{res(false);nvFail('네이버 지도 인증에 실패했어요. Client ID와 웹 서비스 URL 등록을 확인해 주세요.')};
-  const sc=document.createElement('script'); sc.async=true;
-  sc.src='https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId='+encodeURIComponent(k)+'&submodules=geocoder';
-  sc.onload=()=>{
-   if(!(window.naver&&naver.maps)){res(false);nvFail('네이버 지도를 불러오지 못했어요.');return}
-   let n=0; const w=()=>{ if(nvSt==='fail')return; if((naver.maps.Service&&naver.maps.Service.geocode)||++n>30){nvSt='ready';nkUI();res(true)} else setTimeout(w,100) }; w();
+function gLoad(){
+ const k=gKey(); if(!k||gSt==='fail')return Promise.resolve(false);
+ if(gSt==='ready')return Promise.resolve(true);
+ if(gP)return gP;
+ gSt='loading';
+ gP=new Promise(res=>{
+  window.gm_authFailure=()=>{res(false);gFail('구글 지도 인증에 실패했어요. API 키, 결제 계정, 웹사이트 제한(이 사이트 주소)을 확인해 주세요.')};
+  window.__gmReady=async()=>{
+   try{
+    if(!(window.google&&google.maps))throw 0;
+    if(google.maps.importLibrary){await google.maps.importLibrary('maps');await google.maps.importLibrary('places')}
+    gSt='ready'; gkUI(); res(true);
+   }catch(e){res(false);gFail('구글 지도를 불러오지 못했어요.')}
   };
-  sc.onerror=()=>{res(false);nvFail('네이버 지도를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.')};
+  const sc=document.createElement('script'); sc.async=true;
+  sc.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(k)+'&v=weekly&language=ko&region=KR&libraries=places&loading=async&callback=__gmReady';
+  sc.onerror=()=>{res(false);gFail('구글 지도를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.')};
   document.head.appendChild(sc);
  });
- return nvP;
-}
-function nvOpen(i){
- const g=nvG[i], m=nvMarks[i]; if(!g||!m||!nvMap)return;
- if(!nvIW)nvIW=new naver.maps.InfoWindow({content:'',borderWidth:0,backgroundColor:'transparent',disableAnchor:true,pixelOffset:new naver.maps.Point(0,-46)});
- const wrap=document.createElement('div'); wrap.className='nvpop';
- const x=document.createElement('button'); x.type='button'; x.className='nvx'; x.textContent='×'; x.setAttribute('aria-label','닫기'); x.onclick=()=>nvIW.close();
- wrap.append(popupFor(g),x); nvIW.setContent(wrap); nvIW.open(nvMap,m);
-}
-function nvGo(i){
- const m=nvMarks[i]; if(!m||!nvMap)return;
- if(nvIW)nvIW.close();
- nvMap.morph(m.getPosition(),16); setTimeout(()=>nvOpen(i),850);
+ return gP;
 }
 const PIN='<div class="opin" style="width:34px;height:34px"><b><i>@</i></b></div>';
-function nvRender(G){
- if(nvSt!=='ready'){
-  $('mc-hint').textContent='네이버 지도를 불러오는 중…';
-  nvLoad().then(ok=>{if(ok)renderMapNow()}); return;
+function pinClass(){
+ if(GPin)return GPin;
+ GPin=class extends google.maps.OverlayView{
+  constructor(pos,html,title,onClick){super();this.pos=pos;this.html=html;this.title=title||'';this.onClick=onClick;this.d=null}
+  onAdd(){const d=document.createElement('div'); d.className='gpin'; d.innerHTML=this.html; d.title=this.title; d.setAttribute('role','button'); d.setAttribute('aria-label',this.title||'가본 곳');
+   d.addEventListener('click',e=>{e.stopPropagation(); if(this.onClick)this.onClick()});
+   try{google.maps.OverlayView.preventMapHitsAndGesturesFrom(d)}catch(e){}
+   this.getPanes().overlayMouseTarget.appendChild(d); this.d=d}
+  draw(){const pr=this.getProjection(); if(!pr||!this.d)return; const p=pr.fromLatLngToDivPixel(this.pos); if(!p)return; this.d.style.left=(p.x-17)+'px'; this.d.style.top=(p.y-41)+'px'}
+  onRemove(){if(this.d)this.d.remove(); this.d=null}
+  getPosition(){return this.pos}
+  setPosition(p){this.pos=p; this.draw()}
+ };
+ return GPin;
+}
+function gOpen(i){
+ const g=gG[i], m=gMarks[i]; if(!g||!m||!gMap)return;
+ if(!gIW)gIW=new google.maps.InfoWindow({pixelOffset:new google.maps.Size(0,-41)});
+ gIW.setContent(popupFor(g)); gIW.setPosition(m.getPosition()); gIW.open({map:gMap});
+}
+function gGo(i){
+ const m=gMarks[i]; if(!m||!gMap)return;
+ if(gIW)gIW.close();
+ gMap.panTo(m.getPosition()); gMap.setZoom(16); setTimeout(()=>gOpen(i),500);
+}
+function gRender(G){
+ if(gSt!=='ready'){
+  $('mc-hint').textContent='구글 지도를 불러오는 중…';
+  gLoad().then(ok=>{if(ok)renderMapNow()}); return;
  }
- if(!nvMap){
-  nvMap=new naver.maps.Map('omap',{center:new naver.maps.LatLng(37.5665,126.978),zoom:11,zoomControl:true,zoomControlOptions:{position:naver.maps.Position.TOP_RIGHT},logoControl:true,mapDataControl:false,scaleControl:false});
-  nvSig=''; applyMapMode();
+ if(!gMap){
+  gMap=new google.maps.Map($('omap'),{center:{lat:37.5665,lng:126.978},zoom:11,mapTypeControl:false,streetViewControl:false,fullscreenControl:false,clickableIcons:false,zoomControl:true});
+  gSig=''; applyMapMode();
  }
- nvG=G;
+ gG=G; const P=pinClass();
  const sig=JSON.stringify(G.map(g=>[g.lat,g.lng,g.name,g.es.map(e=>e.id+'|'+e.title+'|'+e.date)]));
- if(sig!==nvSig){
-  nvSig=sig; if(nvIW)nvIW.close(); nvMarks.forEach(m=>m.setMap(null)); nvMarks=[];
+ if(sig!==gSig){
+  gSig=sig; if(gIW)gIW.close(); gMarks.forEach(m=>m.setMap(null)); gMarks=[];
   G.forEach((g,i)=>{const n=g.es.length;
-   const m=new naver.maps.Marker({position:new naver.maps.LatLng(g.lat,g.lng),map:nvMap,title:g.name||'가본 곳',icon:{content:PIN.replace('@',n>1?n:'♥'),size:new naver.maps.Size(34,41),anchor:new naver.maps.Point(17,41)}});
-   naver.maps.Event.addListener(m,'click',()=>nvOpen(i)); nvMarks.push(m)});
-  try{naver.maps.Event.trigger(nvMap,'resize')}catch(e){}
-  if(G.length===1){nvMap.setCenter(new naver.maps.LatLng(G[0].lat,G[0].lng));nvMap.setZoom(15)}
-  else{const b=new naver.maps.LatLngBounds(); G.forEach(g=>b.extend(new naver.maps.LatLng(g.lat,g.lng))); nvMap.fitBounds(b,{top:50,right:50,bottom:50,left:50}); naver.maps.Event.once(nvMap,'idle',()=>{if(nvMap&&nvMap.getZoom()>15)nvMap.setZoom(15)})}
- } else {try{naver.maps.Event.trigger(nvMap,'resize')}catch(e){}}
+   const m=new P(new google.maps.LatLng(g.lat,g.lng),PIN.replace('@',n>1?n:'♥'),g.name||'가본 곳',()=>gOpen(i));
+   m.setMap(gMap); gMarks.push(m)});
+  if(G.length===1){gMap.setCenter({lat:G[0].lat,lng:G[0].lng});gMap.setZoom(15)}
+  else{const b=new google.maps.LatLngBounds(); G.forEach(g=>b.extend({lat:g.lat,lng:g.lng})); gMap.fitBounds(b,50); google.maps.event.addListenerOnce(gMap,'idle',()=>{if(gMap&&gMap.getZoom()>15)gMap.setZoom(15)})}
+ }
 }
 function renderMap(D){
  const card=$('mapcard'); if(!card)return; lastD=D;
  if(ui.page!=='story'){ if(mfull)setFull(false); return }
- const G=mapGroups(D), named=D.filter(e=>e.place&&e.place.name).length, k=nvKey(), bad=!k||nvSt==='fail', coarse=matchMedia('(pointer:coarse)').matches;
+ const G=mapGroups(D), named=D.filter(e=>e.place&&e.place.name).length, k=gKey(), bad=!k||gSt==='fail', coarse=matchMedia('(pointer:coarse)').matches;
  $('mc-count').textContent=G.length?`${G.length}곳`:'';
  $('mc-full').classList.toggle('hidden',!G.length||bad);
  $('mc-set').classList.toggle('hidden',!bad);
  $('omap').classList.toggle('hidden',!G.length||bad);
  $('mc-chips').innerHTML=(G.length&&!bad)?G.map((g,i)=>`<button data-mi="${i}" class="pill sm">${esc(g.name||'가본 곳')}${g.es.length>1?' '+g.es.length:''}</button>`).join(''):'';
- $('mc-hint').textContent=!k?'네이버 지도를 보려면 "지도 설정"에서 Client ID를 넣어 주세요.'
-  :nvSt==='fail'?'네이버 지도 인증에 실패했어요. "지도 설정"에서 Client ID와 웹 서비스 URL 등록을 확인해 주세요.'
-  :G.length?(coarse&&!mfull?'핀을 누르면 그날의 이야기를 볼 수 있어요. 두 손가락으로 확대·축소하고, 움직이려면 "크게 보기"를 눌러 주세요.':'핀을 누르면 그날의 이야기를 볼 수 있어요.')
-  :(named?'장소 이름만 적은 이야기는 지도에 표시되지 않아요. 이야기를 수정해서 위치를 지정해 보세요.':'이야기를 쓸 때 장소를 지정하면, 우리가 함께 간 곳이 여기 지도에 표시돼요.');
- if(!G.length||bad){nvTeardown();return}
- nvRender(G);
+ $('mc-hint').textContent=!k?'지도를 보려면 "지도 설정"에서 구글 지도 API 키를 넣어 주세요.'
+  :gSt==='fail'?'구글 지도 인증에 실패했어요. "지도 설정"에서 API 키와 웹사이트 제한을 확인해 주세요.'
+  :G.length?(coarse&&!mfull?'핀을 누르면 그날의 이야기를 볼 수 있어요. 지도는 두 손가락으로 확대·이동해요.':'핀을 누르면 그날의 이야기를 볼 수 있어요.')
+  :(named?'장소 이름만 적은 이야기는 지도에 표시되지 않아요. 이야기를 수정해서 위치를 지정해 보세요.':'이야기를 쓸 때 장소를 검색해 고르면, 우리가 함께 간 곳이 여기 지도에 표시돼요.');
+ if(!G.length||bad){gTeardown();return}
+ gRender(G);
 }
 function mapFocus(en){
  const p=en.place;
- if(!nvKey()||nvSt==='fail'){toast('지도를 보려면 공유·백업의 "네이버 지도 연동"에서 Client ID를 설정해 주세요.');return}
- if(!p||!Number.isFinite(p.lat)||!nvMap){toast('이 이야기는 위치 없이 이름만 저장돼 있어요. 수정에서 위치를 지정해 보세요.');return}
+ if(!gKey()||gSt==='fail'){toast('지도를 보려면 공유·백업의 "구글 지도 연동"에서 API 키를 설정해 주세요.');return}
+ if(!p||!Number.isFinite(p.lat)||!gMap){toast('이 이야기는 위치 없이 이름만 저장돼 있어요. 수정에서 장소를 검색해 골라 보세요.');return}
  const i=mapGroups([...S.diary].sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(b.u||0)-(a.u||0))).findIndex(g=>g.lat.toFixed(4)+','+g.lng.toFixed(4)===p.lat.toFixed(4)+','+p.lng.toFixed(4));
  $('mapcard').scrollIntoView({block:'center',behavior:'smooth'});
- if(i>=0)nvGo(i);
+ if(i>=0)gGo(i);
 }
 $('mc-full').onclick=()=>setFull(!mfull);
-$('mc-set').onclick=()=>{$('backup-open').click(); setTimeout(()=>{const e=$('nk-id'); if(e)e.focus()},250)};
-$('mc-chips').addEventListener('click',e=>{const b=e.target.closest('[data-mi]'); if(b)nvGo(+b.dataset.mi)});
+$('mc-set').onclick=()=>{$('backup-open').click(); setTimeout(()=>{const e=$('gk-id'); if(e)e.focus()},250)};
+$('mc-chips').addEventListener('click',e=>{const b=e.target.closest('[data-mi]'); if(b)gGo(+b.dataset.mi)});
 
-/* --- 네이버 지도 설정 (둘이 연결돼 있으면 같이 동기화) --- */
-function nkUI(){
- const el=$('nk-state'); if(!el)return; const k=nvKey(); if(!$('nk-id').value)$('nk-id').value=k;
- el.textContent=!k?'아직 설정되지 않았어요.':nvSt==='fail'?'⚠ 네이버 지도 인증 실패 — Client ID와 웹 서비스 URL(이 사이트 주소) 등록을 확인해 주세요.':nvSt==='ready'?'✔ 네이버 지도를 쓰고 있어요.':'설정돼 있어요. 우리 이야기 탭에서 확인해 보세요.';
+/* --- 구글 지도 설정 (둘이 연결돼 있으면 같이 동기화) --- */
+function gkUI(){
+ const el=$('gk-state'); if(!el)return; const k=gKey(); if(!$('gk-id').value)$('gk-id').value=k;
+ el.textContent=!k?'아직 설정되지 않았어요.':gSt==='fail'?'⚠ 구글 지도 인증 실패 — API 키, 결제 계정, 웹사이트 제한(이 사이트 주소)을 확인해 주세요.':gSt==='ready'?'✔ 구글 지도를 쓰고 있어요.':'설정돼 있어요. 우리 이야기 탭에서 확인해 보세요.';
 }
-$('nk-save').onclick=()=>{
- const v=$('nk-id').value.trim();
- if(!/^[A-Za-z0-9_-]{6,60}$/.test(v)){toast('Client ID 형식을 확인해 주세요. (영문·숫자만, 비밀 키는 넣지 마세요)');return}
- const had=!!window.naver;
- S.nk=v; S.nku=Date.now(); try{localStorage.setItem(NKEY,v)}catch(e){} save();
- nvSt='idle'; nvP=null; nkUI(); toast('저장했어요. 연결돼 있으면 상대 기기에도 자동으로 적용돼요.');
+$('gk-save').onclick=()=>{
+ const v=$('gk-id').value.trim();
+ if(!/^AIza[0-9A-Za-z_-]{30,}$/.test(v)){toast('API 키 형식을 확인해 주세요. (AIza로 시작하는 키)');return}
+ const had=!!window.google;
+ S.gk=v; S.gku=Date.now(); save();
+ gSt='idle'; gP=null; gkUI(); toast('저장했어요. 연결돼 있으면 상대 기기에도 자동으로 적용돼요.');
  if(had){setTimeout(()=>location.reload(),700);return}
  renderMapNow();
 };
-$('nk-off').onclick=()=>{
- S.nk=''; S.nku=Date.now(); try{localStorage.removeItem(NKEY)}catch(e){} save(); $('nk-id').value='';
- nvSt='idle'; nvP=null; nvTeardown(); nkUI(); renderMapNow(); toast('네이버 지도 설정을 지웠어요.');
+$('gk-off').onclick=()=>{
+ S.gk=''; S.gku=Date.now(); save(); $('gk-id').value='';
+ gSt='idle'; gP=null; gTeardown(); gkUI(); renderMapNow(); toast('구글 지도 설정을 지웠어요.');
 };
 
-/* --- 장소 지정: 주소 검색(네이버 geocoder) + 지도에서 직접 찍기(reverse geocoder) --- */
+/* --- 장소 지정: 가게 이름·주소 검색(Places API New) + 지도에서 직접 찍기 --- */
 function sPlaceShow(){
  const c=$('s-pcur'), name=$('s-place').value.trim(), has=sPlace&&Number.isFinite(sPlace.lat);
  c.classList.toggle('hidden',!has&&!name);
  if(has)c.innerHTML='<span>📍 지도에 표시돼요</span><button type="button" data-pclear>위치 지우기</button>';
- else if(name)c.innerHTML='<span>위치 없이 이름만 저장돼요. 아래 "주소 검색"이나 "지도에서 직접 찍기"로 위치를 정해 보세요.</span>';
+ else if(name)c.innerHTML='<span>위치 없이 이름만 저장돼요. "검색"으로 장소를 골라야 지도에 표시돼요.</span>';
 }
 function sPlaceInit(en){
  sPlace=en&&en.place?Object.assign({},en.place):null;
@@ -1309,28 +1326,29 @@ function sPlaceOut(){
  const name=$('s-place').value.trim(), has=sPlace&&Number.isFinite(sPlace.lat)&&Number.isFinite(sPlace.lng);
  if(!name&&!has)return null;
  const o={name:name||(sPlace&&sPlace.name)||'선택한 위치'};
- if(has){o.lat=sPlace.lat;o.lng=sPlace.lng;if(sPlace.addr)o.addr=sPlace.addr}
+ if(has){o.lat=sPlace.lat;o.lng=sPlace.lng;if(sPlace.addr)o.addr=sPlace.addr;if(sPlace.pid)o.pid=sPlace.pid}
  return o;
 }
-function nvGeocode(q){
- return new Promise(r=>{
-  const to=setTimeout(()=>r([]),7000);
-  try{naver.maps.Service.geocode({query:q},(st,res)=>{clearTimeout(to);
-   if(st!==naver.maps.Service.Status.OK){r([]);return}
-   r(((res&&res.v2&&res.v2.addresses)||[]).slice(0,6).map(a=>({name:a.roadAddress||a.jibunAddress||q,display_name:[a.roadAddress,a.jibunAddress].filter(Boolean).join(', ')||q,lat:a.y,lon:a.x})))})}
-  catch(e){clearTimeout(to);r([])}
- });
+function gErrMsg(e){
+ const m=String((e&&(e.message||e.code))||e||'');
+ if(/not been used|disabled|PERMISSION_DENIED|ApiNotActivated|not authorized|REQUEST_DENIED|403/i.test(m))return '장소 검색 권한이 없어요. Google Cloud 콘솔에서 "Places API (New)"를 사용 설정하고, API 키 제한 목록에도 넣어 주세요.';
+ return '검색에 실패했어요. 잠시 뒤 다시 시도하거나, 아래 "지도에서 직접 찍기"를 써 보세요.';
 }
 async function placeSearch(){
  const q=$('s-place').value.trim(), L_=$('s-pres');
- if(!q){toast('장소 이름이나 주소를 입력해 주세요.');$('s-place').focus();return}
- if(!nvKey()){toast('먼저 공유·백업의 "네이버 지도 연동"에서 Client ID를 설정해 주세요.');return}
+ if(!q){toast('가게 이름이나 주소를 입력해 주세요.');$('s-place').focus();return}
+ if(!gKey()){toast('먼저 공유·백업의 "구글 지도 연동"에서 API 키를 설정해 주세요.');return}
  L_.hidden=false; L_.innerHTML='<li class="pm">검색 중…</li>';
- const ok=await nvLoad();
- if(!ok||!(naver.maps.Service&&naver.maps.Service.geocode)){L_.innerHTML='<li class="pm">네이버 지도를 쓸 수 없어요. 설정을 확인하거나 이름만 저장해 주세요.</li>';return}
- const a=await nvGeocode(q);
- if(!a.length){L_.innerHTML='<li class="pm">검색 결과가 없어요. 네이버 주소 검색은 도로명·지번 주소(예: 성수이로 78)를 찾아요. 가게 이름은 아래 "지도에서 직접 찍기"를 써 주세요.</li>';return}
- L_.innerHTML=a.map((x,i)=>`<li><button type="button" data-pi="${i}">${esc(x.name)}<small>${esc(x.display_name)}</small></button></li>`).join('');
+ const ok=await gLoad();
+ if(!ok){L_.innerHTML='<li class="pm">구글 지도를 쓸 수 없어요. 설정을 확인하거나 이름만 저장해 주세요.</li>';return}
+ let a=[];
+ try{
+  const {Place}=await google.maps.importLibrary('places');
+  const r=await Place.searchByText({textQuery:q,fields:['id','displayName','formattedAddress','location'],language:'ko',region:'kr',maxResultCount:6});
+  a=((r&&r.places)||[]).filter(x=>x&&x.location).map(x=>({name:x.displayName||q,addr:x.formattedAddress||'',lat:x.location.lat(),lng:x.location.lng(),pid:x.id||''}));
+ }catch(e){L_.innerHTML='<li class="pm">'+esc(gErrMsg(e))+'</li>';return}
+ if(!a.length){L_.innerHTML='<li class="pm">검색 결과가 없어요. 지역 이름을 붙여 다시 검색하거나(예: 성수 블루보틀), 아래 "지도에서 직접 찍기"를 써 보세요.</li>';return}
+ L_.innerHTML=a.map((x,i)=>`<li><button type="button" data-pi="${i}">${esc(x.name)}<small>${esc(x.addr)}</small></button></li>`).join('');
  L_._r=a;
 }
 $('s-psearch').onclick=placeSearch;
@@ -1338,47 +1356,50 @@ $('s-place').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){
 $('s-place').addEventListener('input',sPlaceShow);
 $('s-pres').addEventListener('click',e=>{
  const b=e.target.closest('[data-pi]'); if(!b)return; const x=($('s-pres')._r||[])[+b.dataset.pi]; if(!x)return;
- const lat=parseFloat(x.lat), lng=parseFloat(x.lon); if(!Number.isFinite(lat)||!Number.isFinite(lng))return;
- const name=$('s-place').value.trim()||x.name;
- sPlace={name,addr:x.display_name,lat,lng}; $('s-place').value=name; $('s-pres').hidden=true; sPlaceShow();
+ if(!Number.isFinite(x.lat)||!Number.isFinite(x.lng))return;
+ sPlace={name:x.name,addr:x.addr,lat:x.lat,lng:x.lng,pid:x.pid}; $('s-place').value=x.name; $('s-pres').hidden=true; sPlaceShow();
 });
 $('s-pcur').addEventListener('click',e=>{if(e.target.closest('[data-pclear]')){sPlace=null;sPlaceShow()}});
 function pkClose(){
  const w=$('pk'); if(w)w.classList.add('hidden');
  if(pkMark){try{pkMark.setMap(null)}catch(e){}} pkMark=null; pkSel=null;
 }
-function pkSet(ll){
- pkSel={lat:ll.lat(),lng:ll.lng(),addr:''};
- if(!pkMark)pkMark=new naver.maps.Marker({position:ll,map:pkMap,icon:{content:PIN.replace('@','♥'),size:new naver.maps.Size(34,41),anchor:new naver.maps.Point(17,41)}}); else{pkMark.setPosition(ll);pkMark.setMap(pkMap)}
- $('pk-addr').textContent='주소 확인 중…';
- const mine=pkSel;
+function pkSet(ll,placeId){
+ pkSel={lat:ll.lat(),lng:ll.lng(),addr:'',name:'',pid:placeId||''};
+ const P=pinClass();
+ if(!pkMark){pkMark=new P(ll,PIN.replace('@','♥'),'선택한 위치',null);pkMark.setMap(pkMap)} else pkMark.setPosition(ll);
+ $('pk-addr').textContent='장소 확인 중…';
+ const mine=pkSel, done=t=>{if(pkSel===mine)$('pk-addr').textContent=t};
+ if(placeId){
+  (async()=>{try{const {Place}=await google.maps.importLibrary('places'); const pl=new Place({id:placeId}); await pl.fetchFields({fields:['displayName','formattedAddress']});
+   mine.name=pl.displayName||''; mine.addr=pl.formattedAddress||''; done('📍 '+[mine.name,mine.addr].filter(Boolean).join(' · '))}
+   catch(e){done('📍 선택한 위치')}})();
+  return;
+ }
  try{
-  const OT=naver.maps.Service.OrderType||{};
-  naver.maps.Service.reverseGeocode({coords:ll,orders:[OT.ROAD_ADDR||'roadaddr',OT.ADDR||'addr'].join(',')},(st,res)=>{
-   if(pkSel!==mine)return; let a='';
-   if(st===naver.maps.Service.Status.OK){const v=res&&res.v2&&res.v2.address; a=(v&&(v.roadAddress||v.jibunAddress))||''}
-   mine.addr=a; $('pk-addr').textContent=a?'📍 '+a:'📍 선택한 위치 (주소를 찾지 못했어요)';
+  new google.maps.Geocoder().geocode({location:ll,language:'ko'},(res,st)=>{
+   const a=(st==='OK'&&res&&res[0]&&res[0].formatted_address)||''; mine.addr=a; done(a?'📍 '+a:'📍 선택한 위치');
   });
- }catch(e){$('pk-addr').textContent='📍 선택한 위치'}
+ }catch(e){done('📍 선택한 위치')}
 }
 async function pkOpen(){
- if(!nvKey()){toast('먼저 공유·백업의 "네이버 지도 연동"에서 Client ID를 설정해 주세요.');return}
+ if(!gKey()){toast('먼저 공유·백업의 "구글 지도 연동"에서 API 키를 설정해 주세요.');return}
  $('pk').classList.remove('hidden'); $('pk-addr').textContent='지도를 불러오는 중…';
- const ok=await nvLoad(); if(!ok){pkClose();return}
- const has=sPlace&&Number.isFinite(sPlace.lat), c=has?new naver.maps.LatLng(sPlace.lat,sPlace.lng):new naver.maps.LatLng(37.5665,126.978);
+ const ok=await gLoad(); if(!ok){pkClose();return}
+ const has=sPlace&&Number.isFinite(sPlace.lat), c=has?{lat:sPlace.lat,lng:sPlace.lng}:{lat:37.5665,lng:126.978};
  if(!pkMap){
-  pkMap=new naver.maps.Map('pk-map',{center:c,zoom:has?16:12,zoomControl:true,zoomControlOptions:{position:naver.maps.Position.TOP_RIGHT},logoControl:true,mapDataControl:false,scaleControl:false,pinchZoom:true,scrollWheel:true});
-  naver.maps.Event.addListener(pkMap,'click',e=>{if(e&&e.coord)pkSet(e.coord)});
- } else {try{naver.maps.Event.trigger(pkMap,'resize')}catch(e){} pkMap.setCenter(c); pkMap.setZoom(has?16:12)}
- pkSel=null; $('pk-addr').textContent='지도를 눌러 위치를 골라 주세요.';
- if(has)pkSet(c);
+  pkMap=new google.maps.Map($('pk-map'),{center:c,zoom:has?16:12,mapTypeControl:false,streetViewControl:false,fullscreenControl:false,gestureHandling:'greedy',clickableIcons:true});
+  pkMap.addListener('click',e=>{if(!e||!e.latLng)return; if(e.placeId&&e.stop)e.stop(); pkSet(e.latLng,e.placeId)});
+ } else {pkMap.setCenter(c); pkMap.setZoom(has?16:12)}
+ pkSel=null; $('pk-addr').textContent='지도를 눌러 위치를 골라 주세요. 가게 아이콘을 누르면 이름도 가져와요.';
+ if(has)pkSet(new google.maps.LatLng(c.lat,c.lng),sPlace.pid||'');
 }
 $('s-ppick').onclick=pkOpen;
 $('pk-cancel').onclick=pkClose;
 $('pk-ok').onclick=()=>{
  if(!pkSel){toast('지도를 눌러 위치를 골라 주세요.');return}
- const name=$('s-place').value.trim()||pkSel.addr||'선택한 위치';
- sPlace={name,addr:pkSel.addr,lat:pkSel.lat,lng:pkSel.lng}; $('s-place').value=name; $('s-pres').hidden=true; pkClose(); sPlaceShow();
+ const name=$('s-place').value.trim()||pkSel.name||pkSel.addr||'선택한 위치';
+ sPlace={name,addr:pkSel.addr,lat:pkSel.lat,lng:pkSel.lng,pid:pkSel.pid}; $('s-place').value=name; $('s-pres').hidden=true; pkClose(); sPlaceShow();
 };
 
 $('st-add').onclick=()=>openStory(null);
@@ -1431,7 +1452,7 @@ const saveCloud=()=>{try{cloud?localStorage.setItem(CKEY,JSON.stringify(cloud)):
 const cleanDb=u=>String(u||'').trim().replace(/\.json.*$/,'').replace(/\/+$/,'');
 const rid=()=>{const a=new Uint8Array(9);crypto.getRandomValues(a);return [...a].map(b=>(b%36).toString(36)).join('')};
 const curl=(p='')=>`${cloud.db}/rooms/${cloud.room}${p}.json`;
-const normS=d=>{d=d||{};d.plans=Array.isArray(d.plans)?d.plans:Object.values(d.plans||{});d.cat=d.cat||{};d.del=d.del||{};d.mu=d.mu||0;d.vu=d.vu||0;d.bgu=d.bgu||0;d.nku=d.nku||0;d.nk=d.nk||'';d.diary=(Array.isArray(d.diary)?d.diary:Object.values(d.diary||{})).filter(Boolean);d.cmts=(Array.isArray(d.cmts)?d.cmts:Object.values(d.cmts||{})).filter(Boolean);d.todos=(Array.isArray(d.todos)?d.todos:Object.values(d.todos||{})).filter(Boolean);return d};
+const normS=d=>{d=d||{};d.plans=Array.isArray(d.plans)?d.plans:Object.values(d.plans||{});d.cat=d.cat||{};d.del=d.del||{};d.mu=d.mu||0;d.vu=d.vu||0;d.bgu=d.bgu||0;d.gku=d.gku||0;d.gk=d.gk||'';d.diary=(Array.isArray(d.diary)?d.diary:Object.values(d.diary||{})).filter(Boolean);d.cmts=(Array.isArray(d.cmts)?d.cmts:Object.values(d.cmts||{})).filter(Boolean);d.todos=(Array.isArray(d.todos)?d.todos:Object.values(d.todos||{})).filter(Boolean);return d};
 const canon=v=>{if(Array.isArray(v))return v.map(canon);if(v&&typeof v==='object'){const o={};Object.keys(v).sort().forEach(k=>{const c=canon(v[k]);if(!(c&&typeof c==='object'&&!Object.keys(c).length))o[k]=c});return o}return v};
 const cstr=d=>{const x=JSON.parse(JSON.stringify(normS(JSON.parse(JSON.stringify(d||{})))));x.plans.sort((a,b)=>a.id<b.id?-1:1);x.todos.sort((a,b)=>a.id<b.id?-1:1);return JSON.stringify(canon(x))};
 const ml=(x,y,del)=>{const m=new Map();[...y,...x].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))};
@@ -1441,8 +1462,8 @@ function merge(a,b){
  for(const k in a.del)del[k]=Math.max(del[k]||0,a.del[k]);
  const map=new Map();
  [...b.plans,...a.plans].forEach(p=>{const q=map.get(p.id);if(!q||(p.u||0)>=(q.u||0))map.set(p.id,p)});
- const vw=(a.vu||0)>=(b.vu||0)?a:b, gw=(a.bgu||0)>=(b.bgu||0)?a:b, kw=(a.nku||0)>=(b.nku||0)?a:b;
- return {total:w.total,wdate:w.wdate||'',cat:w.cat,mu:w.mu||0,verse:vw.verse,vu:vw.vu||0,bg:gw.bg,bgu:gw.bgu||0,nk:kw.nk||'',nku:kw.nku||0,del,todos:(()=>{const m=new Map();[...b.todos,...a.todos].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))})(),plans:[...map.values()].filter(p=>!(del[p.id]>(p.u||0))),diary:ml(a.diary,b.diary,del),cmts:ml(a.cmts,b.cmts,del)};
+ const vw=(a.vu||0)>=(b.vu||0)?a:b, gw=(a.bgu||0)>=(b.bgu||0)?a:b, kw=(a.gku||0)>=(b.gku||0)?a:b;
+ return {total:w.total,wdate:w.wdate||'',cat:w.cat,mu:w.mu||0,verse:vw.verse,vu:vw.vu||0,bg:gw.bg,bgu:gw.bgu||0,gk:kw.gk||'',gku:kw.gku||0,del,todos:(()=>{const m=new Map();[...b.todos,...a.todos].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))})(),plans:[...map.values()].filter(p=>!(del[p.id]>(p.u||0))),diary:ml(a.diary,b.diary,del),cmts:ml(a.cmts,b.cmts,del)};
 }
 function setSync(st){
  const t={off:'이 기기에만 저장돼요.',ok:'● 실시간 공유 중',busy:'동기화 중…',err:'연결이 불안정해요. 이 기기에는 저장돼 있어요.'}[st];
@@ -1492,7 +1513,7 @@ const shareLink=()=>location.href.split('#')[0]+'#r='+cloud.room+'&d='+encodeURI
 function renderCloudUI(){
  $('cloud-off').classList.toggle('hidden',!!cloud); $('cloud-on').classList.toggle('hidden',!cloud);
  if(cloud){$('c-link').value=shareLink()} else if(!$('c-db').value)$('c-db').value=CLOUD_DEFAULT_DB;
- nkUI();
+ gkUI();
 }
 $('c-connect').onclick=()=>{
  const db=cleanDb($('c-db').value);
@@ -1503,8 +1524,7 @@ $('c-copy').onclick=async()=>{const t=$('c-link');t.select();try{await navigator
 $('c-off').onclick=()=>{if(!confirm('공유를 해제할까요? 이 기기의 데이터는 그대로 남아요.'))return;cloud=null;saveCloud();renderCloudUI();setSync('off')};
 function cloudInit(){
  cloud=loadCloud();
- const h=new URLSearchParams(location.hash.replace(/^#/,'')), r=h.get('r'), d=h.get('d'), nk=h.get('nk');
- if(nk&&/^[A-Za-z0-9_-]{6,60}$/.test(nk)&&!nvKey()){try{localStorage.setItem(NKEY,nk)}catch(e){}}
+ const h=new URLSearchParams(location.hash.replace(/^#/,'')), r=h.get('r'), d=h.get('d');
  if(r&&d&&(!cloud||cloud.room!==r||cloud.db!==cleanDb(d)))connect(d,r,true);
  else if(cloud)syncNow(); else setSync('off');
  setInterval(poll,8000);
