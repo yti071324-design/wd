@@ -1376,7 +1376,7 @@ function renderAnn(){
   return;
  }
  const days=st&&st<=today?Math.round((today-st)/864e5)+1:0, td=ev.filter(e=>e.k===0), up=ev.filter(e=>e.k>0).slice(0,3);
- v.innerHTML=`<div class="ann-top"><div class="min-w-0">${days?`<div class="lbl" style="font-size:11px;margin-bottom:8px">TOGETHER</div><div class="ann-days">우리 ${days.toLocaleString('ko-KR')}일</div><div class="ann-since">${ymd(st)}부터</div>`:`<div class="lbl" style="font-size:11px">OUR DAYS</div>`}</div><button type="button" class="und ann-edit" data-ann="edit">기념일 설정</button></div>`+
+ v.innerHTML=`<div class="ann-top"><div class="min-w-0">${days?`<div class="lbl" style="font-size:11px;margin-bottom:8px">TOGETHER</div><div class="ann-days"> ${days.toLocaleString('ko-KR')}일</div><div class="ann-since">${ymd(st)}부터</div>`:`<div class="lbl" style="font-size:11px">OUR DAYS</div>`}</div><button type="button" class="und ann-edit" data-ann="edit">기념일 설정</button></div>`+
   (td.length?`<div class="ann-today">${AIC('year')} 오늘은 ${td.map(e=>esc(e.name)).join(', ')}이에요!</div>`:'')+
   (up.length?`<ul class="ann-up">${up.map(e=>`<li><span class="ic2" style="background:${AB(e.ic)}">${AIC(e.ic)}</span><span class="nm">${esc(e.name)}</span><span class="dt">${ymd(e.d)}</span><span class="dd">D-${e.k.toLocaleString('ko-KR')}</span></li>`).join('')}</ul>`:'');
 }
