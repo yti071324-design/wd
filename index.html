@@ -196,6 +196,91 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .cm button{color:#9a8f88;font-size:12px;flex-shrink:0}
 .cmadd{display:flex;gap:6px;margin-top:8px}
 .cmadd input{border:1px solid rgba(43,37,34,.16);border-radius:999px;padding:9px 12px;font:600 16px var(--f-body);background:#fff;outline:0;min-width:0}
+.ann{margin:0 0 16px;padding:18px 20px;min-width:0}
+.ann-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.ann-days{font-family:var(--f-num);font-weight:800;font-size:34px;letter-spacing:-.04em;line-height:1}
+.ann-since{font-size:12px;font-weight:600;color:#6B625C;margin-top:6px}
+.ann-edit{font-size:12px;color:#6B625C;flex-shrink:0}
+.ann-up{list-style:none;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--line);display:grid;gap:8px}
+.ann-up li{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;min-width:0}
+.ann-up .ic2{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;font-size:14px}
+.ann-up .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ann-up .dt{font-size:12px;color:#6B625C;flex-shrink:0}
+.ann-up .dd{font-family:var(--f-num);font-weight:800;font-size:14px;flex-shrink:0;min-width:52px;text-align:right}
+.ann-up li.today{background:#FFF3C4;border-radius:12px;padding:6px 8px;margin:0 -8px}
+.ann-up li.today .dd{color:#B45309}
+.ann-today{margin-top:12px;padding:10px 14px;border-radius:14px;background:linear-gradient(90deg,#FDE2D6,#E6DDFB);font-weight:800;font-size:14px}
+.ann-empty{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px;font-weight:600;color:#6B625C}
+.ann-form{display:grid;gap:14px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+#ann-view:empty+.ann-form{margin-top:0;padding-top:0;border-top:0}
+.ann-form.hidden{display:none}
+.ann-form label{display:grid;gap:6px;font-size:13px;font-weight:700}
+.ann-form .fld{margin-top:0}
+.ann-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ann-sub{font-size:13px;font-weight:700;margin-bottom:6px}
+.ann-list{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:6px}
+.ann-list li{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;background:rgba(43,37,34,.04);border-radius:10px;padding:8px 10px}
+.ann-list li span{flex:1;min-width:0}
+.ann-list li small{color:#6B625C}
+.ann-list button{color:#9a8f88;font-size:14px;width:24px}
+.ann-add{display:grid;grid-template-columns:1fr 150px auto auto;gap:8px;align-items:center}
+.ann-y{display:flex!important;grid-auto-flow:column;align-items:center;gap:4px!important;white-space:nowrap}
+@media (max-width:560px){.ann-add{grid-template-columns:1fr 1fr}.ann-add .fld:first-child{grid-column:1/-1}}
+.sview{display:inline-flex;background:rgba(43,37,34,.07);border-radius:999px;padding:3px;margin:0 0 14px}
+.sview button{border-radius:999px;padding:7px 16px;font-size:13px;font-weight:700;color:#6B625C}
+.sview button[aria-selected=true]{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(43,37,34,.15)}
+.scal{padding:16px 14px 14px;max-width:760px;min-width:0}
+.scal.hidden{display:none}
+.slist.hidden{display:none}
+.cal-h{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.cal-t{font-family:var(--f-num);font-weight:800;font-size:18px;letter-spacing:-.02em;min-width:120px;text-align:center}
+.cal-nav{width:34px;height:34px;border-radius:50%;font-size:20px;font-weight:700;background:rgba(43,37,34,.06)}
+.cal-td{margin-left:auto;font-size:12px;color:#6B625C}
+.cal-w,.cal-g{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-w span{text-align:center;font-size:11px;font-weight:700;color:#9a8f88;padding-bottom:4px}
+.cal-w span:first-child{color:#C2410C}.cal-w span:last-child{color:#2563EB}
+.cal-d{display:flex;align-items:flex-start;justify-content:flex-start;position:relative;aspect-ratio:1;border-radius:10px;background:rgba(43,37,34,.03);overflow:hidden;font:700 12px/1 var(--f-num);color:var(--ink);text-align:left;padding:5px;min-width:0}
+.cal-d.out{visibility:hidden}
+.cal-d.sun .n{color:#C2410C}.cal-d.sat .n{color:#2563EB}
+.cal-d.today{box-shadow:inset 0 0 0 2px var(--ink)}
+.cal-d.has{background-size:cover;background-position:center}
+.cal-d.has.ph .n{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.cal-d.has:not(.ph){background:#FDE2D6}
+.cal-d .dot{position:absolute;left:50%;bottom:7px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#C2410C}
+.cal-d .cnt{position:absolute;right:4px;bottom:4px;background:rgba(43,37,34,.75);color:#fff;font-size:10px;padding:2px 5px;border-radius:999px}
+.cal-d .an{position:absolute;right:3px;top:3px;font-size:11px;line-height:1}
+.cal-d:hover{filter:brightness(.97)}
+.cal-sum{margin-top:12px;font-size:12.5px;font-weight:600;color:#6B625C;display:grid;gap:4px}
+.cal-sum b{color:var(--ink)}
+@media (min-width:640px){.cal-d{font-size:13px;padding:7px}.cal-d .an{font-size:13px}}
+.wish{margin:0 0 16px;padding:16px 18px;min-width:0}
+.wh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.wcnt{margin-left:8px;font-family:var(--f-num);font-weight:800;font-size:13px;color:var(--rust)}
+.wdt{font-size:12px;color:#6B625C}
+.wlist,.wdone{list-style:none;margin:0;padding:0}
+.wlist li{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);min-width:0}
+.wlist li:first-child{border-top:0}
+.wlist .ck{width:24px;height:24px;border-radius:50%;border:2px solid var(--ink);background:#fff;flex-shrink:0}
+.wt{flex:1;min-width:0}
+.wt>span{display:block;font-weight:700;font-size:15px;line-height:1.35;overflow-wrap:anywhere}
+.wpl{display:inline-flex;align-items:center;gap:4px;margin-top:3px;font-size:12px;font-weight:700;color:#6B625C;text-decoration:underline;text-underline-offset:3px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wst{flex-shrink:0;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;background:var(--pink);white-space:nowrap}
+.wx{flex-shrink:0;width:26px;color:#9a8f88;font-size:15px}
+.wempty{font-size:13px;font-weight:600;color:#6B625C;padding:4px 0 8px}
+.wadd{display:flex;gap:8px;margin-top:8px}
+.wadd .fld{margin-top:0;flex:1;min-width:0}
+#wi-pbtn[aria-pressed=true]{background:var(--ink)}
+.wpbox{margin-top:8px}.wpbox.hidden{display:none}
+.wdone{margin-top:10px;padding-top:8px;border-top:1px dashed rgba(43,37,34,.2)}
+.wdone.hidden{display:none}
+.wdone li{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;font-weight:600;color:#6B625C;min-width:0}
+.wdone li>span{flex:1;min-width:0;text-decoration:line-through;overflow-wrap:anywhere}
+.wdone small{flex-shrink:0}
+.wdone button{flex-shrink:0;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px;color:var(--ink)}
+.opin.wish b{background:#fff;color:#C2410C;border:2px solid #C2410C}
+.pill.wchip{background:#fff;box-shadow:inset 0 0 0 1.5px #C2410C;color:#C2410C}
+.opop .wact{display:inline-block;margin-top:2px;border-radius:999px;background:var(--ink);color:#fff;text-decoration:none;padding:6px 10px;font-size:12px}
+@media (max-width:420px){.wst{padding:6px 8px}}
 .who{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:-6px 0 16px;font-size:13px;font-weight:700}
 .who-l{color:#6B625C}
 .who-btns{display:flex;gap:6px}
@@ -317,6 +402,27 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
     <div><h2 class="disp text-[30px] leading-none pt-2">OUR STORY <span id="st-count" style="color:var(--rust)"></span></h2><div id="st-sub" class="text-[13px] font-bold mt-3"></div></div>
     <button id="st-add" class="btn flex items-center gap-2 px-4 h-11 text-[15px] shrink-0" style="background:var(--ink);color:#fff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>새 이야기</button>
   </div>
+  <div id="ann" class="card ann">
+    <div id="ann-view"></div>
+    <div id="ann-form" class="ann-form hidden">
+      <label>사귄 날 (1일)<input id="an-start" type="date" class="fld"></label>
+      <div class="ann-2">
+        <label><span id="an-b0l">생일</span><input id="an-b0" type="date" class="fld"></label>
+        <label><span id="an-b1l">생일</span><input id="an-b1" type="date" class="fld"></label>
+      </div>
+      <div>
+        <div class="ann-sub">직접 추가한 기념일</div>
+        <ul id="an-list" class="ann-list"></ul>
+        <div class="ann-add">
+          <input id="an-cn" class="fld" maxlength="20" placeholder="예: 처음 만난 날" aria-label="기념일 이름">
+          <input id="an-cd" type="date" class="fld" aria-label="기념일 날짜">
+          <label class="ann-y"><input id="an-cy" type="checkbox" checked> 매년</label>
+          <button id="an-cadd" type="button" class="btn c-white h-[46px] px-4 text-[14px]">추가</button>
+        </div>
+      </div>
+      <div class="flex gap-2 justify-end"><button id="an-cancel" type="button" class="btn c-cream h-11 px-4 text-[15px]">취소</button><button id="an-save" type="button" class="btn h-11 px-5 text-[15px]" style="background:var(--ink);color:#fff">저장</button></div>
+    </div>
+  </div>
   <div id="who" class="who">
     <span class="who-l">나는</span><span id="who-btns" class="who-btns"></span>
     <button id="who-edit" type="button" class="und who-e">이름 바꾸기</button>
@@ -328,11 +434,33 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
     <button id="who-cancel" type="button" class="btn c-cream h-[46px] px-3 text-[14px]">취소</button>
     <p class="who-hint">바꾸면 지금까지 남긴 댓글·하트의 이름도 함께 바뀌고, 상대방 화면에도 적용돼요.</p>
   </div>
+  <div id="wish" class="card wish">
+    <div class="wh"><div><span class="lbl">WISH LIST</span><span id="wi-count" class="wcnt"></span></div><button id="wi-dtog" type="button" class="und wdt hidden"></button></div>
+    <ul id="wi-list" class="wlist"></ul>
+    <div class="wadd">
+      <input id="wi-text" class="fld" maxlength="60" placeholder="함께 하고 싶은 것 (예: 제주 한 달 살기)" aria-label="하고 싶은 것">
+      <button id="wi-pbtn" type="button" class="btn c-white h-[46px] w-[46px] shrink-0" aria-label="장소 붙이기" aria-pressed="false">📍</button>
+      <button id="wi-add" type="button" class="btn h-[46px] px-4 text-[14px] shrink-0" style="background:var(--ink);color:#fff">추가</button>
+    </div>
+    <div id="wi-pbox" class="wpbox hidden">
+      <div class="prow"><input id="wi-place" class="fld" maxlength="60" placeholder="가고 싶은 곳 이름 (예: 협재해수욕장)" aria-label="가고 싶은 곳"><button id="wi-psearch" type="button" class="btn c-white px-4 h-[46px] text-[14px] shrink-0">검색</button></div>
+      <ul id="wi-pres" class="pres" hidden></ul>
+      <div id="wi-pcur" class="pcur hidden"></div>
+    </div>
+    <ul id="wi-done" class="wdone hidden"></ul>
+  </div>
   <div id="mapcard" class="card">
     <div class="mc-h"><div><span class="lbl">OUR MAP</span><span id="mc-count"></span></div><button id="mc-full" class="und text-[14px]" type="button">크게 보기</button><button id="mc-set" class="und text-[14px] hidden" type="button">지도 설정</button></div>
     <div id="omap" class="hidden"></div>
     <div id="mc-chips"></div>
     <div id="mc-hint" class="mc-hint"></div>
+  </div>
+  <div class="sview" role="tablist" aria-label="보기 방식"><button type="button" data-sv="list" role="tab">목록</button><button type="button" data-sv="cal" role="tab">달력</button></div>
+  <div id="st-cal" class="card scal hidden">
+    <div class="cal-h"><button type="button" id="cal-prev" class="cal-nav" aria-label="이전 달">‹</button><div id="cal-title" class="cal-t"></div><button type="button" id="cal-next" class="cal-nav" aria-label="다음 달">›</button><button type="button" id="cal-today" class="und cal-td">오늘</button></div>
+    <div class="cal-w"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+    <div id="cal-grid" class="cal-g"></div>
+    <div id="cal-sum" class="cal-sum"></div>
   </div>
   <div id="st-list" class="slist"></div>
 </section>
@@ -1200,6 +1328,200 @@ function meIdx(){
 }
 function sMe(){const i=meIdx(); return i>=0?names()[i]:''}
 function nameIdx(n){return names().indexOf(n)}
+/* ===== 우리 기념일 ===== */
+function dOnly(x){const d=new Date(x); d.setHours(0,0,0,0); return d}
+function pd(iso){if(!iso)return null; const d=new Date(iso+'T00:00:00'); return isNaN(d)?null:d}
+function ymd(d){const z=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}.${z(d.getMonth()+1)}.${z(d.getDate())}`}
+function nextYearly(src,today){
+ for(let y=today.getFullYear();y<=today.getFullYear()+1;y++){
+  let d=new Date(y,src.getMonth(),src.getDate()); if(d.getMonth()!==src.getMonth())d=new Date(y,src.getMonth()+1,0);
+  if(d>=today)return d;
+ }
+}
+function annCur(){return Object.assign({start:'',b:['',''],custom:[]},S.ann||{})}
+function annEvents(){
+ const A=annCur(), today=dOnly(Date.now()), N=names(), ev=[], st=pd(A.start);
+ if(st&&st<=today){
+  const passed=Math.round((today-st)/864e5)+1, k=Math.ceil(passed/1000)*1000;
+  [k,k===passed?k+1000:0].filter(Boolean).forEach(m=>ev.push({ic:'💞',bg:'#FDE2D6',name:`${m.toLocaleString('ko-KR')}일`,d:new Date(st.getFullYear(),st.getMonth(),st.getDate()+m-1)}));
+  const ny=nextYearly(st,today), yrs=ny.getFullYear()-st.getFullYear();
+  if(yrs>0)ev.push({ic:'💐',bg:'#E6DDFB',name:`${yrs}주년`,d:ny});
+ } else if(st) ev.push({ic:'💞',bg:'#FDE2D6',name:'1일 (사귄 날)',d:st});
+ [0,1].forEach(i=>{const b=pd((A.b||[])[i]); if(b)ev.push({ic:'🎂',bg:'#FBE7A8',name:`${N[i]} 생일`,d:nextYearly(b,today)})});
+ (A.custom||[]).forEach(c=>{const d=pd(c.date); if(!d)return; const n=c.yearly?nextYearly(d,today):d; if(n>=today)ev.push({ic:'⭐',bg:'#CFEFE6',name:c.name||'기념일',d:n})});
+ const w=pd(S.wdate); if(w&&w>=today)ev.push({ic:'💍',bg:'#F8CFC2',name:'결혼식',d:w});
+ return ev.map(e=>Object.assign(e,{k:Math.round((e.d-today)/864e5)})).sort((a,b)=>a.k-b.k);
+}
+function renderAnn(){
+ const v=$('ann-view'); if(!v)return;
+ const A=annCur(), st=pd(A.start), today=dOnly(Date.now()), ev=annEvents();
+ const formOpen=!$('ann-form').classList.contains('hidden');
+ if(!st&&!ev.length){
+  v.innerHTML=formOpen?'':`<div class="ann-empty"><span>사귄 날을 넣으면 함께한 날과 다가오는 기념일을 알려 드려요.</span><button type="button" class="und shrink-0" data-ann="edit" style="color:var(--ink);font-weight:700">기념일 설정</button></div>`;
+  return;
+ }
+ const days=st&&st<=today?Math.round((today-st)/864e5)+1:0, td=ev.filter(e=>e.k===0), up=ev.filter(e=>e.k>0).slice(0,3);
+ v.innerHTML=`<div class="ann-top"><div class="min-w-0">${days?`<div class="lbl" style="font-size:11px;margin-bottom:8px">TOGETHER</div><div class="ann-days">우리 +${days.toLocaleString('ko-KR')}일</div><div class="ann-since">${ymd(st)}부터</div>`:`<div class="lbl" style="font-size:11px">OUR DAYS</div>`}</div><button type="button" class="und ann-edit" data-ann="edit">기념일 설정</button></div>`+
+  (td.length?`<div class="ann-today">🎉 오늘은 ${td.map(e=>esc(e.name)).join(', ')}이에요!</div>`:'')+
+  (up.length?`<ul class="ann-up">${up.map(e=>`<li><span class="ic2" style="background:${e.bg}">${e.ic}</span><span class="nm">${esc(e.name)}</span><span class="dt">${ymd(e.d)}</span><span class="dd">D-${e.k.toLocaleString('ko-KR')}</span></li>`).join('')}</ul>`:'');
+}
+let anDraft=[];
+function anList(){
+ $('an-list').innerHTML=anDraft.map((c,i)=>`<li><span>${esc(c.name)}</span><small>${ymd(pd(c.date))}${c.yearly?' · 매년':''}</small><button type="button" data-ai="${i}" aria-label="${esc(c.name)} 삭제">×</button></li>`).join('');
+}
+function annOpen(){
+ const A=annCur(), N=names();
+ $('an-start').value=A.start||''; $('an-b0').value=(A.b||[])[0]||''; $('an-b1').value=(A.b||[])[1]||'';
+ $('an-b0l').textContent=N[0]+' 생일'; $('an-b1l').textContent=N[1]+' 생일';
+ anDraft=(A.custom||[]).map(c=>Object.assign({},c)); anList(); $('an-cn').value=''; $('an-cd').value=''; $('an-cy').checked=true;
+ $('ann-form').classList.remove('hidden'); renderAnn();
+}
+function annClose(){$('ann-form').classList.add('hidden'); renderAnn()}
+$('ann-view').addEventListener('click',e=>{if(e.target.closest('[data-ann="edit"]')){$('ann-form').classList.contains('hidden')?annOpen():annClose()}});
+$('an-list').addEventListener('click',e=>{const b=e.target.closest('[data-ai]'); if(!b)return; anDraft.splice(+b.dataset.ai,1); anList()});
+$('an-cadd').onclick=()=>{
+ const n=$('an-cn').value.trim(), d=$('an-cd').value;
+ if(!n){toast('기념일 이름을 적어 주세요.');$('an-cn').focus();return} if(!d){toast('날짜를 골라 주세요.');return}
+ anDraft.push({id:uid(),name:n,date:d,yearly:$('an-cy').checked}); anList(); $('an-cn').value=''; $('an-cd').value='';
+};
+$('an-cn').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();$('an-cadd').click()}});
+$('an-cancel').onclick=annClose;
+$('an-save').onclick=()=>{
+ const st=$('an-start').value;
+ if(st&&pd(st)>dOnly(Date.now())){toast('사귄 날은 오늘이나 지난 날짜로 골라 주세요.');return}
+ if($('an-cn').value.trim()&&$('an-cd').value)$('an-cadd').click();
+ S.ann={start:st,b:[$('an-b0').value,$('an-b1').value],custom:anDraft}; S.anu=Date.now(); save();
+ $('ann-form').classList.add('hidden'); renderAnn(); toast('기념일을 저장했어요.');
+};
+/* ===== 함께 하고 싶은 것 (버킷리스트) ===== */
+let wPlace=null, sWish=null;
+function wishes(){return (S.wish||[]).filter(Boolean)}
+function renderWish(){
+ const L=$('wi-list'); if(!L)return;
+ const A=wishes(), ix=new Map(A.map((w,i)=>[w,i])), open=A.filter(w=>!w.done).sort((a,b)=>(b.t||0)-(a.t||0)||ix.get(b)-ix.get(a)), done=A.filter(w=>w.done).sort((a,b)=>(b.doneAt||'').localeCompare(a.doneAt||''));
+ $('wi-count').textContent=open.length?String(open.length):'';
+ L.innerHTML=open.length?open.map(w=>`<li data-wid="${w.id}"><button type="button" class="ck" data-wa="done" aria-label="${esc(w.text)} 해봤어요로 표시"></button><div class="wt"><span>${esc(w.text)}</span>${w.place&&w.place.name?`<button type="button" class="wpl" data-wa="map">♡ ${esc(w.place.name)}</button>`:''}</div><button type="button" class="wst" data-wa="story">이야기로 남기기</button><button type="button" class="wx" data-wa="del" aria-label="${esc(w.text)} 삭제">×</button></li>`).join('')
+  :`<li class="wempty" style="border:0">가고 싶은 곳, 해 보고 싶은 것을 적어 두세요. 다녀오면 바로 이야기로 남길 수 있어요.</li>`;
+ const t=$('wi-dtog'), shown=!$('wi-done').classList.contains('hidden');
+ t.classList.toggle('hidden',!done.length); t.textContent=`해봤어요 ${done.length} ${shown?'▲':'▼'}`;
+ if(!done.length)$('wi-done').classList.add('hidden');
+ $('wi-done').innerHTML=done.map(w=>`<li data-wid="${w.id}"><span>✓ ${esc(w.text)}</span><small>${w.doneAt?esc(w.doneAt.replace(/-/g,'.')):''}</small>${w.sid&&S.diary.some(e=>e.id===w.sid)?'<button type="button" data-wa="see">이야기 보기</button>':''}<button type="button" data-wa="undo">되돌리기</button></li>`).join('');
+}
+function wpShow(){
+ const c=$('wi-pcur'), has=wPlace&&Number.isFinite(wPlace.lat);
+ c.classList.toggle('hidden',!has);
+ c.innerHTML=has?`<span>📍 ${esc(wPlace.name)} — 지도에 ♡로 표시돼요</span><button type="button" data-wpclear>지우기</button>`:'';
+}
+function wpToggle(on){
+ $('wi-pbox').classList.toggle('hidden',!on); $('wi-pbtn').setAttribute('aria-pressed',String(!!on));
+ if(!on){wPlace=null;$('wi-place').value='';$('wi-pres').hidden=true;wpShow()} else $('wi-place').focus();
+}
+async function gSearch(q){
+ const {Place}=await google.maps.importLibrary('places');
+ const r=await Place.searchByText({textQuery:q,fields:['id','displayName','formattedAddress','location'],language:'ko',region:'kr',maxResultCount:6});
+ return ((r&&r.places)||[]).filter(x=>x&&x.location).map(x=>({name:x.displayName||q,addr:x.formattedAddress||'',lat:x.location.lat(),lng:x.location.lng(),pid:x.id||''}));
+}
+async function wSearch(){
+ const q=$('wi-place').value.trim(), L_=$('wi-pres');
+ if(!q){toast('가고 싶은 곳 이름을 적어 주세요.');$('wi-place').focus();return}
+ if(!gKey()){toast('장소 검색은 구글 지도 연동이 필요해요. "지도 설정"에서 API 키를 넣어 주세요.');return}
+ L_.hidden=false; L_.innerHTML='<li class="pm">검색 중…</li>';
+ if(!(await gLoad())){L_.innerHTML='<li class="pm">구글 지도를 쓸 수 없어요. 설정을 확인해 주세요.</li>';return}
+ let a=[]; try{a=await gSearch(q)}catch(e){L_.innerHTML='<li class="pm">'+esc(gErrMsg(e))+'</li>';return}
+ if(!a.length){L_.innerHTML='<li class="pm">검색 결과가 없어요. 지역 이름을 붙여 다시 검색해 보세요.</li>';return}
+ L_.innerHTML=a.map((x,i)=>`<li><button type="button" data-pi="${i}">${esc(x.name)}<small>${esc(x.addr)}</small></button></li>`).join(''); L_._r=a;
+}
+$('wi-pbtn').onclick=()=>wpToggle($('wi-pbox').classList.contains('hidden'));
+$('wi-psearch').onclick=wSearch;
+$('wi-place').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();wSearch()}});
+$('wi-pres').addEventListener('click',e=>{const b=e.target.closest('[data-pi]'); if(!b)return; const x=($('wi-pres')._r||[])[+b.dataset.pi]; if(!x)return; wPlace=x; $('wi-place').value=x.name; $('wi-pres').hidden=true; wpShow(); if(!$('wi-text').value.trim())$('wi-text').value=x.name+' 가기'});
+$('wi-pcur').addEventListener('click',e=>{if(e.target.closest('[data-wpclear]')){wPlace=null;wpShow()}});
+$('wi-add').onclick=()=>{
+ let t=$('wi-text').value.trim();
+ if(!t&&wPlace)t=wPlace.name+' 가기';
+ if(!t){toast('하고 싶은 것을 적어 주세요.');$('wi-text').focus();return}
+ const n=Date.now(), w={id:uid(),text:t,done:false,t:n,u:n,by:sMe()||''};
+ if(wPlace&&Number.isFinite(wPlace.lat))w.place={name:wPlace.name,addr:wPlace.addr||'',lat:wPlace.lat,lng:wPlace.lng,pid:wPlace.pid||''};
+ S.wish=wishes(); S.wish.push(w); save(); $('wi-text').value=''; wpToggle(false); renderStory(); toast('하고 싶은 것에 추가했어요.');
+};
+$('wi-text').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();$('wi-add').click()}});
+$('wi-dtog').onclick=()=>{$('wi-done').classList.toggle('hidden');renderWish()};
+function wStory(w){
+ openStory(null); sWish=w.id;
+ $('s-title').value=w.text;
+ if(w.place&&Number.isFinite(w.place.lat)){sPlace=Object.assign({},w.place); $('s-place').value=w.place.name; sPlaceShow()}
+}
+function wGo(w){
+ const i=wMapList().findIndex(x=>x.id===w.id);
+ if(!gKey()||gSt==='fail'||i<0){toast('지도를 보려면 구글 지도 연동이 필요해요.');return}
+ $('mapcard').scrollIntoView({block:'center',behavior:'smooth'}); setTimeout(()=>gWGo(i),300);
+}
+function wHandle(e){
+ const b=e.target.closest('[data-wa]'), li=e.target.closest('[data-wid]'); if(!b||!li)return;
+ const w=wishes().find(x=>x.id===li.dataset.wid); if(!w)return; const a=b.dataset.wa, n=Date.now();
+ if(a==='story')wStory(w);
+ else if(a==='map')wGo(w);
+ else if(a==='done'){w.done=true;w.doneAt=new Date(n-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);w.u=n;save();renderStory();toast('해봤어요로 옮겼어요.','되돌리기',()=>{w.done=false;delete w.doneAt;w.u=Date.now();save();renderStory()})}
+ else if(a==='undo'){w.done=false;delete w.doneAt;w.u=n;save();renderStory()}
+ else if(a==='see')goStory(w.sid);
+ else if(a==='del'){S.del[w.id]=n;S.wish=wishes().filter(x=>x!==w);save();renderStory();toast('삭제했어요.','되돌리기',()=>{w.u=Date.now();delete S.del[w.id];S.wish=wishes();S.wish.push(w);save();renderStory()})}
+}
+$('wi-list').addEventListener('click',wHandle);
+$('wi-done').addEventListener('click',wHandle);
+function wMapList(){const A=wishes(), ix=new Map(A.map((w,i)=>[w,i])); return A.filter(w=>!w.done&&w.place&&Number.isFinite(w.place.lat)&&Number.isFinite(w.place.lng)).sort((a,b)=>(b.t||0)-(a.t||0)||ix.get(b)-ix.get(a))}
+/* ===== 이야기 달력 ===== */
+var calY=null,calM=null;
+function sView(){try{return localStorage.getItem('to-in-one-sview')==='cal'?'cal':'list'}catch(e){return 'list'}}
+function setSView(v){try{localStorage.setItem('to-in-one-sview',v)}catch(e){} renderStory()}
+function annOnMonth(y,m){
+ const A=annCur(), N=names(), out={}, add=(d,t)=>{(out[d]=out[d]||[]).push(t)}, last=new Date(y,m+1,0).getDate();
+ const ymatch=(src,d)=>{let mm=src.getMonth(),dd=src.getDate(); if(mm===1&&dd===29&&new Date(y,2,0).getDate()===28)dd=28; return mm===m&&dd===d};
+ const st=pd(A.start);
+ for(let d=1;d<=last;d++){
+  const cur=new Date(y,m,d);
+  if(st&&cur>=st){
+   const n=Math.round((cur-st)/864e5)+1;
+   if(n===1)add(d,'💞 사귄 날');
+   else if(n%1000===0)add(d,`💞 ${n.toLocaleString('ko-KR')}일`);
+   if(n>1&&ymatch(st,d)&&y>st.getFullYear())add(d,`💐 ${y-st.getFullYear()}주년`);
+  }
+  [0,1].forEach(i=>{const b=pd((A.b||[])[i]); if(b&&ymatch(b,d))add(d,`🎂 ${N[i]} 생일`)});
+  (A.custom||[]).forEach(c=>{const cd=pd(c.date); if(!cd)return; if(c.yearly?(ymatch(cd,d)&&y>=cd.getFullYear()):(cd.getFullYear()===y&&cd.getMonth()===m&&cd.getDate()===d))add(d,'⭐ '+(c.name||'기념일'))});
+  const w=pd(S.wdate); if(w&&w.getFullYear()===y&&w.getMonth()===m&&w.getDate()===d)add(d,'💍 결혼식');
+ }
+ return out;
+}
+function renderCal(D){
+ const t=dOnly(Date.now()); if(calY===null){calY=t.getFullYear();calM=t.getMonth()}
+ const y=calY,m=calM, first=new Date(y,m,1).getDay(), last=new Date(y,m+1,0).getDate(), z=n=>String(n).padStart(2,'0');
+ $('cal-title').textContent=`${y}년 ${m+1}월`;
+ const by={}; D.forEach(e=>{if((e.date||'').slice(0,7)===`${y}-${z(m+1)}`){const d=+e.date.slice(8,10);(by[d]=by[d]||[]).push(e)}});
+ Object.values(by).forEach(a=>a.sort((p,q)=>(p.u||0)-(q.u||0)));
+ const AN=annOnMonth(y,m); let h='';
+ for(let i=0;i<first;i++)h+='<span class="cal-d out" aria-hidden="true"></span>';
+ for(let d=1;d<=last;d++){
+  const es=by[d]||[], cov=es.map(e=>imgsOf(e)[0]).find(Boolean), wd=(first+d-1)%7, td=y===t.getFullYear()&&m===t.getMonth()&&d===t.getDate(), an=AN[d];
+  const lab=`${m+1}월 ${d}일`+(es.length?` 이야기 ${es.length}개`:'')+(an?' · '+an.map(a=>a.slice(2).trim()).join(', '):'');
+  h+=`<button type="button" class="cal-d${wd===0?' sun':''}${wd===6?' sat':''}${td?' today':''}${es.length?' has':''}${cov?' ph':''}" data-cd="${y}-${z(m+1)}-${z(d)}" aria-label="${esc(lab)}"${cov?` style="background-image:url('${cov}')"`:''}><span class="n">${d}</span>${an?`<span class="an" aria-hidden="true">${an[0].split(' ')[0]}</span>`:''}${es.length&&!cov?'<span class="dot"></span>':''}${es.length>1?`<span class="cnt">${es.length}</span>`:''}</button>`;
+ }
+ $('cal-grid').innerHTML=h;
+ const n=Object.values(by).reduce((a,x)=>a+x.length,0), al=Object.keys(AN).sort((a,b)=>a-b).flatMap(d=>AN[d].map(x=>`${m+1}.${d} ${x}`));
+ $('cal-sum').innerHTML=`<span>이번 달 이야기 <b>${n}개</b>${n?'':' — 날짜를 눌러 그날의 이야기를 남겨 보세요.'}</span>`+al.map(x=>`<span>${esc(x)}</span>`).join('');
+}
+$('cal-prev').onclick=()=>{calM--; if(calM<0){calM=11;calY--} renderCal(S.diary)};
+$('cal-next').onclick=()=>{calM++; if(calM>11){calM=0;calY++} renderCal(S.diary)};
+$('cal-today').onclick=()=>{calY=null; renderCal(S.diary)};
+$('cal-grid').addEventListener('click',e=>{
+ const b=e.target.closest('[data-cd]'); if(!b)return; const d=b.dataset.cd;
+ const es=S.diary.filter(x=>x.date===d).sort((p,q)=>(p.u||0)-(q.u||0));
+ if(es.length){goStory(es[0].id);return}
+ openStory(null); $('s-date').value=d;
+});
+(function(){let x0=null,y0=0;const g=$('cal-grid');
+ g.addEventListener('touchstart',e=>{if(e.touches.length!==1){x0=null;return}x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+ g.addEventListener('touchend',e=>{if(x0===null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)$(dx<0?'cal-next':'cal-prev').click()},{passive:true});
+})();
+document.querySelector('.sview').addEventListener('click',e=>{const b=e.target.closest('[data-sv]'); if(b)setSView(b.dataset.sv)});
 function renderWho(){
  const N=names(), me=meIdx(), col=['#C2410C','#6D28D9'];
  $('who-btns').innerHTML=N.map((n,i)=>`<button type="button" data-me="${i}" aria-pressed="${me===i}" style="${me===i?'background:'+col[i]:''}">${esc(n)}</button>`).join('');
@@ -1243,7 +1565,7 @@ function renderStory(){
  const D=[...S.diary].sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(b.u||0)-(a.u||0)), me=sMe();
  const t=new Date(), md=(t.getMonth()+1)+'-'+t.getDate();
  const ago=D.find(e=>{const d=new Date(e.date+'T00:00:00');return d.getFullYear()<t.getFullYear()&&(d.getMonth()+1)+'-'+d.getDate()===md});
- renderWho();
+ renderWho(); renderAnn(); renderWish();
  $('st-count').textContent=D.length?`(${D.length})`:'';
  $('st-sub').textContent=D.length?`사진 ${D.reduce((a,e)=>a+imgsOf(e).length,0)}장`+(ago?` · ${t.getFullYear()-+ago.date.slice(0,4)}년 전 오늘, "${ago.title||'우리의 하루'}"`:''):'둘만의 하루를 사진과 함께 남겨 보세요.';
  let mon='',h='',i=0;
@@ -1260,6 +1582,8 @@ function renderStory(){
   `<div class="cmadd"><input class="ct" maxlength="120" placeholder="${me?esc(me)+'(으)로 댓글 달기…':'댓글 달기…'}" aria-label="댓글"><button data-sact="csend">등록</button></div></div></article>`;
  });
  L.innerHTML=h;
+ const sv=sView(); document.querySelectorAll('.sview [data-sv]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.sv===sv)));
+ L.classList.toggle('hidden',sv==='cal'); $('st-cal').classList.toggle('hidden',sv!=='cal'); if(sv==='cal')renderCal(S.diary);
  L.querySelectorAll('.sgtrack').forEach(tr=>tr.addEventListener('scroll',()=>galSync(tr),{passive:true}));
  L.querySelectorAll('[data-sid]').forEach(a=>{const c=a.querySelector('.ct'); if(!c)return; if(dr[a.dataset.sid])c.value=dr[a.dataset.sid]; if(foc===a.dataset.sid){try{c.focus({preventScroll:true});c.setSelectionRange(c.value.length,c.value.length)}catch(e){}}});
  renderMap(D);
@@ -1291,14 +1615,14 @@ document.addEventListener('keydown',e=>{if($('lb').classList.contains('hidden'))
  lb.addEventListener('touchend',e=>{if(x0===null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3)lbStep(dx<0?1:-1)},{passive:true});
 })();
 function openStory(en){
- sEd=en||null;sImgs=en?imgsOf(en).slice(0,SMAX):[];sBusy=0;sImg=sImgs[0]||'';
+ sWish=null; sEd=en||null;sImgs=en?imgsOf(en).slice(0,SMAX):[];sBusy=0;sImg=sImgs[0]||'';
  $('sdlg-title').textContent=en?'EDIT STORY':'NEW STORY'; $('s-del').classList.toggle('hidden',!en);
  $('s-date').value=en?en.date:new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
  $('s-title').value=en?en.title||'':''; $('s-text').value=en?en.text||'':''; sShow(); sPlaceInit(en); open_('sdlg');
 }
 
 /* ===== 우리 지도: 구글 지도 (Maps JavaScript API + Places API (New)) ===== */
-var mfull=false,lastD=[],gSt='idle',gP=null,gMap=null,gMarks=[],gIW=null,gSig='',gG=[],pkMap=null,pkMark=null,pkSel=null,GPin=null;
+var gWMarks=[],gWL=[],mfull=false,lastD=[],gSt='idle',gP=null,gMap=null,gMarks=[],gIW=null,gSig='',gG=[],pkMap=null,pkMark=null,pkSel=null,GPin=null;
 function gKey(){let k='';try{k=(S&&S.gk)||''}catch(e){} return (k||'').trim()}
 function gUrl(p){
  if(!p)return 'https://www.google.com/maps';
@@ -1321,6 +1645,7 @@ function popupFor(g){
 }
 function goStory(id){
  if(mfull)setFull(false);
+ if(sView()==='cal'){try{localStorage.setItem('to-in-one-sview','list')}catch(e){} renderStory()}
  setTimeout(()=>{const el=document.querySelector('#st-list [data-sid="'+id+'"]'); if(!el)return; el.scrollIntoView({block:'center',behavior:'smooth'}); el.classList.remove('hl'); void el.offsetWidth; el.classList.add('hl')},80);
 }
 function applyMapMode(){
@@ -1336,7 +1661,7 @@ function setFull(on){
 function renderMapNow(){renderMap(lastD)}
 function gTeardown(){
  if(gIW){try{gIW.close()}catch(e){}} gIW=null;
- gMarks.forEach(m=>{try{m.setMap(null)}catch(e){}}); gMarks=[];
+ gMarks.forEach(m=>{try{m.setMap(null)}catch(e){}}); gMarks=[]; gWMarks.forEach(m=>{try{m.setMap(null)}catch(e){}}); gWMarks=[];
  gMap=null; gSig=''; gG=[];
  const o=$('omap'); if(o)o.innerHTML='';
 }
@@ -1386,12 +1711,27 @@ function gOpen(i){
  if(!gIW)gIW=new google.maps.InfoWindow({pixelOffset:new google.maps.Size(0,-41)});
  gIW.setContent(popupFor(g)); gIW.setPosition(m.getPosition()); gIW.open({map:gMap});
 }
+function wishPop(w){
+ const box=document.createElement('div'); box.className='opop';
+ const h=document.createElement('b'); h.textContent='♡ '+(w.place.name||'가고 싶은 곳'); box.append(h);
+ const t=document.createElement('span'); t.textContent=w.text; box.append(t);
+ const st=document.createElement('a'); st.href='#'; st.className='wact'; st.textContent='다녀왔어요 · 이야기로 남기기'; st.onclick=e=>{e.preventDefault(); if(mfull)setFull(false); wStory(w)}; box.append(st);
+ const ol=document.createElement('div'); ol.className='ol'; const a=document.createElement('a'); a.href=gUrl(w.place); a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='구글맵에서 열기'; ol.append(a); box.append(ol);
+ return box;
+}
+function gWOpen(i){
+ const w=gWL[i], m=gWMarks[i]; if(!w||!m||!gMap)return;
+ if(!gIW)gIW=new google.maps.InfoWindow({pixelOffset:new google.maps.Size(0,-41)});
+ gIW.setContent(wishPop(w)); gIW.setPosition(m.getPosition()); gIW.open({map:gMap});
+}
+function gWGo(i){const m=gWMarks[i]; if(!m||!gMap)return; if(gIW)gIW.close(); gMap.panTo(m.getPosition()); gMap.setZoom(16); setTimeout(()=>gWOpen(i),500)}
 function gGo(i){
  const m=gMarks[i]; if(!m||!gMap)return;
  if(gIW)gIW.close();
  gMap.panTo(m.getPosition()); gMap.setZoom(16); setTimeout(()=>gOpen(i),500);
 }
-function gRender(G){
+function gRender(G,WL){
+ WL=WL||[];
  if(gSt!=='ready'){
   $('mc-hint').textContent='구글 지도를 불러오는 중…';
   gLoad().then(ok=>{if(ok)renderMapNow()}); return;
@@ -1400,32 +1740,34 @@ function gRender(G){
   gMap=new google.maps.Map($('omap'),{center:{lat:37.5665,lng:126.978},zoom:11,mapTypeControl:false,streetViewControl:false,fullscreenControl:false,clickableIcons:false,zoomControl:true});
   gSig=''; applyMapMode();
  }
- gG=G; const P=pinClass();
- const sig=JSON.stringify(G.map(g=>[g.lat,g.lng,g.name,g.es.map(e=>e.id+'|'+e.title+'|'+e.date)]));
+ gG=G; gWL=WL; const P=pinClass();
+ const sig=JSON.stringify([G.map(g=>[g.lat,g.lng,g.name,g.es.map(e=>e.id+'|'+e.title+'|'+e.date)]),WL.map(w=>[w.id,w.text,w.place.lat,w.place.lng,w.place.name])]);
  if(sig!==gSig){
-  gSig=sig; if(gIW)gIW.close(); gMarks.forEach(m=>m.setMap(null)); gMarks=[];
+  gSig=sig; if(gIW)gIW.close(); gMarks.forEach(m=>m.setMap(null)); gMarks=[]; gWMarks.forEach(m=>m.setMap(null)); gWMarks=[];
+  WL.forEach((w,i)=>{const m=new P(new google.maps.LatLng(w.place.lat,w.place.lng),PIN.replace('opin','opin wish').replace('@','♡'),'가고 싶은 곳: '+(w.place.name||''),()=>gWOpen(i)); m.setMap(gMap); gWMarks.push(m)});
   G.forEach((g,i)=>{const n=g.es.length;
    const m=new P(new google.maps.LatLng(g.lat,g.lng),PIN.replace('@',n>1?n:'♥'),g.name||'가본 곳',()=>gOpen(i));
    m.setMap(gMap); gMarks.push(m)});
-  if(G.length===1){gMap.setCenter({lat:G[0].lat,lng:G[0].lng});gMap.setZoom(15)}
-  else{const b=new google.maps.LatLngBounds(); G.forEach(g=>b.extend({lat:g.lat,lng:g.lng})); gMap.fitBounds(b,50); google.maps.event.addListenerOnce(gMap,'idle',()=>{if(gMap&&gMap.getZoom()>15)gMap.setZoom(15)})}
+  const AP=G.map(g=>({lat:g.lat,lng:g.lng})).concat(WL.map(w=>({lat:w.place.lat,lng:w.place.lng})));
+  if(AP.length===1){gMap.setCenter(AP[0]);gMap.setZoom(15)}
+  else{const b=new google.maps.LatLngBounds(); AP.forEach(x=>b.extend(x)); gMap.fitBounds(b,50); google.maps.event.addListenerOnce(gMap,'idle',()=>{if(gMap&&gMap.getZoom()>15)gMap.setZoom(15)})}
  }
 }
 function renderMap(D){
  const card=$('mapcard'); if(!card)return; lastD=D;
  if(ui.page!=='story'){ if(mfull)setFull(false); return }
- const G=mapGroups(D), named=D.filter(e=>e.place&&e.place.name).length, k=gKey(), bad=!k||gSt==='fail', coarse=matchMedia('(pointer:coarse)').matches;
- $('mc-count').textContent=G.length?`${G.length}곳`:'';
- $('mc-full').classList.toggle('hidden',!G.length||bad);
+ const G=mapGroups(D), WL=wMapList(), any=G.length+WL.length, named=D.filter(e=>e.place&&e.place.name).length, k=gKey(), bad=!k||gSt==='fail', coarse=matchMedia('(pointer:coarse)').matches;
+ $('mc-count').textContent=[G.length?`${G.length}곳`:'',WL.length?`♡ ${WL.length}`:''].filter(Boolean).join(' · ');
+ $('mc-full').classList.toggle('hidden',!any||bad);
  $('mc-set').classList.toggle('hidden',!bad);
- $('omap').classList.toggle('hidden',!G.length||bad);
- $('mc-chips').innerHTML=(G.length&&!bad)?G.map((g,i)=>`<button data-mi="${i}" class="pill sm">${esc(g.name||'가본 곳')}${g.es.length>1?' '+g.es.length:''}</button>`).join(''):'';
+ $('omap').classList.toggle('hidden',!any||bad);
+ $('mc-chips').innerHTML=(any&&!bad)?G.map((g,i)=>`<button data-mi="${i}" class="pill sm">${esc(g.name||'가본 곳')}${g.es.length>1?' '+g.es.length:''}</button>`).join('')+WL.map((w,i)=>`<button data-wi="${i}" class="pill sm wchip">♡ ${esc(w.place.name||w.text)}</button>`).join(''):'';
  $('mc-hint').textContent=!k?'지도를 보려면 "지도 설정"에서 구글 지도 API 키를 넣어 주세요.'
   :gSt==='fail'?'구글 지도 인증에 실패했어요. "지도 설정"에서 API 키와 웹사이트 제한을 확인해 주세요.'
-  :G.length?(coarse&&!mfull?'핀을 누르면 그날의 이야기를 볼 수 있어요. 지도는 두 손가락으로 확대·이동해요.':'핀을 누르면 그날의 이야기를 볼 수 있어요.')
+  :any?((G.length?'♥ 핀은 다녀온 곳, ':'')+(WL.length?'♡ 핀은 가고 싶은 곳이에요. ':'')+(coarse&&!mfull?'지도는 두 손가락으로 확대·이동해요.':'핀을 누르면 자세히 볼 수 있어요.'))
   :(named?'장소 이름만 적은 이야기는 지도에 표시되지 않아요. 이야기를 수정해서 위치를 지정해 보세요.':'이야기를 쓸 때 장소를 검색해 고르면, 우리가 함께 간 곳이 여기 지도에 표시돼요.');
- if(!G.length||bad){gTeardown();return}
- gRender(G);
+ if(!any||bad){gTeardown();return}
+ gRender(G,WL);
 }
 function mapFocus(en){
  const p=en.place;
@@ -1437,7 +1779,7 @@ function mapFocus(en){
 }
 $('mc-full').onclick=()=>setFull(!mfull);
 $('mc-set').onclick=()=>{$('backup-open').click(); setTimeout(()=>{const e=$('gk-id'); if(e)e.focus()},250)};
-$('mc-chips').addEventListener('click',e=>{const b=e.target.closest('[data-mi]'); if(b)gGo(+b.dataset.mi)});
+$('mc-chips').addEventListener('click',e=>{const b=e.target.closest('[data-mi]'); if(b){gGo(+b.dataset.mi);return} const w=e.target.closest('[data-wi]'); if(w)gWGo(+w.dataset.wi)});
 
 /* --- 구글 지도 설정 (둘이 연결돼 있으면 같이 동기화) --- */
 function gkUI(){
@@ -1570,8 +1912,10 @@ $('s-save').onclick=()=>{
  if(!date){toast('날짜를 골라 주세요.');return} if(!title&&!text&&!sImg&&!place){toast('제목, 사진, 장소, 이야기 중 하나는 적어 주세요.');return}
  const t=sEd&&S.diary.find(x=>x.id===sEd.id), u=Date.now();
  const imgs=sImgs.slice(0,SMAX);
- if(t)Object.assign(t,{date,title,text,img:sImg,imgs,place,u}); else S.diary.push({id:sEd?sEd.id:uid(),date,title,text,img:sImg,imgs,place,hearts:sEd?sEd.hearts||{}:{},u});
- save();closeAll();renderStory();
+ if(t)Object.assign(t,{date,title,text,img:sImg,imgs,place,u}); else {const nid=sEd?sEd.id:uid(); S.diary.push({id:nid,date,title,text,img:sImg,imgs,place,hearts:sEd?sEd.hearts||{}:{},u});
+  if(sWish){const w=wishes().find(x=>x.id===sWish); if(w){w.done=true;w.doneAt=date;w.sid=nid;w.u=u}}}
+ const fromWish=!t&&sWish; sWish=null;
+ save();closeAll();renderStory(); if(fromWish)toast('이야기로 남기고, 하고 싶은 것은 "해봤어요"로 옮겼어요.');
 };
 $('s-del').onclick=()=>{
  const en=sEd&&S.diary.find(x=>x.id===sEd.id); if(!en){closeAll();return}
@@ -1614,9 +1958,9 @@ const saveCloud=()=>{try{cloud?localStorage.setItem(CKEY,JSON.stringify(cloud)):
 const cleanDb=u=>String(u||'').trim().replace(/\.json.*$/,'').replace(/\/+$/,'');
 const rid=()=>{const a=new Uint8Array(9);crypto.getRandomValues(a);return [...a].map(b=>(b%36).toString(36)).join('')};
 const curl=(p='')=>`${cloud.db}/rooms/${cloud.room}${p}.json`;
-const normS=d=>{d=d||{};d.plans=Array.isArray(d.plans)?d.plans:Object.values(d.plans||{});d.cat=d.cat||{};d.del=d.del||{};d.mu=d.mu||0;d.vu=d.vu||0;d.bgu=d.bgu||0;d.gku=d.gku||0;d.gk=d.gk||'';d.nmu=d.nmu||0;d.diary=(Array.isArray(d.diary)?d.diary:Object.values(d.diary||{})).filter(Boolean);d.cmts=(Array.isArray(d.cmts)?d.cmts:Object.values(d.cmts||{})).filter(Boolean);d.todos=(Array.isArray(d.todos)?d.todos:Object.values(d.todos||{})).filter(Boolean);return d};
+const normS=d=>{d=d||{};d.plans=Array.isArray(d.plans)?d.plans:Object.values(d.plans||{});d.cat=d.cat||{};d.del=d.del||{};d.mu=d.mu||0;d.vu=d.vu||0;d.bgu=d.bgu||0;d.gku=d.gku||0;d.gk=d.gk||'';d.nmu=d.nmu||0;d.anu=d.anu||0;d.diary=(Array.isArray(d.diary)?d.diary:Object.values(d.diary||{})).filter(Boolean);d.cmts=(Array.isArray(d.cmts)?d.cmts:Object.values(d.cmts||{})).filter(Boolean);d.todos=(Array.isArray(d.todos)?d.todos:Object.values(d.todos||{})).filter(Boolean);d.wish=(Array.isArray(d.wish)?d.wish:Object.values(d.wish||{})).filter(Boolean);return d};
 const canon=v=>{if(Array.isArray(v))return v.map(canon);if(v&&typeof v==='object'){const o={};Object.keys(v).sort().forEach(k=>{const c=canon(v[k]);if(!(c&&typeof c==='object'&&!Object.keys(c).length))o[k]=c});return o}return v};
-const cstr=d=>{const x=JSON.parse(JSON.stringify(normS(JSON.parse(JSON.stringify(d||{})))));x.plans.sort((a,b)=>a.id<b.id?-1:1);x.todos.sort((a,b)=>a.id<b.id?-1:1);return JSON.stringify(canon(x))};
+const cstr=d=>{const x=JSON.parse(JSON.stringify(normS(JSON.parse(JSON.stringify(d||{})))));x.plans.sort((a,b)=>a.id<b.id?-1:1);x.todos.sort((a,b)=>a.id<b.id?-1:1);['diary','cmts','wish'].forEach(k=>x[k].sort((a,b)=>a.id<b.id?-1:1));return JSON.stringify(canon(x))};
 const ml=(x,y,del)=>{const m=new Map();[...y,...x].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))};
 function merge(a,b){
  a=normS(a);b=normS(b);
@@ -1624,8 +1968,8 @@ function merge(a,b){
  for(const k in a.del)del[k]=Math.max(del[k]||0,a.del[k]);
  const map=new Map();
  [...b.plans,...a.plans].forEach(p=>{const q=map.get(p.id);if(!q||(p.u||0)>=(q.u||0))map.set(p.id,p)});
- const vw=(a.vu||0)>=(b.vu||0)?a:b, gw=(a.bgu||0)>=(b.bgu||0)?a:b, kw=(a.gku||0)>=(b.gku||0)?a:b, nw=(a.nmu||0)>=(b.nmu||0)?a:b;
- return {total:w.total,wdate:w.wdate||'',cat:w.cat,mu:w.mu||0,verse:vw.verse,vu:vw.vu||0,bg:gw.bg,bgu:gw.bgu||0,gk:kw.gk||'',gku:kw.gku||0,names:nw.names||null,nmu:nw.nmu||0,del,todos:(()=>{const m=new Map();[...b.todos,...a.todos].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))})(),plans:[...map.values()].filter(p=>!(del[p.id]>(p.u||0))),diary:ml(a.diary,b.diary,del),cmts:ml(a.cmts,b.cmts,del)};
+ const vw=(a.vu||0)>=(b.vu||0)?a:b, gw=(a.bgu||0)>=(b.bgu||0)?a:b, kw=(a.gku||0)>=(b.gku||0)?a:b, nw=(a.nmu||0)>=(b.nmu||0)?a:b, aw=(a.anu||0)>=(b.anu||0)?a:b;
+ return {total:w.total,wdate:w.wdate||'',cat:w.cat,mu:w.mu||0,verse:vw.verse,vu:vw.vu||0,bg:gw.bg,bgu:gw.bgu||0,gk:kw.gk||'',gku:kw.gku||0,names:nw.names||null,nmu:nw.nmu||0,ann:aw.ann||null,anu:aw.anu||0,del,todos:(()=>{const m=new Map();[...b.todos,...a.todos].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))})(),plans:[...map.values()].filter(p=>!(del[p.id]>(p.u||0))),diary:ml(a.diary,b.diary,del),cmts:ml(a.cmts,b.cmts,del),wish:ml(a.wish,b.wish,del)};
 }
 function setSync(st){
  const t={off:'이 기기에만 저장돼요.',ok:'● 실시간 공유 중',busy:'동기화 중…',err:'연결이 불안정해요. 이 기기에는 저장돼 있어요.'}[st];
