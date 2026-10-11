@@ -788,7 +788,7 @@ function renderTop(){
  const base=Math.max(total||0,sum)||1;
  $('bar').innerHTML=segs.map(([v,col,est])=>`<i class="${est?'est':''}" style="flex:${v};background-color:${col}"></i>`).join('')+(total>sum?`<i style="flex:${total-sum}"></i>`:'');
  $('bar').parentElement.classList.toggle('over',!!total&&pl>total);
- $('share-leg').innerHTML=CATS.filter(c=>planned(c)>0).map(c=>`<span><i class="sw" style="background:${SC[c]}"></i>${lab(c)} ${Math.round(planned(c)/base*100)}%</span>`).join('')+(hasEst?'<span><i class="sw est-sw"></i>빗금은 예상 금액</span>':'');
+ $('share-leg').innerHTML=CATS.filter(c=>planned(c)>0).map(c=>`<span><i class="sw" style="background:${SC[c]}"></i>${lab(c)} ${Math.round(planned(c)/base*100)}%</span>`).join('')+(hasEst?'<span><i class="sw est-sw"></i>예상 금액</span>':'');
  $('dday').textContent=dday();
  $('wdate-txt').textContent=S.wdate?fmtDate(S.wdate):'';
  $('wdate-txt').style.display=S.wdate?'':'none';
