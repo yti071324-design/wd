@@ -203,7 +203,9 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .ann-edit{font-size:12px;color:#6B625C;flex-shrink:0}
 .ann-up{list-style:none;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--line);display:grid;gap:8px}
 .ann-up li{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;min-width:0}
-.ann-up .ic2{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;font-size:14px}
+.ann-up .ic2{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;color:var(--ink)}
+.ann-up .ic2 .ic{width:16px;height:16px;stroke-width:2.2}
+.ann-today .ic{width:16px;height:16px;margin-right:4px;vertical-align:-.15em}
 .ann-up .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ann-up .dt{font-size:12px;color:#6B625C;flex-shrink:0}
 .ann-up .dd{font-family:var(--f-num);font-weight:800;font-size:14px;flex-shrink:0;min-width:52px;text-align:right}
@@ -229,7 +231,7 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .sview{display:inline-flex;background:rgba(43,37,34,.07);border-radius:999px;padding:3px;margin:0 0 14px}
 .sview button{border-radius:999px;padding:7px 16px;font-size:13px;font-weight:700;color:#6B625C}
 .sview button[aria-selected=true]{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(43,37,34,.15)}
-.scal{padding:16px 14px 14px;max-width:760px;min-width:0}
+.scal{padding:16px 14px 14px;min-width:0}
 .scal.hidden{display:none}
 .slist.hidden{display:none}
 .cal-h{display:flex;align-items:center;gap:6px;margin-bottom:10px}
@@ -248,11 +250,16 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .cal-d.has:not(.ph){background:#FDE2D6}
 .cal-d .dot{position:absolute;left:50%;bottom:7px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#C2410C}
 .cal-d .cnt{position:absolute;right:4px;bottom:4px;background:rgba(43,37,34,.75);color:#fff;font-size:10px;padding:2px 5px;border-radius:999px}
-.cal-d .an{position:absolute;right:3px;top:3px;font-size:11px;line-height:1}
+.cal-d .an{position:absolute;right:3px;top:3px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;color:var(--ink);box-shadow:0 0 0 1.5px #fff}
+.cal-d .an .ic{width:11px;height:11px;stroke-width:2.4}
+.cal-an{display:flex;align-items:center;gap:6px}
+.cal-an i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:var(--ink);flex-shrink:0}
+.cal-an i .ic{width:12px;height:12px;stroke-width:2.4}
 .cal-d:hover{filter:brightness(.97)}
 .cal-sum{margin-top:12px;font-size:12.5px;font-weight:600;color:#6B625C;display:grid;gap:4px}
 .cal-sum b{color:var(--ink)}
-@media (min-width:640px){.cal-d{font-size:13px;padding:7px}.cal-d .an{font-size:13px}}
+@media (min-width:1000px){.cal-d{aspect-ratio:auto;height:84px}}
+@media (min-width:640px){.cal-d{font-size:13px;padding:7px}.cal-d .an{width:22px;height:22px;right:5px;top:5px}.cal-d .an .ic{width:13px;height:13px}}
 .wish{margin:0 0 16px;padding:16px 18px;min-width:0}
 .wh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .wcnt{margin-left:8px;font-family:var(--f-num);font-weight:800;font-size:13px;color:var(--rust)}
@@ -269,7 +276,7 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .wempty{font-size:13px;font-weight:600;color:#6B625C;padding:4px 0 8px}
 .wadd{display:flex;gap:8px;margin-top:8px}
 .wadd .fld{margin-top:0;flex:1;min-width:0}
-#wi-pbtn[aria-pressed=true]{background:var(--ink)}
+#wi-pbtn[aria-pressed=true]{background:var(--ink);color:#fff}
 .wpbox{margin-top:8px}.wpbox.hidden{display:none}
 .wdone{margin-top:10px;padding-top:8px;border-top:1px dashed rgba(43,37,34,.2)}
 .wdone.hidden{display:none}
@@ -439,7 +446,7 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
     <ul id="wi-list" class="wlist"></ul>
     <div class="wadd">
       <input id="wi-text" class="fld" maxlength="60" placeholder="함께 하고 싶은 것 (예: 제주 한 달 살기)" aria-label="하고 싶은 것">
-      <button id="wi-pbtn" type="button" class="btn c-white h-[46px] w-[46px] shrink-0" aria-label="장소 붙이기" aria-pressed="false">📍</button>
+      <button id="wi-pbtn" type="button" class="btn c-white h-[46px] shrink-0 grid place-items-center" style="width:46px;flex:0 0 46px" aria-label="장소 붙이기" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button>
       <button id="wi-add" type="button" class="btn h-[46px] px-4 text-[14px] shrink-0" style="background:var(--ink);color:#fff">추가</button>
     </div>
     <div id="wi-pbox" class="wpbox hidden">
@@ -1338,18 +1345,26 @@ function nextYearly(src,today){
   if(d>=today)return d;
  }
 }
+function AIC(t){return SV({
+ days:'<path d="M12 20s-7-4.4-8.5-9A4.8 4.8 0 0 1 12 8a4.8 4.8 0 0 1 8.5 3c-1.5 4.6-8.5 9-8.5 9z"/>',
+ year:'<path d="M11 3.5l1.7 4.8 4.8 1.7-4.8 1.7L11 16.5l-1.7-4.8L4.5 10l4.8-1.7z"/><path d="M18 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>',
+ bday:'<path d="M4 21h16"/><path d="M5 21v-6.5A2.5 2.5 0 0 1 7.5 12h9a2.5 2.5 0 0 1 2.5 2.5V21"/><path d="M5 16.5c1.2.9 2.3.9 3.5 0s2.3-.9 3.5 0 2.3.9 3.5 0 2.3-.9 3.5 0"/><path d="M12 12V8.5"/><path d="M12 6.2c-.9-.8-.9-1.9 0-3 .9 1.1.9 2.2 0 3z"/>',
+ star:'<path d="M12 3.8l2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.7-5 2.7 1-5.6-4.1-3.9 5.6-.8z"/>',
+ wed:'<circle cx="12" cy="15" r="5.5"/><path d="M9.6 6.6 12 9.5l2.4-2.9-1.2-2.1h-2.4z"/>'
+}[t]||'')}
+function AB(t){return {days:'#FDE2D6',year:'#E6DDFB',bday:'#FBE7A8',star:'#CFEFE6',wed:'#F8CFC2'}[t]||'#eee'}
 function annCur(){return Object.assign({start:'',b:['',''],custom:[]},S.ann||{})}
 function annEvents(){
  const A=annCur(), today=dOnly(Date.now()), N=names(), ev=[], st=pd(A.start);
  if(st&&st<=today){
   const passed=Math.round((today-st)/864e5)+1, k=Math.ceil(passed/1000)*1000;
-  [k,k===passed?k+1000:0].filter(Boolean).forEach(m=>ev.push({ic:'💞',bg:'#FDE2D6',name:`${m.toLocaleString('ko-KR')}일`,d:new Date(st.getFullYear(),st.getMonth(),st.getDate()+m-1)}));
+  [k,k===passed?k+1000:0].filter(Boolean).forEach(m=>ev.push({ic:'days',name:`${m.toLocaleString('ko-KR')}일`,d:new Date(st.getFullYear(),st.getMonth(),st.getDate()+m-1)}));
   const ny=nextYearly(st,today), yrs=ny.getFullYear()-st.getFullYear();
-  if(yrs>0)ev.push({ic:'💐',bg:'#E6DDFB',name:`${yrs}주년`,d:ny});
- } else if(st) ev.push({ic:'💞',bg:'#FDE2D6',name:'1일 (사귄 날)',d:st});
- [0,1].forEach(i=>{const b=pd((A.b||[])[i]); if(b)ev.push({ic:'🎂',bg:'#FBE7A8',name:`${N[i]} 생일`,d:nextYearly(b,today)})});
- (A.custom||[]).forEach(c=>{const d=pd(c.date); if(!d)return; const n=c.yearly?nextYearly(d,today):d; if(n>=today)ev.push({ic:'⭐',bg:'#CFEFE6',name:c.name||'기념일',d:n})});
- const w=pd(S.wdate); if(w&&w>=today)ev.push({ic:'💍',bg:'#F8CFC2',name:'결혼식',d:w});
+  if(yrs>0)ev.push({ic:'year',name:`${yrs}주년`,d:ny});
+ } else if(st) ev.push({ic:'days',name:'1일 (사귄 날)',d:st});
+ [0,1].forEach(i=>{const b=pd((A.b||[])[i]); if(b)ev.push({ic:'bday',name:`${N[i]} 생일`,d:nextYearly(b,today)})});
+ (A.custom||[]).forEach(c=>{const d=pd(c.date); if(!d)return; const n=c.yearly?nextYearly(d,today):d; if(n>=today)ev.push({ic:'star',name:c.name||'기념일',d:n})});
+ const w=pd(S.wdate); if(w&&w>=today)ev.push({ic:'wed',name:'결혼식',d:w});
  return ev.map(e=>Object.assign(e,{k:Math.round((e.d-today)/864e5)})).sort((a,b)=>a.k-b.k);
 }
 function renderAnn(){
@@ -1362,8 +1377,8 @@ function renderAnn(){
  }
  const days=st&&st<=today?Math.round((today-st)/864e5)+1:0, td=ev.filter(e=>e.k===0), up=ev.filter(e=>e.k>0).slice(0,3);
  v.innerHTML=`<div class="ann-top"><div class="min-w-0">${days?`<div class="lbl" style="font-size:11px;margin-bottom:8px">TOGETHER</div><div class="ann-days">우리 +${days.toLocaleString('ko-KR')}일</div><div class="ann-since">${ymd(st)}부터</div>`:`<div class="lbl" style="font-size:11px">OUR DAYS</div>`}</div><button type="button" class="und ann-edit" data-ann="edit">기념일 설정</button></div>`+
-  (td.length?`<div class="ann-today">🎉 오늘은 ${td.map(e=>esc(e.name)).join(', ')}이에요!</div>`:'')+
-  (up.length?`<ul class="ann-up">${up.map(e=>`<li><span class="ic2" style="background:${e.bg}">${e.ic}</span><span class="nm">${esc(e.name)}</span><span class="dt">${ymd(e.d)}</span><span class="dd">D-${e.k.toLocaleString('ko-KR')}</span></li>`).join('')}</ul>`:'');
+  (td.length?`<div class="ann-today">${AIC('year')} 오늘은 ${td.map(e=>esc(e.name)).join(', ')}이에요!</div>`:'')+
+  (up.length?`<ul class="ann-up">${up.map(e=>`<li><span class="ic2" style="background:${AB(e.ic)}">${AIC(e.ic)}</span><span class="nm">${esc(e.name)}</span><span class="dt">${ymd(e.d)}</span><span class="dd">D-${e.k.toLocaleString('ko-KR')}</span></li>`).join('')}</ul>`:'');
 }
 let anDraft=[];
 function anList(){
@@ -1481,13 +1496,13 @@ function annOnMonth(y,m){
   const cur=new Date(y,m,d);
   if(st&&cur>=st){
    const n=Math.round((cur-st)/864e5)+1;
-   if(n===1)add(d,'💞 사귄 날');
-   else if(n%1000===0)add(d,`💞 ${n.toLocaleString('ko-KR')}일`);
-   if(n>1&&ymatch(st,d)&&y>st.getFullYear())add(d,`💐 ${y-st.getFullYear()}주년`);
+   if(n===1)add(d,{t:'days',n:'사귄 날'});
+   else if(n%1000===0)add(d,{t:'days',n:`${n.toLocaleString('ko-KR')}일`});
+   if(n>1&&ymatch(st,d)&&y>st.getFullYear())add(d,{t:'year',n:`${y-st.getFullYear()}주년`});
   }
-  [0,1].forEach(i=>{const b=pd((A.b||[])[i]); if(b&&ymatch(b,d))add(d,`🎂 ${N[i]} 생일`)});
-  (A.custom||[]).forEach(c=>{const cd=pd(c.date); if(!cd)return; if(c.yearly?(ymatch(cd,d)&&y>=cd.getFullYear()):(cd.getFullYear()===y&&cd.getMonth()===m&&cd.getDate()===d))add(d,'⭐ '+(c.name||'기념일'))});
-  const w=pd(S.wdate); if(w&&w.getFullYear()===y&&w.getMonth()===m&&w.getDate()===d)add(d,'💍 결혼식');
+  [0,1].forEach(i=>{const b=pd((A.b||[])[i]); if(b&&ymatch(b,d))add(d,{t:'bday',n:`${N[i]} 생일`})});
+  (A.custom||[]).forEach(c=>{const cd=pd(c.date); if(!cd)return; if(c.yearly?(ymatch(cd,d)&&y>=cd.getFullYear()):(cd.getFullYear()===y&&cd.getMonth()===m&&cd.getDate()===d))add(d,{t:'star',n:c.name||'기념일'})});
+  const w=pd(S.wdate); if(w&&w.getFullYear()===y&&w.getMonth()===m&&w.getDate()===d)add(d,{t:'wed',n:'결혼식'});
  }
  return out;
 }
@@ -1501,12 +1516,12 @@ function renderCal(D){
  for(let i=0;i<first;i++)h+='<span class="cal-d out" aria-hidden="true"></span>';
  for(let d=1;d<=last;d++){
   const es=by[d]||[], cov=es.map(e=>imgsOf(e)[0]).find(Boolean), wd=(first+d-1)%7, td=y===t.getFullYear()&&m===t.getMonth()&&d===t.getDate(), an=AN[d];
-  const lab=`${m+1}월 ${d}일`+(es.length?` 이야기 ${es.length}개`:'')+(an?' · '+an.map(a=>a.slice(2).trim()).join(', '):'');
-  h+=`<button type="button" class="cal-d${wd===0?' sun':''}${wd===6?' sat':''}${td?' today':''}${es.length?' has':''}${cov?' ph':''}" data-cd="${y}-${z(m+1)}-${z(d)}" aria-label="${esc(lab)}"${cov?` style="background-image:url('${cov}')"`:''}><span class="n">${d}</span>${an?`<span class="an" aria-hidden="true">${an[0].split(' ')[0]}</span>`:''}${es.length&&!cov?'<span class="dot"></span>':''}${es.length>1?`<span class="cnt">${es.length}</span>`:''}</button>`;
+  const lab=`${m+1}월 ${d}일`+(es.length?` 이야기 ${es.length}개`:'')+(an?' · '+an.map(a=>a.n).join(', '):'');
+  h+=`<button type="button" class="cal-d${wd===0?' sun':''}${wd===6?' sat':''}${td?' today':''}${es.length?' has':''}${cov?' ph':''}" data-cd="${y}-${z(m+1)}-${z(d)}" aria-label="${esc(lab)}"${cov?` style="background-image:url('${cov}')"`:''}><span class="n">${d}</span>${an?`<span class="an" aria-hidden="true" style="background:${AB(an[0].t)}">${AIC(an[0].t)}</span>`:''}${es.length&&!cov?'<span class="dot"></span>':''}${es.length>1?`<span class="cnt">${es.length}</span>`:''}</button>`;
  }
  $('cal-grid').innerHTML=h;
- const n=Object.values(by).reduce((a,x)=>a+x.length,0), al=Object.keys(AN).sort((a,b)=>a-b).flatMap(d=>AN[d].map(x=>`${m+1}.${d} ${x}`));
- $('cal-sum').innerHTML=`<span>이번 달 이야기 <b>${n}개</b>${n?'':' — 날짜를 눌러 그날의 이야기를 남겨 보세요.'}</span>`+al.map(x=>`<span>${esc(x)}</span>`).join('');
+ const n=Object.values(by).reduce((a,x)=>a+x.length,0), al=Object.keys(AN).sort((a,b)=>a-b).flatMap(d=>AN[d].map(x=>`<span class="cal-an"><i style="background:${AB(x.t)}">${AIC(x.t)}</i>${m+1}.${d} ${esc(x.n)}</span>`));
+ $('cal-sum').innerHTML=`<span>이번 달 이야기 <b>${n}개</b>${n?'':' — 날짜를 눌러 그날의 이야기를 남겨 보세요.'}</span>`+al.join('');
 }
 $('cal-prev').onclick=()=>{calM--; if(calM<0){calM=11;calY--} renderCal(S.diary)};
 $('cal-next').onclick=()=>{calM++; if(calM>11){calM=0;calY++} renderCal(S.diary)};
