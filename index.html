@@ -736,7 +736,66 @@ const seed=()=>({
 let S, ui={cat:'all',st:new Set(),q:'',sort:'new',page:(()=>{let x='';try{x=localStorage.getItem('to-in-one-page')}catch(e){}return 'plans'})()};
 function migCat(d){if(!d)return d;const O='결혼준비',N='결혼식준비';(Array.isArray(d.plans)?d.plans:Object.values(d.plans||{})).forEach(p=>{if(p&&p.cat===O)p.cat=N});if(d.cat&&Object.prototype.hasOwnProperty.call(d.cat,O)){if(d.cat[N]==null)d.cat[N]=d.cat[O];delete d.cat[O]}return d}
 function load(){try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){} if(!S)S=seed(); migCat(S); S.del=S.del||{}; S.mu=S.mu||0; S.todos=Array.isArray(S.todos)?S.todos:[]; S.diary=Array.isArray(S.diary)?S.diary:[]; S.cmts=Array.isArray(S.cmts)?S.cmts:[]}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('저장 공간이 부족해요. 사진을 줄이거나 삭제해 주세요.')}}
+/* ===== 사진 따로 저장: 데이터에는 '@아이디'만 두고, 사진은 IndexedDB(이 기기)와 Firebase /imgs(공유)에 한 장씩 ===== */
+var IMGC=new Map(), IMGR=new Map(), imgDbP=null, idbOK=false, imgRemote=null, imgFetching=new Set();
+var IMG_PH='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 3%22%3E%3Crect width=%224%22 height=%223%22 fill=%22%23F3E6E1%22/%3E%3C/svg%3E';
+function imgHash(s){let h1=0xdeadbeef^s.length,h2=0x41c6ce57^s.length;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return (h2>>>0).toString(36)+(h1>>>0).toString(36)+s.length.toString(36)}
+function idb(){
+ if(imgDbP)return imgDbP;
+ imgDbP=new Promise(res=>{try{const r=indexedDB.open('to-in-one',1);r.onupgradeneeded=()=>{try{r.result.createObjectStore('imgs')}catch(e){}};r.onsuccess=()=>{idbOK=true;res(r.result)};r.onerror=()=>res(null);r.onblocked=()=>res(null)}catch(e){res(null)}});
+ return imgDbP;
+}
+function idbPut(id,v){return idb().then(db=>db&&new Promise(r=>{try{const t=db.transaction('imgs','readwrite');t.objectStore('imgs').put(v,id);t.oncomplete=()=>r(true);t.onerror=t.onabort=()=>r(false)}catch(e){r(false)}}))}
+function idbGet(id){return idb().then(db=>db?new Promise(r=>{try{const q=db.transaction('imgs').objectStore('imgs').get(id);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)}catch(e){r(null)}}):null)}
+function iRef(v){
+ if(typeof v!=='string'||v.slice(0,11)!=='data:image/')return v;
+ let id=IMGR.get(v); if(!id){id=imgHash(v);IMGR.set(v,id)}
+ if(!IMGC.has(id)){IMGC.set(id,v);idbPut(id,v)}
+ return '@'+id;
+}
+function iVal(v){if(typeof v!=='string'||v[0]!=='@')return v; const d=IMGC.get(v.slice(1)); return d||v}
+function mapImgs(d,f){
+ if(!d)return d; const o=Object.assign({},d);
+ if(Array.isArray(d.plans))o.plans=d.plans.map(p=>p&&p.img?Object.assign({},p,{img:f(p.img)}):p);
+ if(Array.isArray(d.diary))o.diary=d.diary.map(e=>{if(!e||(!e.img&&!Array.isArray(e.imgs)))return e; const x=Object.assign({},e); if(e.img)x.img=f(e.img); if(Array.isArray(e.imgs))x.imgs=e.imgs.map(f); return x});
+ if(d.bg&&d.bg.img)o.bg=Object.assign({},d.bg,{img:f(d.bg.img)});
+ return o;
+}
+function dehyd(d){return mapImgs(d,iRef)}
+function hyd(d){return mapImgs(d,iVal)}
+function imgIds(d){const a=new Set(); mapImgs(d,v=>{if(typeof v==='string'&&v[0]==='@')a.add(v.slice(1));return v}); return [...a]}
+function imgMissing(d){return imgIds(d).filter(id=>!IMGC.has(id))}
+function imgRefresh(){S=hyd(S); if(anyOpen()){pendingRender=true;return} render()}
+async function imgFetch(ids){
+ ids=ids.filter(id=>!IMGC.has(id)&&!imgFetching.has(id)); if(!ids.length)return;
+ ids.forEach(id=>imgFetching.add(id)); let got=0;
+ await Promise.all(ids.map(async id=>{
+  let v=await idbGet(id);
+  if(!v&&cloud){try{const r=await fetch(curl('/imgs/'+id)); if(r.ok){v=await r.json(); if(typeof v==='string'&&v.slice(0,11)==='data:image/')idbPut(id,v); else v=null}}catch(e){}}
+  if(v){IMGC.set(id,v);IMGR.set(v,id);got++}
+  imgFetching.delete(id);
+ }));
+ if(got)imgRefresh();
+}
+async function imgUpload(d){
+ if(!cloud)return; const ids=imgIds(d).filter(id=>IMGC.has(id)); if(!ids.length)return;
+ if(!imgRemote){imgRemote=new Set(); try{const r=await fetch(curl('/imgs')+'?shallow=true'); if(r.ok){const k=await r.json(); if(k)Object.keys(k).forEach(x=>imgRemote.add(x))}}catch(e){}}
+ for(const id of ids){ if(imgRemote.has(id))continue;
+  const w=await fetch(curl('/imgs/'+id),{method:'PUT',body:JSON.stringify(IMGC.get(id))}); if(!w.ok)throw 0; imgRemote.add(id);
+ }
+}
+function imgBoot(){
+ const hadInline=JSON.stringify(mapImgs(S,v=>(typeof v==='string'&&v.slice(0,11)==='data:image/')?'#':v)).includes('"#"');
+ idb().then(async db=>{
+  if(hadInline){S=hyd(dehyd(S)); persist(); if(db)toast('사진을 따로 저장하도록 정리했어요. 저장 공간이 넉넉해졌어요.')}
+  const miss=imgMissing(S); if(miss.length)await imgFetch(miss);
+ });
+}
+new MutationObserver(ms=>{ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType!==1)return; (n.tagName==='IMG'?[n]:n.querySelectorAll('img')).forEach(i=>{const s=i.getAttribute('src'); if(s&&s[0]==='@'){i.dataset.ref=s;i.setAttribute('src',IMG_PH)}})}))}).observe(document.documentElement,{childList:true,subtree:true});
+function persist(){
+ let txt; try{txt=JSON.stringify(idbOK?dehyd(S):S)}catch(e){return}
+ try{localStorage.setItem(KEY,txt)}catch(e){toast(idbOK?'이 기기의 저장 공간이 부족해요.':'저장 공간이 부족해요. 사진을 줄이거나 삭제해 주세요.')}
+}
 function save(){persist();scheduleSync()}
 let tt;function toast(m,label,fn){
  const t=$('toast');t.textContent=m;
@@ -899,7 +958,7 @@ function renderVerse(){
 }
 let bgLast='';
 const bgCur=()=>Object.assign({img:'',veil:55,pos:50},S.bg||{});
-function paintBg(el,v){el.style.backgroundImage=`url("${v.img||DEFAULT_BG}")`;el.style.backgroundPosition=`center ${v.pos}%`}
+function paintBg(el,v){if(v.img&&v.img[0]==='@')return;el.style.backgroundImage=`url("${v.img||DEFAULT_BG}")`;el.style.backgroundPosition=`center ${v.pos}%`}
 function renderBg(){
  const v=bgCur(),k=(v.img?v.img.length+':'+v.img.slice(-24):'d')+'|'+v.pos+'|'+v.veil;
  if(k===bgLast)return; bgLast=k;
@@ -1290,7 +1349,7 @@ function init() {
     $('wdate').value = S.wdate||'';
     render();
 }
-load(); init();
+load(); init(); imgBoot();
 /* ===== 금액 도우미: '450만', '1.5억', '3천만' 입력 / 아래에 한글 금액 표시 ===== */
 function krw(str){
  const t=String(str).replace(/[,\s원₩]/g,''); let total=0,section=0,pending=null,m; const re=/(\d+(?:\.\d+)?)|([억만천백])/g;
@@ -1537,7 +1596,7 @@ function renderCal(D){
  const AN=annOnMonth(y,m); let h='';
  for(let i=0;i<first;i++)h+='<span class="cal-d out" aria-hidden="true"></span>';
  for(let d=1;d<=last;d++){
-  const es=by[d]||[], cov=es.map(e=>imgsOf(e)[0]).find(Boolean), wd=(first+d-1)%7, td=y===t.getFullYear()&&m===t.getMonth()&&d===t.getDate(), an=AN[d];
+  const es=by[d]||[], cov=es.map(e=>imgsOf(e)[0]).find(u=>u&&u[0]!=='@'), wd=(first+d-1)%7, td=y===t.getFullYear()&&m===t.getMonth()&&d===t.getDate(), an=AN[d];
   const lab=`${m+1}월 ${d}일`+(es.length?` 일기 ${es.length}개`:'')+(an?' · '+an.map(a=>a.n).join(', '):'');
   h+=`<button type="button" class="cal-d${wd===0?' sun':''}${wd===6?' sat':''}${td?' today':''}${es.length?' has':''}${cov?' ph':''}" data-cd="${y}-${z(m+1)}-${z(d)}" aria-label="${esc(lab)}"${cov?` style="background-image:url('${cov}')"`:''}><span class="n">${d}</span>${an?`<span class="an" aria-hidden="true" style="background:${AB(an[0].t)}">${AIC(an[0].t)}</span>`:''}${es.length&&!cov?'<span class="dot"></span>':''}${es.length>1?`<span class="cnt">${es.length}</span>`:''}</button>`;
  }
@@ -1642,7 +1701,7 @@ function lbShow(){
  $('lb-prev').classList.toggle('hidden',!m); $('lb-next').classList.toggle('hidden',!m);
  $('lb-cnt').classList.toggle('hidden',!m); $('lb-cnt').textContent=`${lbI+1} / ${lbList.length}`;
 }
-function lbOpen(list,i){lbList=(list||[]).filter(Boolean); if(!lbList.length)return; lbI=Math.max(0,Math.min(i||0,lbList.length-1)); lbShow(); open_('lb')}
+function lbOpen(list,i){lbList=(list||[]).filter(u=>u&&u[0]!=='@'); if(!lbList.length)return; lbI=Math.max(0,Math.min(i||0,lbList.length-1)); lbShow(); open_('lb')}
 function lbStep(d){if(lbList.length<2)return; lbI=(lbI+d+lbList.length)%lbList.length; lbShow()}
 $('lb-prev').onclick=e=>{e.stopPropagation();lbStep(-1)};
 $('lb-next').onclick=e=>{e.stopPropagation();lbStep(1)};
@@ -2014,23 +2073,27 @@ function setSync(st){
 }
 const anyOpen=()=>['edit','alloc','backup','verse','bgdlg','lb','sdlg'].some(id=>!$(id).classList.contains('hidden'));
 function applyRemote(m){
- const ch=cstr(m)!==cstr(S); S=m;
+ const ch=cstr(m)!==cstr(dehyd(S)); S=hyd(m);
  if(editing&&editing.id){const f=S.plans.find(p=>p.id===editing.id); if(f)editing=f}
  if(!ch)return; persist();
  if(anyOpen()){pendingRender=true;return}
  if(document.activeElement!==$('total'))$('total').value=(S.total||0).toLocaleString('ko-KR');
  $('wdate').value=S.wdate||''; render();
+ imgFetch(imgMissing(S));
 }
 function scheduleSync(){ if(!cloud)return; clearTimeout(syncT); syncT=setTimeout(syncNow,700); }
 async function syncNow(){
  if(!cloud)return; if(syncing){again=true;return} syncing=true; setSync('busy');
  try{
-  const r=await fetch(curl()); if(!r.ok)throw 0; const remote=await r.json();
-  const m=(remote&&remote.data)?merge(S,remote.data):normS(S);
+  const [rd,ru]=await Promise.all([fetch(curl('/data')),fetch(curl('/updatedAt'))]); if(!rd.ok||!ru.ok)throw 0;
+  const rdata=await rd.json(), rts=await ru.json(), remote=rdata?{data:rdata,updatedAt:rts}:null;
+  const L=dehyd(S), m=(remote&&remote.data)?merge(L,remote.data):normS(L);
   applyRemote(m);
-  if(!remote||!remote.data||cstr(S)!==cstr(remote.data)){
+  const out=dehyd(S);
+  await imgUpload(out);
+  if(!remote||!remote.data||cstr(out)!==cstr(remote.data)){
    const ts=Date.now();
-   const w=await fetch(curl()+'?x-http-method-override=PATCH',{method:'POST',body:JSON.stringify({data:S,updatedAt:ts})});
+   const w=await fetch(curl()+'?x-http-method-override=PATCH',{method:'POST',body:JSON.stringify({data:out,updatedAt:ts})});
    if(!w.ok)throw 0; lastTs=ts;
   } else lastTs=remote.updatedAt||0;
   setSync('ok');
@@ -2043,11 +2106,11 @@ async function poll(){
  catch(e){setSync('err')}
 }
 async function connect(db,room,joining){
- cloud={db:cleanDb(db),room}; saveCloud(); renderCloudUI(); setSync('busy');
+ cloud={db:cleanDb(db),room}; imgRemote=null; saveCloud(); renderCloudUI(); setSync('busy');
  if(joining){
   try{
-   const r=await fetch(curl()); const remote=await r.json();
-   if(remote&&remote.data){S=normS(remote.data);persist();lastTs=remote.updatedAt||0;init();setSync('ok');return}
+   const [rd,ru]=await Promise.all([fetch(curl('/data')),fetch(curl('/updatedAt'))]); const rdata=await rd.json(), rts=await ru.json();
+   if(rdata){S=hyd(normS(rdata));persist();lastTs=rts||0;init();setSync('ok');imgFetch(imgMissing(S));return}
   }catch(e){setSync('err');return}
  }
  await syncNow();
@@ -2066,7 +2129,7 @@ $('c-connect').onclick=()=>{
 $('c-copy').onclick=async()=>{const t=$('c-link');t.select();try{await navigator.clipboard.writeText(t.value);toast('링크를 복사했어요.')}catch(e){document.execCommand('copy');toast('선택된 링크를 복사해 주세요.')}};
 $('c-off').onclick=()=>{if(!confirm('공유를 해제할까요? 이 기기의 데이터는 그대로 남아요.'))return;cloud=null;saveCloud();renderCloudUI();setSync('off')};
 function cloudInit(){
- cloud=loadCloud();
+ cloud=loadCloud(); imgRemote=null;
  const h=new URLSearchParams(location.hash.replace(/^#/,'')), r=h.get('r'), d=h.get('d');
  if(r&&d&&(!cloud||cloud.room!==r||cloud.db!==cleanDb(d)))connect(d,r,true);
  else if(cloud)syncNow(); else setSync('off');
