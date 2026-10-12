@@ -103,6 +103,7 @@ img,svg{max-width:100%}
 .hero>*+*{margin-top:28px}
 #bgfix,#bgveil{position:fixed;inset:0;z-index:-1;pointer-events:none}
 #bgfix{background:var(--pink) center 50%/cover no-repeat;transform:translateZ(0)}
+body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:100lvh;will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}
 #bgveil{background:var(--pink);opacity:.55}
 #bg-range{width:100%;accent-color:#2B2522;height:28px}
 .ic{display:inline-block;width:1.1em;height:1.1em;vertical-align:-.2em;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
@@ -368,6 +369,9 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .pmore{margin-top:8px}.pmore summary{font:700 13px var(--f-body);color:#6B625C;cursor:pointer}
 .pmore p{font:500 12px/1.6 var(--f-body);color:#6B625C;margin:6px 0 0;word-break:keep-all}
 .scard.hl{animation:pulse .6s ease 2}
+@keyframes pgin{from{opacity:0;transform:translateX(var(--pgx,20px))}to{opacity:1;transform:none}}
+.pg-in{animation:pgin .38s cubic-bezier(.2,.8,.2,1) var(--pgd,0ms) both}
+@media (prefers-reduced-motion:reduce){.pg-in{animation:none}}
 </style>
 </head>
 <body class="antialiased">
@@ -376,7 +380,7 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 <main data-page="story" class="w-full min-h-screen relative pb-16">
 
 <header class="sticky top-0 z-40 bb3 c-pink">
-  <div class="wrap py-3"><button id="logo" aria-label="맨 위로"><span class="disp logo-t">TO IN ONE</span><span class="tagline">
+  <div class="wrap py-3"><button id="logo" aria-label="전체 계획으로"><span class="disp logo-t">TO IN ONE</span></button></div>
 </header>
 
 <nav class="bb3 c-cream"><div class="wrap" style="padding-left:0;padding-right:0"><ul id="tabs" class="flex overflow-x-auto no-scrollbar"></ul></div></nav>
@@ -730,7 +734,8 @@ const seed=()=>({
 });
 
 let S, ui={cat:'all',st:new Set(),q:'',sort:'new',page:(()=>{let x='';try{x=localStorage.getItem('to-in-one-page')}catch(e){}return 'plans'})()};
-function load(){try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){} if(!S)S=seed(); S.del=S.del||{}; S.mu=S.mu||0; S.todos=Array.isArray(S.todos)?S.todos:[]; S.diary=Array.isArray(S.diary)?S.diary:[]; S.cmts=Array.isArray(S.cmts)?S.cmts:[]}
+function migCat(d){if(!d)return d;const O='결혼준비',N='결혼식준비';(Array.isArray(d.plans)?d.plans:Object.values(d.plans||{})).forEach(p=>{if(p&&p.cat===O)p.cat=N});if(d.cat&&Object.prototype.hasOwnProperty.call(d.cat,O)){if(d.cat[N]==null)d.cat[N]=d.cat[O];delete d.cat[O]}return d}
+function load(){try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){} if(!S)S=seed(); migCat(S); S.del=S.del||{}; S.mu=S.mu||0; S.todos=Array.isArray(S.todos)?S.todos:[]; S.diary=Array.isArray(S.diary)?S.diary:[]; S.cmts=Array.isArray(S.cmts)?S.cmts:[]}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('저장 공간이 부족해요. 사진을 줄이거나 삭제해 주세요.')}}
 function save(){persist();scheduleSync()}
 let tt;function toast(m,label,fn){
@@ -972,9 +977,11 @@ document.addEventListener('click', e => {
  if (c && !c.closest('#alloc')) {
      // 주의: render()가 버튼을 새로 만들기 때문에, 누른 버튼의 위치는 렌더링 전에 먼저 확인해야 한다.
      const shouldScroll = !!(c.closest('nav') || c.closest('#grid'));
+     const pgFrom = tabIdx();
      ui.cat = c.dataset.cat; ui.page = 'plans'; try { localStorage.setItem('to-in-one-page', 'plans'); } catch (x) {} animList = true;
      render();
      if (c.closest('nav')) window.scrollTo(0, 0); else if (shouldScroll) scrollToPlans();
+     pgAnim(pgFrom);
      return;
  }
  
@@ -1015,7 +1022,10 @@ document.addEventListener('keydown', e => {
  if (id === 'edit' && editSnap() !== editSnap0 && !confirm('저장하지 않은 변경 사항이 있어요. 닫을까요?')) return;
  closeAll();
 });
-$('logo').onclick = () => { window.scrollTo({top: 0, behavior: 'smooth'}); };
+$('logo').onclick = () => {
+ if (ui.page === 'plans' && ui.cat === 'all') { window.scrollTo({top: 0, behavior: 'smooth'}); return; }
+ const from = tabIdx(); ui.cat = 'all'; ui.page = 'plans'; try { localStorage.setItem('to-in-one-page', 'plans'); } catch (x) {} animList = true; render(); window.scrollTo(0, 0); pgAnim(from); window.dispatchEvent(new Event('scroll'));
+};
 $('total').addEventListener('input', e => { if (/[억만천백]/.test(e.target.value)) return; e.target.value = num(e.target.value).toLocaleString('ko-KR'); S.total = num(e.target.value); S.mu = Date.now(); save(); renderTop(); });
 $('total').addEventListener('blur', e => { if (/[억만천백]/.test(e.target.value)) { const n = krw(e.target.value); e.target.value = n.toLocaleString('ko-KR'); S.total = n; S.mu = Date.now(); save(); renderTop(); } });
 $('wdate').addEventListener('click', () => { try { if ($('wdate').showPicker) $('wdate').showPicker(); } catch (e) {} });
@@ -1324,7 +1334,19 @@ krUpdateAll();
  fab.addEventListener('click',()=>ui.page==='story'?openStory(null):openEdit(null));
  upd();
 })();
-function setPage(p){ui.page=p;try{localStorage.setItem('to-in-one-page',p)}catch(e){}animList=true;render();window.scrollTo(0,0);window.dispatchEvent(new Event('scroll'))}
+function tabIdx(){return ui.page==='story'?CATS.length+1:(ui.cat==='all'?0:CATS.indexOf(ui.cat)+1)}
+function pgAnim(from){
+ const to=tabIdx(); if(from===to)return;
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const dir=to>from?1:-1;
+ document.querySelectorAll('main > section').forEach((el,i)=>{
+  if(!el.offsetParent&&getComputedStyle(el).display==='none')return;
+  el.classList.remove('pg-in'); el.style.setProperty('--pgx',(dir*22)+'px'); el.style.setProperty('--pgd',Math.min(i,3)*40+'ms');
+  void el.offsetWidth; el.classList.add('pg-in');
+  el.addEventListener('animationend',function f(ev){if(ev.target!==el)return;el.classList.remove('pg-in');el.removeEventListener('animationend',f)});
+ });
+}
+function setPage(p){const from=tabIdx();ui.page=p;try{localStorage.setItem('to-in-one-page',p)}catch(e){}animList=true;render();window.scrollTo(0,0);pgAnim(from);window.dispatchEvent(new Event('scroll'))}
 function names(){const D=['태인','가현'], n=Array.isArray(S.names)?S.names:[]; return [0,1].map(i=>(n[i]||'').trim()||D[i])}
 function meIdx(){
  let v=null; try{v=localStorage.getItem('to-in-one-me2')}catch(e){}
@@ -1973,7 +1995,7 @@ const saveCloud=()=>{try{cloud?localStorage.setItem(CKEY,JSON.stringify(cloud)):
 const cleanDb=u=>String(u||'').trim().replace(/\.json.*$/,'').replace(/\/+$/,'');
 const rid=()=>{const a=new Uint8Array(9);crypto.getRandomValues(a);return [...a].map(b=>(b%36).toString(36)).join('')};
 const curl=(p='')=>`${cloud.db}/rooms/${cloud.room}${p}.json`;
-const normS=d=>{d=d||{};d.plans=Array.isArray(d.plans)?d.plans:Object.values(d.plans||{});d.cat=d.cat||{};d.del=d.del||{};d.mu=d.mu||0;d.vu=d.vu||0;d.bgu=d.bgu||0;d.gku=d.gku||0;d.gk=d.gk||'';d.nmu=d.nmu||0;d.anu=d.anu||0;d.diary=(Array.isArray(d.diary)?d.diary:Object.values(d.diary||{})).filter(Boolean);d.cmts=(Array.isArray(d.cmts)?d.cmts:Object.values(d.cmts||{})).filter(Boolean);d.todos=(Array.isArray(d.todos)?d.todos:Object.values(d.todos||{})).filter(Boolean);d.wish=(Array.isArray(d.wish)?d.wish:Object.values(d.wish||{})).filter(Boolean);return d};
+const normS=d=>{d=d||{};migCat(d);d.plans=Array.isArray(d.plans)?d.plans:Object.values(d.plans||{});d.cat=d.cat||{};d.del=d.del||{};d.mu=d.mu||0;d.vu=d.vu||0;d.bgu=d.bgu||0;d.gku=d.gku||0;d.gk=d.gk||'';d.nmu=d.nmu||0;d.anu=d.anu||0;d.diary=(Array.isArray(d.diary)?d.diary:Object.values(d.diary||{})).filter(Boolean);d.cmts=(Array.isArray(d.cmts)?d.cmts:Object.values(d.cmts||{})).filter(Boolean);d.todos=(Array.isArray(d.todos)?d.todos:Object.values(d.todos||{})).filter(Boolean);d.wish=(Array.isArray(d.wish)?d.wish:Object.values(d.wish||{})).filter(Boolean);return d};
 const canon=v=>{if(Array.isArray(v))return v.map(canon);if(v&&typeof v==='object'){const o={};Object.keys(v).sort().forEach(k=>{const c=canon(v[k]);if(!(c&&typeof c==='object'&&!Object.keys(c).length))o[k]=c});return o}return v};
 const cstr=d=>{const x=JSON.parse(JSON.stringify(normS(JSON.parse(JSON.stringify(d||{})))));x.plans.sort((a,b)=>a.id<b.id?-1:1);x.todos.sort((a,b)=>a.id<b.id?-1:1);['diary','cmts','wish'].forEach(k=>x[k].sort((a,b)=>a.id<b.id?-1:1));return JSON.stringify(canon(x))};
 const ml=(x,y,del)=>{const m=new Map();[...y,...x].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))};
