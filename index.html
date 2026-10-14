@@ -1322,9 +1322,18 @@ function allocRest(){
 $('alloc-fields').addEventListener('input', e => { if(e.target.dataset.a){ e.target.value=num(e.target.value).toLocaleString('ko-KR'); allocRest(); }});
 $('alloc-save').onclick = () => { document.querySelectorAll('[data-a]').forEach(i=>S.cat[i.dataset.a]=num(i.value)); S.mu = Date.now(); save(); closeAll(); render(); };
 
-$('backup-open').onclick = () => { $('b-text').value = JSON.stringify(Object.assign({}, S, { bg: undefined, bgu: undefined, gk: undefined, gku: undefined, nk: undefined, nku: undefined })); renderCloudUI(); open_('backup'); };
+/* 백업 글: 사진 원본(수 MB) 대신 사진 번호(@아이디)만 담아 가볍게 만든다. 모바일에서 창이 멈추던 원인 */
+function backupText() {
+    const d = mapImgs(Object.assign({}, S, { bg: undefined, bgu: undefined, gk: undefined, gku: undefined, nk: undefined, nku: undefined }), iRef);
+    return JSON.stringify(d);
+}
+$('backup-open').onclick = () => {
+    $('b-text').value = ''; $('b-text').placeholder = '백업 내용을 준비하는 중…';
+    renderCloudUI(); open_('backup');
+    setTimeout(() => { try { $('b-text').value = backupText(); } catch (e) { toast('백업 내용을 만들지 못했어요.'); } $('b-text').placeholder = ''; }, 50);
+};
 $('b-copy').onclick = async () => {
-    const t = $('b-text'); t.select();
+    const t = $('b-text'); if (!t.value) t.value = backupText(); t.select();
     try { await navigator.clipboard.writeText(t.value); toast('복사했어요.'); } 
     catch(e) { document.execCommand('copy'); toast('선택된 내용을 복사해 주세요.'); }
 };
@@ -1333,7 +1342,7 @@ $('b-load').onclick = () => {
         const d = JSON.parse($('b-text').value);
         if(!Array.isArray(d.plans) || typeof d.cat!=='object') throw 0;
         if(!confirm('현재 데이터가 불러온 내용으로 바뀌어요. 계속할까요?')) return;
-        d.bg = S.bg; d.bgu = S.bgu; d.gk = S.gk; d.gku = S.gku; if (!d.verse) { d.verse = S.verse; d.vu = S.vu; } if (!Array.isArray(d.todos)) d.todos = S.todos || []; S = d; S.del = S.del||{}; S.mu = Date.now(); save(); init(); closeAll(); toast('불러왔어요.');
+        d.bg = S.bg; d.bgu = S.bgu; d.gk = S.gk; d.gku = S.gku; if (!d.verse) { d.verse = S.verse; d.vu = S.vu; } if (!Array.isArray(d.todos)) d.todos = S.todos || []; S = hyd(d); S.del = S.del||{}; S.mu = Date.now(); save(); init(); closeAll(); toast('불러왔어요.'); const miss = imgMissing(S); if (miss.length) imgFetch(miss);
     } catch(e) { toast('백업 내용을 읽을 수 없어요. 형식을 확인해 주세요.'); }
 };
 
