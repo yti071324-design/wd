@@ -2093,7 +2093,7 @@ const saveCloud=()=>{try{cloud?localStorage.setItem(CKEY,JSON.stringify(cloud)):
 const cleanDb=u=>String(u||'').trim().replace(/\.json.*$/,'').replace(/\/+$/,'');
 const rid=()=>{const a=new Uint8Array(9);crypto.getRandomValues(a);return [...a].map(b=>(b%36).toString(36)).join('')};
 /* ===== 비밀번호 잠금: Firebase 이메일·비밀번호 로그인(REST). 토큰이 있어야 데이터베이스를 읽고 쓸 수 있게 규칙으로 막는다 ===== */
-var LOCK={apiKey:'',email:'us@to-in-one.app'};
+var LOCK={apiKey:'AIzaSyAZBwAVRsT6f8F5cwIqzCOe9pH1GbGbm9c',email:'us@to-in-one.app'};
 var AKEY='to-in-one-auth', authRt='', authIdt='', authExp=0, authP=null, cloudStarted=false;
 (function(){try{const a=JSON.parse(localStorage.getItem(AKEY)||'null'); if(a){authRt=a.rt||'';authIdt=a.idt||'';authExp=a.exp||0}}catch(e){}})();
 function authOn(){return !!LOCK.apiKey}
