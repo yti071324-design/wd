@@ -371,6 +371,17 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .pmore{margin-top:8px}.pmore summary{font:700 13px var(--f-body);color:#6B625C;cursor:pointer}
 .pmore p{font:500 12px/1.6 var(--f-body);color:#6B625C;margin:6px 0 0;word-break:keep-all}
 .scard.hl{animation:pulse .6s ease 2}
+.lock{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;background:var(--pink)}
+.lock.hidden{display:none}
+body.lk main,body.lk #fab,body.lk #toast{display:none!important}
+.lk-card{width:100%;max-width:340px;background:#fff;border-radius:24px;box-shadow:var(--shadow);padding:30px 24px 22px;display:grid;gap:12px;text-align:center}
+.lk-ic{width:64px;height:64px;margin:0 auto 4px}
+.lk-title{font-size:28px;line-height:1}
+.lk-sub{font-size:13px;font-weight:600;color:#6B625C;margin:0 0 6px;word-break:keep-all}
+.lk-card .fld{margin-top:0;text-align:center;letter-spacing:.08em}
+.lk-msg{min-height:18px;margin:0;font-size:13px;font-weight:700;color:#b91c1c;word-break:keep-all}
+.lk-card.shake{animation:lkshake .35s}
+@keyframes lkshake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
 @keyframes pgin{from{opacity:0;transform:translateX(var(--pgx,20px))}to{opacity:1;transform:none}}
 .pg-in{animation:pgin .38s cubic-bezier(.2,.8,.2,1) var(--pgd,0ms) both}
 @media (prefers-reduced-motion:reduce){.pg-in{animation:none}}
@@ -379,6 +390,17 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 <body class="antialiased">
 <div id="bgfix" aria-hidden="true"></div><div id="bgveil" aria-hidden="true"></div>
 
+<div id="lock" class="lock hidden" role="dialog" aria-modal="true" aria-labelledby="lk-t">
+  <form id="lk-form" class="lk-card" autocomplete="on">
+    <svg class="lk-ic" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#F9DCD3"/><path d="M13.5 29.5 32 14l18.5 15.5V48a3.5 3.5 0 0 1-3.5 3.5H17a3.5 3.5 0 0 1-3.5-3.5z" fill="#fff" stroke="#2B2522" stroke-width="4.6" stroke-linejoin="round"/><path d="M32 44.5s-8.2-4.7-9.7-9.4a5.1 5.1 0 0 1 9.7-3.2 5.1 5.1 0 0 1 9.7 3.2c-1.5 4.7-9.7 9.4-9.7 9.4z" fill="#B04A62"/></svg>
+    <h1 id="lk-t" class="disp lk-title">TO IN ONE</h1>
+    <p class="lk-sub">우리 둘만의 공간이에요. 비밀번호를 입력해 주세요.</p>
+    <input id="lk-user" type="email" name="username" autocomplete="username" hidden>
+    <input id="lk-pw" class="fld" type="password" name="password" autocomplete="current-password" placeholder="비밀번호" aria-label="비밀번호" required>
+    <button id="lk-go" type="submit" class="btn h-12 text-[15px] w-full" style="background:var(--ink);color:#fff">열기</button>
+    <p id="lk-msg" class="lk-msg" role="alert"></p>
+  </form>
+</div>
 <main data-page="story" class="w-full min-h-screen relative pb-16">
 
 <header class="sticky top-0 z-40 bb3 c-pink">
@@ -636,6 +658,12 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
         <input id="c-link" class="fld" style="margin-top:0;font-size:13px" readonly>
         <div class="flex gap-2"><button id="c-copy" class="btn c-mint h-11 px-5 text-[15px] flex-1">링크 복사</button><button id="c-off" class="btn c-cream h-11 px-4 text-[15px]">연결 해제</button></div>
       </div>
+      <div id="lk-box" class="hidden flex flex-col gap-2">
+        <hr class="rule">
+        <span>비밀번호 잠금</span>
+        <p class="text-[13px] font-medium break-keep leading-relaxed">이 기기는 비밀번호로 열려 있어요. 다른 사람이 쓸 수 있는 기기라면 잠가 두세요. 다시 열 때 비밀번호가 필요해요.</p>
+        <button id="lk-now" type="button" class="btn c-cream h-11 px-5 text-[15px]">이 기기 잠그기</button>
+      </div>
       <hr class="rule">
       <div id="gk-box" class="flex flex-col gap-2">
         <span>구글 지도 연동</span>
@@ -773,15 +801,15 @@ async function imgFetch(ids){
  ids.forEach(id=>imgFetching.add(id)); let got=0;
  await Promise.all(ids.map(async id=>{
   let v=await idbGet(id);
-  if(!v&&cloud){try{const r=await fetch(curl('/imgs/'+id)); if(r.ok){v=await r.json(); if(typeof v==='string'&&v.slice(0,11)==='data:image/')idbPut(id,v); else v=null}}catch(e){}}
+  if(!v&&cloud){try{await authReady(); const r=await fetch(curl('/imgs/'+id)); if(r.ok){v=await r.json(); if(typeof v==='string'&&v.slice(0,11)==='data:image/')idbPut(id,v); else v=null}}catch(e){}}
   if(v){IMGC.set(id,v);IMGR.set(v,id);got++}
   imgFetching.delete(id);
  }));
  if(got)imgRefresh();
 }
 async function imgUpload(d){
- if(!cloud)return; const ids=imgIds(d).filter(id=>IMGC.has(id)); if(!ids.length)return;
- if(!imgRemote){imgRemote=new Set(); try{const r=await fetch(curl('/imgs')+'?shallow=true'); if(r.ok){const k=await r.json(); if(k)Object.keys(k).forEach(x=>imgRemote.add(x))}}catch(e){}}
+ if(!cloud)return; const ids=imgIds(d).filter(id=>IMGC.has(id)); if(!ids.length)return; await authReady();
+ if(!imgRemote){imgRemote=new Set(); try{const r=await fetch(curl('/imgs','shallow=true')); if(r.ok){const k=await r.json(); if(k)Object.keys(k).forEach(x=>imgRemote.add(x))}}catch(e){}}
  for(const id of ids){ if(imgRemote.has(id))continue;
   const w=await fetch(curl('/imgs/'+id),{method:'PUT',body:JSON.stringify(IMGC.get(id))}); if(!w.ok)throw 0; imgRemote.add(id);
  }
@@ -2064,7 +2092,55 @@ const loadCloud=()=>{try{return JSON.parse(localStorage.getItem(CKEY)||'null')}c
 const saveCloud=()=>{try{cloud?localStorage.setItem(CKEY,JSON.stringify(cloud)):localStorage.removeItem(CKEY)}catch(e){}};
 const cleanDb=u=>String(u||'').trim().replace(/\.json.*$/,'').replace(/\/+$/,'');
 const rid=()=>{const a=new Uint8Array(9);crypto.getRandomValues(a);return [...a].map(b=>(b%36).toString(36)).join('')};
-const curl=(p='')=>`${cloud.db}/rooms/${cloud.room}${p}.json`;
+/* ===== 비밀번호 잠금: Firebase 이메일·비밀번호 로그인(REST). 토큰이 있어야 데이터베이스를 읽고 쓸 수 있게 규칙으로 막는다 ===== */
+var LOCK={apiKey:'',email:'us@to-in-one.app'};
+var AKEY='to-in-one-auth', authRt='', authIdt='', authExp=0, authP=null, cloudStarted=false;
+(function(){try{const a=JSON.parse(localStorage.getItem(AKEY)||'null'); if(a){authRt=a.rt||'';authIdt=a.idt||'';authExp=a.exp||0}}catch(e){}})();
+function authOn(){return !!LOCK.apiKey}
+function authSave(){try{authRt?localStorage.setItem(AKEY,JSON.stringify({rt:authRt,idt:authIdt,exp:authExp})):localStorage.removeItem(AKEY)}catch(e){}}
+function authSet(j){authIdt=j.idToken||j.id_token||'';authRt=j.refreshToken||j.refresh_token||authRt;authExp=Date.now()+((+(j.expiresIn||j.expires_in)||3600)*1000);authSave()}
+function authClear(){authRt='';authIdt='';authExp=0;authSave()}
+function lockShow(msg){
+ document.body.classList.add('lk'); $('lock').classList.remove('hidden'); $('lk-msg').textContent=msg||''; $('lk-pw').value='';
+ $('lk-user').value=LOCK.email; setTimeout(()=>{try{$('lk-pw').focus()}catch(e){}},50);
+}
+function lockHide(){document.body.classList.remove('lk'); $('lock').classList.add('hidden'); $('lk-msg').textContent=''}
+function lockErr(code){
+ code=String(code||'');
+ if(/INVALID_PASSWORD|INVALID_LOGIN_CREDENTIALS|EMAIL_NOT_FOUND|MISSING_PASSWORD/.test(code))return '비밀번호가 맞지 않아요.';
+ if(/TOO_MANY_ATTEMPTS/.test(code))return '여러 번 틀려서 잠시 막혔어요. 조금 뒤에 다시 해 주세요.';
+ if(/USER_DISABLED/.test(code))return '이 계정은 사용이 중지됐어요.';
+ if(/API_KEY|CONFIGURATION|OPERATION_NOT_ALLOWED/.test(code))return '잠금 설정에 문제가 있어요. (Firebase 로그인 설정 확인)';
+ return '인터넷 연결을 확인하고 다시 시도해 주세요.';
+}
+async function authSignIn(pw){
+ const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+encodeURIComponent(LOCK.apiKey),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:LOCK.email,password:pw,returnSecureToken:true})});
+ const j=await r.json().catch(()=>({}));
+ if(!r.ok)throw new Error((j.error&&j.error.message)||'NET');
+ authSet(j);
+}
+async function authRefresh(){
+ const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+encodeURIComponent(LOCK.apiKey),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(authRt)});
+ const j=await r.json().catch(()=>({}));
+ if(!r.ok){const m=(j.error&&j.error.message)||'NET'; if(/TOKEN_EXPIRED|USER_DISABLED|USER_NOT_FOUND|INVALID_REFRESH_TOKEN|INVALID_GRANT_TYPE|MISSING_REFRESH_TOKEN/.test(m)){authClear();lockShow('다시 로그인이 필요해요. 비밀번호를 입력해 주세요.')} throw new Error(m)}
+ authSet(j);
+}
+async function authReady(){
+ if(!authOn())return true;
+ if(!authRt){lockShow();throw new Error('LOCKED')}
+ if(authIdt&&authExp>Date.now()+60000)return true;
+ if(!authP)authP=authRefresh().finally(()=>{authP=null});
+ await authP; return true;
+}
+$('lk-form').addEventListener('submit',async e=>{
+ e.preventDefault(); const pw=$('lk-pw').value; if(!pw){$('lk-pw').focus();return}
+ const btn=$('lk-go'); btn.disabled=true; btn.textContent='확인 중…'; $('lk-msg').textContent='';
+ try{await authSignIn(pw); lockHide(); startCloud(); toast('반가워요! 이 기기에서는 다시 묻지 않아요.')}
+ catch(x){$('lk-msg').textContent=lockErr(x.message); const c=$('lk-form'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); $('lk-pw').select()}
+ finally{btn.disabled=false; btn.textContent='열기'}
+});
+$('lk-now').onclick=()=>{if(!confirm('이 기기를 잠글까요? 다시 열 때 비밀번호가 필요해요.'))return; authClear(); closeAll(); lockShow('잠갔어요.')};
+const curl=(p='',q='')=>{const a=[]; if(q)a.push(q); if(authOn()&&authIdt)a.push('auth='+encodeURIComponent(authIdt)); return `${cloud.db}/rooms/${cloud.room}${p}.json`+(a.length?'?'+a.join('&'):'')};
 const normS=d=>{d=d||{};migCat(d);d.plans=Array.isArray(d.plans)?d.plans:Object.values(d.plans||{});d.cat=d.cat||{};d.del=d.del||{};d.mu=d.mu||0;d.vu=d.vu||0;d.bgu=d.bgu||0;d.gku=d.gku||0;d.gk=d.gk||'';d.nmu=d.nmu||0;d.anu=d.anu||0;d.diary=(Array.isArray(d.diary)?d.diary:Object.values(d.diary||{})).filter(Boolean);d.cmts=(Array.isArray(d.cmts)?d.cmts:Object.values(d.cmts||{})).filter(Boolean);d.todos=(Array.isArray(d.todos)?d.todos:Object.values(d.todos||{})).filter(Boolean);d.wish=(Array.isArray(d.wish)?d.wish:Object.values(d.wish||{})).filter(Boolean);return d};
 const canon=v=>{if(Array.isArray(v))return v.map(canon);if(v&&typeof v==='object'){const o={};Object.keys(v).sort().forEach(k=>{const c=canon(v[k]);if(!(c&&typeof c==='object'&&!Object.keys(c).length))o[k]=c});return o}return v};
 const cstr=d=>{const x=JSON.parse(JSON.stringify(normS(JSON.parse(JSON.stringify(d||{})))));x.plans.sort((a,b)=>a.id<b.id?-1:1);x.todos.sort((a,b)=>a.id<b.id?-1:1);['diary','cmts','wish'].forEach(k=>x[k].sort((a,b)=>a.id<b.id?-1:1));return JSON.stringify(canon(x))};
@@ -2094,8 +2170,9 @@ function applyRemote(m){
 }
 function scheduleSync(){ if(!cloud)return; clearTimeout(syncT); syncT=setTimeout(syncNow,700); }
 async function syncNow(){
- if(!cloud)return; if(syncing){again=true;return} syncing=true; setSync('busy');
+ if(!cloud)return; if(syncing){again=true;return} if(document.body.classList.contains('lk'))return; syncing=true; setSync('busy');
  try{
+  await authReady();
   const [rd,ru]=await Promise.all([fetch(curl('/data')),fetch(curl('/updatedAt'))]); if(!rd.ok||!ru.ok)throw 0;
   const rdata=await rd.json(), rts=await ru.json(), remote=rdata?{data:rdata,updatedAt:rts}:null;
   const L=dehyd(S), m=(remote&&remote.data)?merge(L,remote.data):normS(L);
@@ -2104,7 +2181,7 @@ async function syncNow(){
   await imgUpload(out);
   if(!remote||!remote.data||cstr(out)!==cstr(remote.data)){
    const ts=Date.now();
-   const w=await fetch(curl()+'?x-http-method-override=PATCH',{method:'POST',body:JSON.stringify({data:out,updatedAt:ts})});
+   const w=await fetch(curl('','x-http-method-override=PATCH'),{method:'POST',body:JSON.stringify({data:out,updatedAt:ts})});
    if(!w.ok)throw 0; lastTs=ts;
   } else lastTs=remote.updatedAt||0;
   setSync('ok');
@@ -2112,15 +2189,16 @@ async function syncNow(){
  finally{syncing=false; if(again){again=false;scheduleSync()}}
 }
 async function poll(){
- if(!cloud||document.hidden||syncing)return;
- try{const r=await fetch(curl('/updatedAt')); if(!r.ok)throw 0; const ts=await r.json(); if(ts===null||ts!==lastTs)await syncNow(); else setSync('ok')}
+ if(!cloud||document.hidden||syncing||document.body.classList.contains('lk'))return;
+ try{await authReady(); const r=await fetch(curl('/updatedAt')); if(!r.ok)throw 0; const ts=await r.json(); if(ts===null||ts!==lastTs)await syncNow(); else setSync('ok')}
  catch(e){setSync('err')}
 }
 async function connect(db,room,joining){
  cloud={db:cleanDb(db),room}; imgRemote=null; saveCloud(); renderCloudUI(); setSync('busy');
  if(joining){
   try{
-   const [rd,ru]=await Promise.all([fetch(curl('/data')),fetch(curl('/updatedAt'))]); const rdata=await rd.json(), rts=await ru.json();
+   await authReady();
+   const [rd,ru]=await Promise.all([fetch(curl('/data')),fetch(curl('/updatedAt'))]); if(!rd.ok||!ru.ok)throw 0; const rdata=await rd.json(), rts=await ru.json();
    if(rdata){S=hyd(normS(rdata));persist();lastTs=rts||0;init();setSync('ok');imgFetch(imgMissing(S));return}
   }catch(e){setSync('err');return}
  }
@@ -2131,6 +2209,7 @@ function renderCloudUI(){
  $('cloud-off').classList.toggle('hidden',!!cloud); $('cloud-on').classList.toggle('hidden',!cloud);
  if(cloud){$('c-link').value=shareLink()} else if(!$('c-db').value)$('c-db').value=CLOUD_DEFAULT_DB;
  gkUI();
+ $('lk-box').classList.toggle('hidden',!(authOn()&&authRt));
 }
 $('c-connect').onclick=()=>{
  const db=cleanDb($('c-db').value);
@@ -2140,6 +2219,7 @@ $('c-connect').onclick=()=>{
 $('c-copy').onclick=async()=>{const t=$('c-link');t.select();try{await navigator.clipboard.writeText(t.value);toast('링크를 복사했어요.')}catch(e){document.execCommand('copy');toast('선택된 링크를 복사해 주세요.')}};
 $('c-off').onclick=()=>{if(!confirm('공유를 해제할까요? 이 기기의 데이터는 그대로 남아요.'))return;cloud=null;saveCloud();renderCloudUI();setSync('off')};
 function cloudInit(){
+ if(cloudStarted)return; cloudStarted=true;
  cloud=loadCloud(); imgRemote=null;
  const h=new URLSearchParams(location.hash.replace(/^#/,'')), r=h.get('r'), d=h.get('d');
  if(r&&d&&(!cloud||cloud.room!==r||cloud.db!==cleanDb(d)))connect(d,r,true);
@@ -2148,7 +2228,8 @@ function cloudInit(){
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()});
  addEventListener('focus',poll);
 }
-cloudInit();
+function startCloud(){if(cloudStarted){if(cloud)syncNow()} else cloudInit()}
+if(authOn()&&!authRt)lockShow(); else cloudInit();
 addEventListener('resize',()=>{fitTotal();fitCells()});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{fitTotal();fitCells()});
 
