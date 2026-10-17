@@ -679,7 +679,14 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
       </div>
       <hr class="rule">
       <div class="flex flex-col gap-2">
-        <span>백업 (복사해 두면 다른 기기에서 불러올 수 있어요)</span>
+        <span>전체 백업 (사진 포함)</span>
+        <p class="text-[13px] font-medium break-keep leading-relaxed">계획·일기·댓글·기념일·하고 싶은 것과 사진까지 모두 파일 하나로 저장해요. 가끔 받아 두면 실수로 지워도 되살릴 수 있어요.</p>
+        <div class="flex gap-2"><button id="fb-save" type="button" class="btn c-mint h-11 px-4 text-[15px] flex-1">백업 파일 받기</button><label class="btn c-cream h-11 px-4 text-[15px] grid place-items-center cursor-pointer">파일로 되살리기<input id="fb-file" type="file" accept=".json,application/json" class="hidden"></label></div>
+        <p id="fb-state" style="font-size:12px;font-weight:700"></p>
+      </div>
+      <hr class="rule">
+      <div class="flex flex-col gap-2">
+        <span>글 백업 (복사해 두면 다른 기기에서 불러올 수 있어요)</span>
         <textarea id="b-text" rows="5" class="num" style="font-size:12px;font-weight:500"></textarea>
       </div>
     </div>
@@ -1380,6 +1387,47 @@ $('b-load').onclick = () => {
     } catch(e) { toast('백업 내용을 읽을 수 없어요. 형식을 확인해 주세요.'); }
 };
 
+/* ===== 전체 백업 파일: 데이터 + 사진(원본) 한 파일 ===== */
+async function fullBackup(){
+ const btn=$('fb-save'), st=$('fb-state'); btn.disabled=true; st.textContent='사진을 모으는 중…';
+ try{
+  const miss=imgMissing(S); if(miss.length)await imgFetch(miss);
+  const d=dehyd(S), ids=imgIds(d), imgs={}; let lost=0;
+  ids.forEach(id=>{const v=IMGC.get(id); if(v)imgs[id]=v; else lost++});
+  const data=Object.assign({},d); delete data.nk; delete data.nku;
+  const out={app:'to-in-one',v:1,at:new Date().toISOString(),data,imgs};
+  const blob=new Blob([JSON.stringify(out)],{type:'application/json'});
+  const t=new Date(), z=n=>String(n).padStart(2,'0'), name=`to-in-one-backup-${t.getFullYear()}${z(t.getMonth()+1)}${z(t.getDate())}.json`;
+  const info=`사진 ${Object.keys(imgs).length}장 · ${(blob.size/1048576).toFixed(1)}MB`+(lost?` (불러오지 못한 사진 ${lost}장 제외)`:'');
+  let file=null; try{file=new File([blob],name,{type:'application/json'})}catch(e){}
+  if(file&&navigator.canShare&&matchMedia('(pointer:coarse)').matches&&navigator.canShare({files:[file]})){
+   try{await navigator.share({files:[file],title:'TO IN ONE 백업'}); st.textContent='저장했어요 · '+info; return}
+   catch(e){if(e&&e.name==='AbortError'){st.textContent='';return}}
+  }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000);
+  st.textContent='받았어요 · '+info;
+ }catch(e){st.textContent='백업 파일을 만들지 못했어요. 다시 시도해 주세요.'}
+ finally{btn.disabled=false}
+}
+async function fullRestore(f){
+ const st=$('fb-state'); let o=null;
+ try{o=JSON.parse(await f.text())}catch(e){toast('백업 파일을 읽을 수 없어요.');return}
+ if(!o||o.app!=='to-in-one'||!o.data||!Array.isArray(o.data.plans)){toast('TO IN ONE 백업 파일이 아니에요.');return}
+ const when=o.at?new Date(o.at):null, wl=when&&!isNaN(when)?`${when.getFullYear()}.${when.getMonth()+1}.${when.getDate()} `:'';
+ if(!confirm(`${wl}백업으로 되살릴까요?\n백업에 있던 계획·일기·사진이 그때 내용으로 돌아와요. 백업 이후에 새로 만든 항목은 그대로 남아요.`))return;
+ st.textContent='되살리는 중…';
+ Object.entries(o.imgs||{}).forEach(([id,v])=>{if(typeof v==='string'&&v.slice(0,11)==='data:image/'){IMGC.set(id,v);IMGR.set(v,id);idbPut(id,v)}});
+ const now=Date.now(), d=normS(JSON.parse(JSON.stringify(o.data)));
+ ['plans','diary','cmts','todos','wish'].forEach(k=>(d[k]||[]).forEach(x=>{if(x)x.u=now}));
+ d.del={}; d.mu=d.vu=d.bgu=d.nmu=d.anu=now;
+ if(d.gk)d.gku=now; else {d.gk=S.gk;d.gku=S.gku}
+ S=hyd(merge(d,dehyd(S))); imgRemote=null; seenS=null; save(); init(); closeAll();
+ const miss=imgMissing(S); if(miss.length)imgFetch(miss);
+ toast('백업으로 되살렸어요.'); st.textContent='';
+}
+$('fb-save').onclick=fullBackup;
+$('fb-file').onchange=e=>{const f=e.target.files[0]; e.target.value=''; if(f)fullRestore(f)};
 /* ===== 표로 복사 (엑셀·구글 시트에 바로 붙여넣기) ===== */
 $('b-tsv').onclick=async()=>{
  const rows=[['카테고리','계획','진행 상태','예상 비용','확정 비용','계약금','마감일','우선순위','메모','링크']];
