@@ -788,6 +788,7 @@ function idb(){
  return imgDbP;
 }
 function idbPut(id,v){return idb().then(db=>db&&new Promise(r=>{try{const t=db.transaction('imgs','readwrite');t.objectStore('imgs').put(v,id);t.oncomplete=()=>r(true);t.onerror=t.onabort=()=>r(false)}catch(e){r(false)}}))}
+function idbDel(id){return idb().then(db=>db&&new Promise(r=>{try{const t=db.transaction('imgs','readwrite');t.objectStore('imgs').delete(id);t.oncomplete=()=>r(true);t.onerror=t.onabort=()=>r(false)}catch(e){r(false)}}))}
 function idbGet(id){return idb().then(db=>db?new Promise(r=>{try{const q=db.transaction('imgs').objectStore('imgs').get(id);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)}catch(e){r(null)}}):null)}
 function iRef(v){
  if(typeof v!=='string'||v.slice(0,11)!=='data:image/')return v;
@@ -825,6 +826,32 @@ async function imgUpload(d){
  for(const id of ids){ if(imgRemote.has(id))continue;
   const w=await fetch(curl('/imgs/'+id),{method:'PUT',body:JSON.stringify(IMGC.get(id))}); if(!w.ok)throw 0; imgRemote.add(id);
  }
+}
+/* 지운 사진 정리: 아무 데서도 안 쓰는 사진은 /imgsOrphan에 처음 발견한 시각을 적고, 30일 지나도 계속 안 쓰이면 Firebase에서 지운다 (기기당 하루 한 번) */
+var GCK='to-in-one-gc', GC_DAYS=30;
+async function imgGC(force){
+ if(!cloud||document.body.classList.contains('lk'))return;
+ let last=0; try{last=+localStorage.getItem(GCK)||0}catch(e){}
+ if(!force&&Date.now()-last<864e5)return;
+ try{localStorage.setItem(GCK,String(Date.now()))}catch(e){}
+ try{
+  await authReady();
+  const [ri,ro]=await Promise.all([fetch(curl('/imgs','shallow=true')),fetch(curl('/imgsOrphan'))]); if(!ri.ok||!ro.ok)return;
+  const all=Object.keys((await ri.json())||{}), marks=(await ro.json())||{};
+  const used=new Set(imgIds(dehyd(S))), now=Date.now(), pm={}, del=[];
+  if(!used.size&&all.length&&!((S.plans||[]).length+(S.diary||[]).length))return;
+  all.forEach(id=>{
+   if(used.has(id)){if(marks[id])pm[id]=null;return}
+   if(!marks[id])pm[id]=now; else if(now-(+marks[id]||now)>GC_DAYS*864e5){del.push(id);pm[id]=null}
+  });
+  Object.keys(marks).forEach(id=>{if(!all.includes(id))pm[id]=null});
+  if(del.length){
+   const o={}; del.forEach(id=>o[id]=null);
+   const w=await fetch(curl('/imgs','x-http-method-override=PATCH'),{method:'POST',body:JSON.stringify(o)}); if(!w.ok)return;
+   del.forEach(id=>{if(imgRemote)imgRemote.delete(id); const v=IMGC.get(id); if(v)IMGR.delete(v); IMGC.delete(id); idbDel(id)});
+  }
+  if(Object.keys(pm).length)await fetch(curl('/imgsOrphan','x-http-method-override=PATCH'),{method:'POST',body:JSON.stringify(pm)});
+ }catch(e){}
 }
 function imgBoot(){
  const hadInline=JSON.stringify(mapImgs(S,v=>(typeof v==='string'&&v.slice(0,11)==='data:image/')?'#':v)).includes('"#"');
@@ -2283,6 +2310,7 @@ async function syncNow(){
    if(!w.ok)throw 0; lastTs=ts;
   } else lastTs=remote.updatedAt||0;
   setSync('ok');
+  setTimeout(()=>imgGC(),3000);
  }catch(e){setSync('err')}
  finally{syncing=false; if(again){again=false;scheduleSync()}}
 }
