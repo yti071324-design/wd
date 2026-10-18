@@ -376,9 +376,9 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .scard.hl{animation:pulse .6s ease 2}
 .tab{position:relative}
 #tabs{position:relative}
-#tabs .tpill{position:absolute;left:0;top:0;width:0;height:0;border-radius:999px;background:var(--ink);pointer-events:none;opacity:0;z-index:0;transition:transform .42s cubic-bezier(.3,1.25,.4,1),width .42s cubic-bezier(.3,1.25,.4,1),height .3s}
-#tabs .tab{z-index:1;transition:color .3s ease,filter .15s,transform .1s}
-#tabs.haspill .tab.on{background:transparent}
+#tabs .tpill{position:absolute;left:0;top:0;width:0;height:0;border-radius:999px;background:#F4DFD8;pointer-events:none;opacity:0;z-index:0;transition:transform .42s cubic-bezier(.3,1.25,.4,1),width .42s cubic-bezier(.3,1.25,.4,1),height .3s}
+#tabs .tab{z-index:1;transition:filter .15s,transform .1s}
+#tabs.haspill .tab.on{background:transparent;color:var(--ink)}
 @supports (overflow-x:clip){main{overflow-x:clip}}
 @media (prefers-reduced-motion:reduce){#tabs .tpill{transition:none}}
 .tdot{position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:#B04A62;box-shadow:0 0 0 2px #fff}
