@@ -2,8 +2,8 @@
    - 앱 화면(index.html 등)은 저장해 둔 것을 바로 보여주고, 뒤에서 새 버전을 받아 다음에 열 때 바꾼다
    - 글꼴은 한 번 받으면 저장해 두고 쓴다
    - Firebase·구글 로그인·지도 등 데이터 요청은 저장하지 않고 그대로 보낸다 */
-const APP = 'toinone-app-v1', FONTS = 'toinone-fonts-v1';
-const CORE = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
+const APP = 'toinone-app-v2', FONTS = 'toinone-fonts-v1';
+const CORE = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './bg-default.jpg'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.jsdelivr.net'];
 
 self.addEventListener('install', e => {
