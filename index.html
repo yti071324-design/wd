@@ -1529,6 +1529,31 @@ function pgAnim(from){
   el.addEventListener('animationend',function f(ev){if(ev.target!==el)return;el.classList.remove('pg-in');el.removeEventListener('animationend',f)});
  });
 }
+/* 모바일: 화면을 좌우로 밀면 옆 탭으로 이동 */
+(function(){
+ let x0=null,y0=0,t0=0,ok=false;
+ const SKIP='input,textarea,select,[contenteditable],nav,#tabs,.cs-list,.sgtrack,#mapcard,#omap,.scal,#cal-grid,.dlg,#lb,#lock,.no-swipe';
+ function busy(){return document.body.classList.contains('lk')||(typeof mfull!=='undefined'&&mfull)||['edit','alloc','backup','verse','bgdlg','lb','sdlg'].some(i=>{const d=$(i);return d&&!d.classList.contains('hidden')})}
+ function hScroll(el){for(;el&&el!==document.body;el=el.parentElement){const o=getComputedStyle(el).overflowX;if((o==='auto'||o==='scroll')&&el.scrollWidth>el.clientWidth+2)return true}return false}
+ document.addEventListener('touchstart',e=>{
+  x0=null; if(e.touches.length!==1||busy())return;
+  const t=e.touches[0], el=e.target;
+  if(t.clientX<24||t.clientX>innerWidth-24)return;           // 화면 가장자리는 사파리 뒤로가기 제스처에 양보
+  if(el.closest&&el.closest(SKIP))return;
+  if(hScroll(el))return;
+  const sel=getSelection&&getSelection(); if(sel&&!sel.isCollapsed)return;
+  x0=t.clientX;y0=t.clientY;t0=Date.now();ok=true;
+ },{passive:true});
+ document.addEventListener('touchmove',e=>{if(x0!==null&&e.touches.length!==1)x0=null},{passive:true});
+ document.addEventListener('touchcancel',()=>{x0=null},{passive:true});
+ document.addEventListener('touchend',e=>{
+  if(x0===null||!ok)return; const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0,dt=Date.now()-t0; x0=null;
+  if(dt>800||Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.7||busy())return;
+  const tabs=[...$('tabs').querySelectorAll('button.tab')], i=tabs.findIndex(b=>b.classList.contains('on'));
+  const n=tabs[i+(dx<0?1:-1)]; if(i<0||!n)return;
+  n.click();
+ },{passive:true});
+})();
 function setPage(p){const from=tabIdx();ui.page=p;try{localStorage.setItem('to-in-one-page',p)}catch(e){}animList=true;render();window.scrollTo(0,0);pgAnim(from);window.dispatchEvent(new Event('scroll'))}
 function names(){const D=['태인','가현'], n=Array.isArray(S.names)?S.names:[]; return [0,1].map(i=>(n[i]||'').trim()||D[i])}
 function meIdx(){
