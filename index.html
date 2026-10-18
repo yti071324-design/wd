@@ -232,7 +232,18 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .ann-add{display:grid;grid-template-columns:1fr 150px auto auto;gap:8px;align-items:center}
 .ann-y{display:flex!important;grid-auto-flow:column;align-items:center;gap:4px!important;white-space:nowrap}
 @media (max-width:560px){.ann-add{grid-template-columns:1fr 1fr}.ann-add .fld:first-child{grid-column:1/-1}}
-.sview{display:inline-flex;background:rgba(43,37,34,.07);border-radius:999px;padding:3px;margin:0 0 14px}
+.sview{display:inline-flex;background:rgba(43,37,34,.07);border-radius:999px;padding:3px;margin:0;flex-shrink:0}
+.stool{display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.sfind{flex:1;min-width:0;max-width:300px;margin-left:auto;display:flex;align-items:center;gap:6px;height:38px;padding:0 6px 0 12px;border-radius:999px;background:rgba(255,255,255,.75);border:1.5px solid rgba(43,37,34,.14);color:#8A7F78;transition:border-color .2s,background .2s}
+.sfind:focus-within{border-color:var(--rust);background:#fff;color:var(--ink)}
+.sfind input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:16px;font-weight:600;color:var(--ink);padding:0}
+.sfind input::-webkit-search-cancel-button{display:none}
+.sfind input::placeholder{color:#A0958E;font-weight:600;font-size:14px}
+.sfind button{width:26px;height:26px;border-radius:999px;font-size:17px;line-height:1;color:#6B625C;background:rgba(43,37,34,.08);flex-shrink:0}
+.sfind button.hidden{display:none}
+.sres{grid-column:1/-1;font-size:13px;font-weight:700;color:#6B625C}
+.sres b{color:var(--rust)}
+.slist mark{background:#F8DCC9;color:inherit;border-radius:4px;padding:0 1px}
 .sview button{border-radius:999px;padding:7px 16px;font-size:13px;font-weight:700;color:#6B625C}
 .sview button[aria-selected=true]{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(43,37,34,.15)}
 .scal{padding:16px 14px 14px;min-width:0}
@@ -496,7 +507,8 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
     <div id="mc-chips"></div>
     <div id="mc-hint" class="mc-hint"></div>
   </div>
-  <div class="sview" role="tablist" aria-label="보기 방식"><button type="button" data-sv="list" role="tab">목록</button><button type="button" data-sv="cal" role="tab">달력</button></div>
+  <div class="stool"><div class="sview" role="tablist" aria-label="보기 방식"><button type="button" data-sv="list" role="tab">목록</button><button type="button" data-sv="cal" role="tab">달력</button></div>
+   <label class="sfind"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input id="st-q" type="search" enterkeyhint="search" autocomplete="off" maxlength="40" placeholder="제목·내용·장소 검색" aria-label="일기 검색"><button type="button" id="st-qx" class="hidden" aria-label="검색어 지우기">×</button></label></div>
   <div id="st-cal" class="card scal hidden">
     <div class="cal-h"><button type="button" id="cal-prev" class="cal-nav" aria-label="이전 달">‹</button><div id="cal-title" class="cal-t"></div><button type="button" id="cal-next" class="cal-nav" aria-label="다음 달">›</button><button type="button" id="cal-today" class="und cal-td">오늘</button></div>
     <div class="cal-w"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
@@ -1814,35 +1826,49 @@ function galSync(tr){
  if(g._i===i)return; g._i=i; g.querySelector('.sgcnt').textContent=`${i+1} / ${n}`;
  g.querySelectorAll('.sgdots i').forEach((d,k)=>d.classList.toggle('on',k===i));
 }
+var sQ='',sQT=0;
+function sTerms(){return (sQ||'').toLowerCase().split(/\s+/).filter(Boolean)}
+function sHay(e){return [e.title,e.text,e.place&&e.place.name,e.place&&e.place.addr,e.date,fmtDate(e.date),...S.cmts.filter(c=>c.eid===e.id).map(c=>c.text)].filter(Boolean).join('\n').toLowerCase()}
+function sHit(e,qt){const h=sHay(e); return qt.every(t=>h.includes(t))}
+function sMark(x,qt){
+ const r=new RegExp('('+qt.map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).sort((a,b)=>b.length-a.length).join('|')+')','gi');
+ return String(x??'').split(r).map((p,i)=>i%2?'<mark>'+esc(p)+'</mark>':esc(p)).join('');
+}
+function sQSet(v){sQ=v||''; $('st-qx').classList.toggle('hidden',!sQ); clearTimeout(sQT); sQT=setTimeout(renderStory,120)}
+$('st-q').addEventListener('input',e=>sQSet(e.target.value));
+$('st-q').addEventListener('keydown',e=>{if(e.key==='Escape'){e.target.value='';sQSet('')} else if(e.key==='Enter')e.target.blur()});
+$('st-qx').addEventListener('click',()=>{const i=$('st-q'); i.value=''; sQSet(''); i.focus()});
 function renderStory(){
  const L=$('st-list'); if(!L)return;
  newsTick();
  const dr={}, fo=document.activeElement; let foc=null;
  L.querySelectorAll('[data-sid]').forEach(a=>{const c=a.querySelector('.ct'); if(c&&c.value)dr[a.dataset.sid]=c.value; if(c&&c===fo)foc=a.dataset.sid});
  const D=[...S.diary].sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(b.u||0)-(a.u||0)), me=sMe();
+ const qt=sTerms(), F=qt.length?D.filter(e=>sHit(e,qt)):D, hl=qt.length?(x=>sMark(x,qt)):esc;
  const t=new Date(), md=(t.getMonth()+1)+'-'+t.getDate();
  const ago=D.find(e=>{const d=new Date(e.date+'T00:00:00');return d.getFullYear()<t.getFullYear()&&(d.getMonth()+1)+'-'+d.getDate()===md});
  renderWho(); renderAnn(); renderWish();
  $('st-count').textContent=D.length?`(${D.length})`:'';
  $('st-sub').textContent=D.length?`사진 ${D.reduce((a,e)=>a+imgsOf(e).length,0)}장`+(ago?` · ${t.getFullYear()-+ago.date.slice(0,4)}년 전 오늘, "${ago.title||'우리의 하루'}"`:''):'둘만의 하루를 사진과 함께 남겨 보세요.';
  let mon='',h='',i=0;
- if(!D.length)h='<div class="p-6 text-center text-sm font-bold break-keep" style="grid-column:1/-1;border:2px dashed rgba(43,37,34,.3);border-radius:20px">아직 기록이 없어요.<br>+ 새 일기로 첫 사진을 남겨 보세요.</div>';
- D.forEach(e=>{
+ if(qt.length)h=F.length?`<div class="sres">"${esc((sQ||'').trim())}" 일기 <b>${F.length}</b>개</div>`:`<div class="p-6 text-center text-sm font-bold break-keep" style="grid-column:1/-1;border:2px dashed rgba(43,37,34,.3);border-radius:20px">"${esc((sQ||'').trim())}"에 맞는 일기가 없어요.<br>다른 말로 찾아보세요.</div>`;
+ else if(!D.length)h='<div class="p-6 text-center text-sm font-bold break-keep" style="grid-column:1/-1;border:2px dashed rgba(43,37,34,.3);border-radius:20px">아직 기록이 없어요.<br>+ 새 일기로 첫 사진을 남겨 보세요.</div>';
+ F.forEach(e=>{
   const m=(e.date||'').slice(0,7); if(m!==mon){mon=m;h+=`<div class="smon">${m.slice(0,4)}년 ${+m.slice(5,7)}월</div>`}
   const cs=S.cmts.filter(c=>c.eid===e.id).sort((a,b)=>a.t-b.t), hn=Object.keys(e.hearts||{}), mine=!!me&&hn.includes(me);
   h+=`<article class="scard card${animList?' rise':''}" style="--i:${Math.min(i++,8)}" data-sid="${e.id}">`+galHTML(imgsOf(e))+
-  `<div class="sbody"><div class="flex justify-between items-start gap-3"><div class="min-w-0"><div class="sdate">${fmtDate(e.date)}${newTag(e,cs)}</div><h3 class="sttl">${esc(e.title||'우리의 하루')}</h3></div><button data-sact="edit" class="und text-[13px] shrink-0">수정</button></div>`+
-  (e.place&&e.place.name?`<div class="splc"><button data-sact="loc" class="splb"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2.5\"/></svg> ${esc(e.place.name)}</button><a href="${gUrl(e.place)}" target="_blank" rel="noopener noreferrer">구글맵</a></div>`:'')+
-  (e.text?`<p class="stxt whitespace-pre-wrap">${esc(e.text)}</p>`:'')+
+  `<div class="sbody"><div class="flex justify-between items-start gap-3"><div class="min-w-0"><div class="sdate">${fmtDate(e.date)}${newTag(e,cs)}</div><h3 class="sttl">${hl(e.title||'우리의 하루')}</h3></div><button data-sact="edit" class="und text-[13px] shrink-0">수정</button></div>`+
+  (e.place&&e.place.name?`<div class="splc"><button data-sact="loc" class="splb"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2.5\"/></svg> ${hl(e.place.name)}</button><a href="${gUrl(e.place)}" target="_blank" rel="noopener noreferrer">구글맵</a></div>`:'')+
+  (e.text?`<p class="stxt whitespace-pre-wrap">${hl(e.text)}</p>`:'')+
   `<div class="srow"><button data-sact="heart" class="pill sm" aria-pressed="${mine}" aria-label="하트 ${hn.length}개" style="${mine?'background:#F8CFC2':''}">♥ ${hn.length||''}</button>${hn.length?`<span class="hn">${hn.map(esc).join(' · ')}</span>`:''}<span>댓글 ${cs.length}</span></div>`+
-  `<ul class="cm">${cs.map(c=>`<li data-cid="${c.id}"${isNew('c:'+c.id)?' class="cnew"':''}><b class="${nameIdx(c.by)>=0?'p'+nameIdx(c.by):''}">${esc(c.by)}</b><span class="min-w-0">${esc(c.text)}</span><small>${sTime(c.t)}</small><button data-sact="cdel" aria-label="댓글 삭제">✕</button></li>`).join('')}</ul>`+
+  `<ul class="cm">${cs.map(c=>`<li data-cid="${c.id}"${isNew('c:'+c.id)?' class="cnew"':''}><b class="${nameIdx(c.by)>=0?'p'+nameIdx(c.by):''}">${esc(c.by)}</b><span class="min-w-0">${hl(c.text)}</span><small>${sTime(c.t)}</small><button data-sact="cdel" aria-label="댓글 삭제">✕</button></li>`).join('')}</ul>`+
   `<div class="cmadd"><input class="ct" maxlength="120" placeholder="${me?esc(me)+'(으)로 댓글 달기…':'댓글 달기…'}" aria-label="댓글"><button data-sact="csend">등록</button></div></div></article>`;
  });
  const nv=visitNew?[...visitNew].filter(k=>{const id=k.split(':')[1]; return k[0]==='c'?S.cmts.some(x=>x.id===id):S.diary.some(x=>x.id===id)}):[];
  const ON=names()[1-Math.max(0,meIdx())];
  h=(nv.length?`<button type="button" class="snews" data-news>${esc(ON)}의 새 소식 ${nv.length}개 <span aria-hidden="true">↓</span></button>`:'')+h;
  L.innerHTML=h;
- const sv=sView(); document.querySelectorAll('.sview [data-sv]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.sv===sv)));
+ const sv=qt.length?'list':sView(); document.querySelectorAll('.sview [data-sv]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.sv===sv)));
  L.classList.toggle('hidden',sv==='cal'); $('st-cal').classList.toggle('hidden',sv!=='cal'); if(sv==='cal')renderCal(S.diary);
  L.querySelectorAll('.sgtrack').forEach(tr=>tr.addEventListener('scroll',()=>galSync(tr),{passive:true}));
  L.querySelectorAll('[data-sid]').forEach(a=>{const c=a.querySelector('.ct'); if(!c)return; if(dr[a.dataset.sid])c.value=dr[a.dataset.sid]; if(foc===a.dataset.sid){try{c.focus({preventScroll:true});c.setSelectionRange(c.value.length,c.value.length)}catch(e){}}});
