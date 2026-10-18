@@ -375,6 +375,12 @@ main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .pcur button{text-decoration:underline;text-underline-offset:3px}
 .scard.hl{animation:pulse .6s ease 2}
 .tab{position:relative}
+#tabs{position:relative}
+#tabs .tpill{position:absolute;left:0;top:0;width:0;height:0;border-radius:999px;background:var(--ink);pointer-events:none;opacity:0;z-index:0;transition:transform .42s cubic-bezier(.3,1.25,.4,1),width .42s cubic-bezier(.3,1.25,.4,1),height .3s}
+#tabs .tab{z-index:1;transition:color .3s ease,filter .15s,transform .1s}
+#tabs.haspill .tab.on{background:transparent}
+@supports (overflow-x:clip){main{overflow-x:clip}}
+@media (prefers-reduced-motion:reduce){#tabs .tpill{transition:none}}
 .tdot{position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:#B04A62;box-shadow:0 0 0 2px #fff}
 .snew{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#B04A62;color:#fff;font:800 10.5px/1.5 var(--f-body);letter-spacing:.02em;vertical-align:1px}
 .cm li.cnew{background:#FDF1EC;border-radius:8px;margin:0 -6px;padding:4px 6px}
@@ -953,6 +959,7 @@ function renderNav(){
  $('ptitle').textContent=ui.cat==='all'?'전체 계획':lab(ui.cat);
  newsNotify();
  const on=$('tabs').querySelector('.on'); if(on&&on.scrollIntoView)try{on.scrollIntoView({block:'nearest',inline:'center'})}catch(e){}
+ placePill(false);
  $('stchips').innerHTML=ST.map(s=>`<button data-st="${s}" aria-pressed="${ui.st.has(s)}" class="pill sm ${ui.st.size&&!ui.st.has(s)?'opacity-40':''}" style="background:${STC[s]}">${s}</button>`).join('');
 }
 
@@ -1521,38 +1528,82 @@ function tabIdx(){return ui.page==='story'?CATS.length+1:(ui.cat==='all'?0:CATS.
 function pgAnim(from){
  const to=tabIdx(); if(from===to)return;
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- const dir=to>from?1:-1;
+ const dir=to>from?1:-1, sw=swipeDir; swipeDir=0;
  document.querySelectorAll('main > section').forEach((el,i)=>{
   if(!el.offsetParent&&getComputedStyle(el).display==='none')return;
-  el.classList.remove('pg-in'); el.style.setProperty('--pgx',(dir*22)+'px'); el.style.setProperty('--pgd',Math.min(i,3)*40+'ms');
+  el.classList.remove('pg-in'); el.style.setProperty('--pgx',(sw?Math.round(dir*Math.min(innerWidth*.55,320)):dir*22)+'px'); el.style.setProperty('--pgd',sw?'0ms':Math.min(i,3)*40+'ms');
   void el.offsetWidth; el.classList.add('pg-in');
   el.addEventListener('animationend',function f(ev){if(ev.target!==el)return;el.classList.remove('pg-in');el.removeEventListener('animationend',f)});
  });
 }
-/* 모바일: 화면을 좌우로 밀면 옆 탭으로 이동 */
+/* 탭 아래 검은 알약: 활성 탭으로 미끄러져 이동 */
+var tabPill=null,pillLast=null,swipeDir=0;
+function pillBox(b){return {x:b.offsetLeft,y:b.offsetTop,w:b.offsetWidth,h:b.offsetHeight}}
+function pillSet(r,anim){
+ const st=tabPill.style; st.transition=anim?'':'none';
+ st.transform=`translate3d(${r.x}px,${r.y}px,0)`; st.width=r.w+'px'; st.height=r.h+'px'; st.opacity='1'; pillLast=r;
+}
+function placePill(instant,from,to,p){
+ const ul=$('tabs'); if(!ul)return;
+ if(!tabPill){tabPill=document.createElement('li');tabPill.className='tpill';tabPill.setAttribute('aria-hidden','true')}
+ const fresh=tabPill.parentNode!==ul; if(fresh)ul.prepend(tabPill); ul.classList.add('haspill');
+ const a=from||ul.querySelector('.tab.on'); if(!a||!a.offsetWidth){tabPill.style.opacity='0';return}
+ let r=pillBox(a);
+ if(to&&p){const q=pillBox(to),k=Math.max(0,Math.min(1,p)); r={x:r.x+(q.x-r.x)*k,y:r.y+(q.y-r.y)*k,w:r.w+(q.w-r.w)*k,h:r.h}}
+ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(instant||reduce||!pillLast){pillSet(r,false);return}
+ if(fresh){pillSet(pillLast,false); void tabPill.offsetWidth}
+ pillSet(r,true);
+}
+addEventListener('resize',()=>placePill(true));
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>placePill(true));
+
+/* 모바일: 화면을 손가락으로 끌면 따라 움직이고, 충분히 밀면 옆 탭으로 넘어감 */
 (function(){
- let x0=null,y0=0,t0=0,ok=false;
+ let x0=null,y0=0,mode=0,dx=0,secs=[],tabs=[],cur=-1,nb=null,W=1,vx=0,lx=0,lt=0,anim=false;
  const SKIP='input,textarea,select,[contenteditable],nav,#tabs,.cs-list,.sgtrack,#mapcard,#omap,.scal,#cal-grid,.dlg,#lb,#lock,.no-swipe';
- function busy(){return document.body.classList.contains('lk')||(typeof mfull!=='undefined'&&mfull)||['edit','alloc','backup','verse','bgdlg','lb','sdlg'].some(i=>{const d=$(i);return d&&!d.classList.contains('hidden')})}
+ function busy(){return anim||document.body.classList.contains('lk')||(typeof mfull!=='undefined'&&mfull)||['edit','alloc','backup','verse','bgdlg','lb','sdlg'].some(i=>{const d=$(i);return d&&!d.classList.contains('hidden')})}
  function hScroll(el){for(;el&&el!==document.body;el=el.parentElement){const o=getComputedStyle(el).overflowX;if((o==='auto'||o==='scroll')&&el.scrollWidth>el.clientWidth+2)return true}return false}
+ function setX(x,ms){secs.forEach(el=>{el.style.transition=ms?`transform ${ms}ms cubic-bezier(.25,.8,.25,1),opacity ${ms}ms`:'none';el.style.transform=x?`translate3d(${x}px,0,0)`:'';el.style.opacity=x?String(1-Math.min(.45,Math.abs(x)/W*.6)):''})}
+ function clear(){secs.forEach(el=>{el.style.transition='';el.style.transform='';el.style.opacity='';el.style.willChange=''})}
  document.addEventListener('touchstart',e=>{
-  x0=null; if(e.touches.length!==1||busy())return;
+  x0=null;mode=0; if(e.touches.length!==1||busy())return;
   const t=e.touches[0], el=e.target;
   if(t.clientX<24||t.clientX>innerWidth-24)return;           // 화면 가장자리는 사파리 뒤로가기 제스처에 양보
   if(el.closest&&el.closest(SKIP))return;
   if(hScroll(el))return;
   const sel=getSelection&&getSelection(); if(sel&&!sel.isCollapsed)return;
-  x0=t.clientX;y0=t.clientY;t0=Date.now();ok=true;
+  x0=t.clientX;y0=t.clientY;lx=x0;lt=Date.now();vx=0;dx=0;
  },{passive:true});
- document.addEventListener('touchmove',e=>{if(x0!==null&&e.touches.length!==1)x0=null},{passive:true});
- document.addEventListener('touchcancel',()=>{x0=null},{passive:true});
- document.addEventListener('touchend',e=>{
-  if(x0===null||!ok)return; const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0,dt=Date.now()-t0; x0=null;
-  if(dt>800||Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.7||busy())return;
-  const tabs=[...$('tabs').querySelectorAll('button.tab')], i=tabs.findIndex(b=>b.classList.contains('on'));
-  const n=tabs[i+(dx<0?1:-1)]; if(i<0||!n)return;
-  n.click();
- },{passive:true});
+ document.addEventListener('touchmove',e=>{
+  if(x0===null)return;
+  if(e.touches.length!==1){if(mode===1)snap();x0=null;return}
+  const t=e.touches[0],ddx=t.clientX-x0,ddy=t.clientY-y0;
+  if(mode===0){
+   if(Math.abs(ddx)<7&&Math.abs(ddy)<7)return;
+   if(Math.abs(ddx)<=Math.abs(ddy)*1.15){x0=null;return}      // 세로 스크롤은 그대로
+   tabs=[...$('tabs').querySelectorAll('button.tab')]; cur=tabs.findIndex(b=>b.classList.contains('on')); if(cur<0){x0=null;return}
+   secs=[...document.querySelectorAll('main > section')].filter(el=>getComputedStyle(el).display!=='none');
+   secs.forEach(el=>{el.classList.remove('pg-in');el.style.willChange='transform'}); W=innerWidth||1; mode=1;
+  }
+  if(e.cancelable)e.preventDefault();
+  nb=tabs[cur+(ddx<0?1:-1)]||null;
+  dx=nb?ddx:ddx*.22;                                            // 양 끝 탭에서는 살짝만 끌림
+  setX(dx,0); placePill(true,tabs[cur],nb,Math.abs(ddx)/W);
+  const now=Date.now(); if(now>lt){vx=(t.clientX-lx)/(now-lt);lx=t.clientX;lt=now}
+ },{passive:false});
+ function snap(){anim=true;setX(0,260);placePill(false,tabs[cur]);setTimeout(()=>{clear();anim=false},270)}
+ function done(){
+  if(x0===null)return; x0=null; if(mode!==1)return; mode=0;
+  if(Date.now()-lt>90)vx=0;                                   // 멈췄다가 놓으면 튕긴 걸로 보지 않음
+  const go=nb&&(Math.abs(dx)>W*.35||(Math.abs(vx)>.45&&Math.abs(dx)>40&&Math.sign(vx)===Math.sign(dx)));
+  if(!go){snap();return}
+  anim=true; const d=dx<0?-1:1, ms=Math.max(120,Math.min(220,(W-Math.abs(dx))/Math.max(.8,Math.abs(vx)))|0);
+  setX(d*W,ms); placePill(false,nb);
+  setTimeout(()=>{clear();swipeDir=-d;nb.click();anim=false},ms);
+ }
+ document.addEventListener('touchend',done,{passive:true});
+ document.addEventListener('touchcancel',()=>{if(mode===1){mode=0;snap()}x0=null},{passive:true});
 })();
 function setPage(p){const from=tabIdx();ui.page=p;try{localStorage.setItem('to-in-one-page',p)}catch(e){}animList=true;render();window.scrollTo(0,0);pgAnim(from);window.dispatchEvent(new Event('scroll'))}
 function names(){const D=['태인','가현'], n=Array.isArray(S.names)?S.names:[]; return [0,1].map(i=>(n[i]||'').trim()||D[i])}
