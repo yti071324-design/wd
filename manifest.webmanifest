@@ -1,0 +1,16 @@
+{
+  "name": "TO IN ONE",
+  "short_name": "TO IN ONE",
+  "description": "우리 둘의 결혼·신혼집 계획과 일기장",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FBEEE8",
+  "theme_color": "#F9DCD3",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

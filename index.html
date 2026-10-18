@@ -14,6 +14,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2215%22 fill=%22%23F9DCD3%22/%3E%3Cpath d=%22M13.5 29.5 32 14l18.5 15.5V48a3.5 3.5 0 0 1-3.5 3.5H17a3.5 3.5 0 0 1-3.5-3.5z%22 fill=%22%23fff%22 stroke=%22%232B2522%22 stroke-width=%224.6%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M32 44.5s-8.2-4.7-9.7-9.4a5.1 5.1 0 0 1 9.7-3.2 5.1 5.1 0 0 1 9.7 3.2c-1.5 4.7-9.7 9.4-9.7 9.4z%22 fill=%22%23B04A62%22/%3E%3C/svg%3E">
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEAUlEQVR4nMSXe0xTVxzHv+e2vVVYqzMMXUdXEBwZK10WR5g6A9kWJ2aPbLjFxwb1FSQhZrhol0iyZJvZDEuWiUYlRDE+8NWIjz98/OMzgmJ8gO8SRSK+WspDRcD2eM5Bq5Qqt6XWT3Jzfud3fr/z+917z7n3d9Two8tx1kpBJgLUDIpkEKLGQKD0EQguAaSWgOyRk8xrnx8mPjvHmdguKpUxzdd4tVTKGjqTmCxuXwLd9ec+91DPRpZhLCIABRpVhEzTJJqPSFzhpd45kQrOYXdt9FJaIOROR90UllMFXgtkqkQpnYsQcTa74XK3IFR4bIk9j3iEwP5DRzDJOhtZubOEHBIsNum8UvuQCVqlPixrLCtfhzVb7L30M37MRoH1Z7ZrCRRD0cnWQC1Vat/R0YFFxf/hwLFq0R8ydKhoW1t6XkPmmHQsXjgfgwcNUjolJKWGd5wu5BTafMETRo6EfccucXGZw8dyflkobMOawEVHPaYVFKK+oUH0Pxk7FpvtlRjxtkFcXOY6DrfhttwnLAkcOFYF63wbmltbRT9nxkyUrl6LqOhonw2XuY6Pcbgt9+G+/fHSNbByfQVKN2wSskqlwuIlxfjqm2/xMnbv3IFFtgXweDyinzd9KvJ+mhJcAty5iC22vQcPi75er0fJilKMTkuDEmpOHMe8/Dy0tbWJ/pcZ4/HXgkJxE4oS4Pva9nexkOMTErCybA3ijEZ0ultxvtyO+7fuIsacjMTvJoDvJcf2fXDVXUa0YThScr6H9k09Gq83IH/OLFy7elXM82/Rb/hs3Jg+CQT81bY/eCBanU6Him3bRcup/rME7ks9E/KA95puw8ue1s2jJ326+0z36RIbjO+ahO+EzPFob29HC7sCETABr9crWi3bz0+Dsz8W3Jev9bK7ceh4H9/mC89WP/eVtewbx4LTJ3P6o/g7AIlAb3qnXzO9yYBgUJ4AI0m8835sJmchGIJKwPjFOIz6YdILx1NysxGXkY5gCLreS7FmQ9ZF49zqrT4dYdvLkj8d8VkZCJaQCs6k7Il468P3UVNcCnXUYIz+dTbeiBuBUAi54h2SZELm0t8hadQgUlBvMjwJcFRaGQMlYAKxw4aJ1uV0YvnS/zEQml09v+bhMTEBx1lFdLaKlTG9lm53dzcmz52HxqYmhAOjwQD7qhKo1X73S2m1RAk57e+g0Wiw6p8/kGZJZU4qhIqarY/0jyxirj7BeXwWm3TV137M6rwqvpkQUaiHUFWaJCem1rCzYBkiDDsILZNHfXBK7B9tlFzEil0nIgR74jc0elLEZZEAMSQ7tTJ9j4mVeNVQ7NKqdWYSa74nYvuPdznqcikoP56nhvl4XkdA2fHcUv788GMAAAD//7ssFUQAAAAGSURBVAMALYlw8e9bh/4AAAAASUVORK5CYII=">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -2236,7 +2237,7 @@ function lockErr(code){
  if(/TOO_MANY_ATTEMPTS/.test(code))return '여러 번 틀려서 잠시 막혔어요. 조금 뒤에 다시 해 주세요.';
  if(/USER_DISABLED/.test(code))return '이 계정은 사용이 중지됐어요.';
  if(/API_KEY|CONFIGURATION|OPERATION_NOT_ALLOWED/.test(code))return '잠금 설정에 문제가 있어요. (Firebase 로그인 설정 확인)';
- return '인터넷 연결을 확인하고 다시 시도해 주세요.';
+ return navigator.onLine===false?'오프라인이에요. 처음 열 때는 인터넷 연결이 필요해요.':'인터넷 연결을 확인하고 다시 시도해 주세요.';
 }
 async function authSignIn(pw){
  const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+encodeURIComponent(LOCK.apiKey),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:LOCK.email,password:pw,returnSecureToken:true})});
@@ -2280,7 +2281,8 @@ function merge(a,b){
  return {total:w.total,wdate:w.wdate||'',cat:w.cat,mu:w.mu||0,verse:vw.verse,vu:vw.vu||0,bg:gw.bg,bgu:gw.bgu||0,gk:kw.gk||'',gku:kw.gku||0,names:nw.names||null,nmu:nw.nmu||0,ann:aw.ann||null,anu:aw.anu||0,del,todos:(()=>{const m=new Map();[...b.todos,...a.todos].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))})(),plans:[...map.values()].filter(p=>!(del[p.id]>(p.u||0))),diary:ml(a.diary,b.diary,del),cmts:ml(a.cmts,b.cmts,del),wish:ml(a.wish,b.wish,del)};
 }
 function setSync(st){
- const t={off:'이 기기에만 저장돼요.',ok:'● 실시간 공유 중',busy:'동기화 중…',err:'연결이 불안정해요. 이 기기에는 저장돼 있어요.'}[st];
+ if(st==='err'&&navigator.onLine===false)st='offline';
+ const t={off:'이 기기에만 저장돼요.',ok:'● 실시간 공유 중',busy:'동기화 중…',err:'연결이 불안정해요. 이 기기에는 저장돼 있어요.',offline:'오프라인이에요. 이 기기에 저장해 두었다가 연결되면 올려요.'}[st];
  $('sync-txt').textContent=t; const c=$('c-state'); if(c)c.textContent=t;
 }
 const anyOpen=()=>['edit','alloc','backup','verse','bgdlg','lb','sdlg'].some(id=>!$(id).classList.contains('hidden'));
@@ -2354,6 +2356,9 @@ function cloudInit(){
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()});
  addEventListener('focus',poll);
 }
+addEventListener('online',()=>{if(cloud&&cloudStarted)syncNow()});
+addEventListener('offline',()=>{if(cloud)setSync('err')});
+if('serviceWorker' in navigator&&(location.protocol==='https:'||/^(localhost|127\.0\.0\.1)$/.test(location.hostname))){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
 function startCloud(){if(cloudStarted){if(cloud)syncNow()} else cloudInit()}
 if(authOn()&&!authRt)lockShow(); else cloudInit();
 addEventListener('resize',()=>{fitTotal();fitCells()});
