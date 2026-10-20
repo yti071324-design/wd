@@ -29,3 +29,22 @@
 
 규칙을 바꾼 뒤에도 앱은 그대로 동기화돼야 한다 (화면 위 동기화 표시가 정상).
 동기화 오류가 나면 앱에 로그인한 계정의 이메일이 `index.html`의 `LOCK.email`과 같은지 확인.
+
+## 웹 API 키 (GitHub "Secret scanning" 경고)
+
+`index.html`의 `LOCK.apiKey`(AIza…)는 Firebase **웹 API 키**다. 브라우저에서 로그인하려면 반드시 페이지에 들어 있어야 해서
+숨길 수 없고, 숨길 필요도 없다 (비밀번호가 아니라 "이 앱은 어느 Firebase 프로젝트 것"이라는 이름표).
+데이터는 위 규칙 + 비밀번호 로그인이 지킨다. 키를 바꿔도(재발급) 새 키 역시 공개되므로 의미가 없다.
+
+대신 이 키를 **다른 용도로 못 쓰게 제한**한다. 같은 프로젝트에 지도 같은 유료 API가 켜져 있으면
+제한 없는 키로 남이 그 API를 써서 요금이 나올 수 있기 때문.
+
+1. [Google Cloud 콘솔 → 사용자 인증 정보](https://console.cloud.google.com/apis/credentials?project=to-in-one-82b37)
+2. 끝이 `…GbGbm9c`인 키(이름: Browser key (auto created by Firebase)) 클릭
+3. **애플리케이션 제한사항** → 웹사이트 → `https://yti071324-design.github.io/*` 추가
+4. **API 제한사항** → 키 제한 → `Identity Toolkit API`, `Token Service API` 두 개만 선택 → 저장
+5. 몇 분 뒤 앱에서 "이 기기 잠그기" → 비밀번호로 다시 들어가지는지 확인
+6. GitHub 경고는 **Close as → Won't fix** (메모: Firebase 웹 키, 공개용·사이트/API 제한 적용)
+
+앱이 쓰는 구글 주소: `identitytoolkit.googleapis.com`(로그인), `securetoken.googleapis.com`(로그인 유지).
+데이터베이스(`firebaseio.com`)는 API 키가 아니라 로그인 토큰으로 접근한다.
