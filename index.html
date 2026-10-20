@@ -2564,6 +2564,8 @@ let cloud=null, lastTs=0, syncT=null, syncing=false, again=false;
 const loadCloud=()=>{try{return JSON.parse(localStorage.getItem(CKEY)||'null')}catch(e){return null}};
 const saveCloud=()=>{try{cloud?localStorage.setItem(CKEY,JSON.stringify(cloud)):localStorage.removeItem(CKEY)}catch(e){}};
 const cleanDb=u=>String(u||'').trim().replace(/\.json.*$/,'').replace(/\/+$/,'');
+/* 보안: Firebase 데이터베이스 주소와 방 이름 형식만 허용 (공유 링크로 엉뚱한 서버에 로그인 출입증이 새지 않게) */
+const dbOk=u=>/^https:\/\/[a-z0-9-]+(\.[a-z0-9-]+)*\.(firebaseio\.com|firebasedatabase\.app)$/i.test(u||''), roomOk=r=>/^[A-Za-z0-9_-]{6,64}$/.test(r||'');
 const rid=()=>{const a=new Uint8Array(9);crypto.getRandomValues(a);return [...a].map(b=>(b%36).toString(36)).join('')};
 /* ===== 비밀번호 잠금: Firebase 이메일·비밀번호 로그인(REST). 토큰이 있어야 데이터베이스를 읽고 쓸 수 있게 규칙으로 막는다 ===== */
 var LOCK={apiKey:'AIzaSyAZBwAVRsT6f8F5cwIqzCOe9pH1GbGbm9c',email:'us@to-in-one.app'};
@@ -2613,7 +2615,7 @@ $('lk-form').addEventListener('submit',async e=>{
  finally{btn.disabled=false; btn.textContent='열기'}
 });
 $('lk-now').onclick=()=>{if(!confirm('이 기기를 잠글까요? 다시 열 때 비밀번호가 필요해요.'))return; authClear(); closeAll(); lockShow('잠갔어요.')};
-const curl=(p='',q='')=>{const a=[]; if(q)a.push(q); if(authOn()&&authIdt)a.push('auth='+encodeURIComponent(authIdt)); return `${cloud.db}/rooms/${cloud.room}${p}.json`+(a.length?'?'+a.join('&'):'')};
+const curl=(p='',q='')=>{const a=[]; if(q)a.push(q); if(authOn()&&authIdt&&dbOk(cloud.db))a.push('auth='+encodeURIComponent(authIdt)); return `${cloud.db}/rooms/${cloud.room}${p}.json`+(a.length?'?'+a.join('&'):'')};
 const normS=d=>{d=d||{};migCat(d);d.plans=Array.isArray(d.plans)?d.plans:Object.values(d.plans||{});d.cat=d.cat||{};d.del=d.del||{};d.mu=d.mu||0;d.vu=d.vu||0;d.bgu=d.bgu||0;d.gku=d.gku||0;d.gk=d.gk||'';d.nmu=d.nmu||0;d.anu=d.anu||0;d.diary=(Array.isArray(d.diary)?d.diary:Object.values(d.diary||{})).filter(Boolean);d.cmts=(Array.isArray(d.cmts)?d.cmts:Object.values(d.cmts||{})).filter(Boolean);d.todos=(Array.isArray(d.todos)?d.todos:Object.values(d.todos||{})).filter(Boolean);d.wish=(Array.isArray(d.wish)?d.wish:Object.values(d.wish||{})).filter(Boolean);return d};
 const canon=v=>{if(Array.isArray(v))return v.map(canon);if(v&&typeof v==='object'){const o={};Object.keys(v).sort().forEach(k=>{const c=canon(v[k]);if(!(c&&typeof c==='object'&&!Object.keys(c).length))o[k]=c});return o}return v};
 const cstr=d=>{const x=JSON.parse(JSON.stringify(normS(JSON.parse(JSON.stringify(d||{})))));x.plans.sort((a,b)=>a.id<b.id?-1:1);x.todos.sort((a,b)=>a.id<b.id?-1:1);['diary','cmts','wish'].forEach(k=>x[k].sort((a,b)=>a.id<b.id?-1:1));return JSON.stringify(canon(x))};
@@ -2688,7 +2690,7 @@ function renderCloudUI(){
 }
 $('c-connect').onclick=()=>{
  const db=cleanDb($('c-db').value);
- if(!/^https:\/\/[^\s/]+\.(firebaseio\.com|firebasedatabase\.app)$/.test(db)){toast('Firebase Realtime Database 주소를 확인해 주세요.');return}
+ if(!dbOk(db)){toast('Firebase Realtime Database 주소를 확인해 주세요.');return}
  connect(db,rid(),false).then(()=>toast('공유 링크를 만들었어요.'));
 };
 $('c-copy').onclick=async()=>{const t=$('c-link');t.select();try{await navigator.clipboard.writeText(t.value);toast('링크를 복사했어요.')}catch(e){document.execCommand('copy');toast('선택된 링크를 복사해 주세요.')}};
@@ -2697,7 +2699,12 @@ function cloudInit(){
  if(cloudStarted)return; cloudStarted=true;
  cloud=loadCloud(); imgRemote=null;
  const h=new URLSearchParams(location.hash.replace(/^#/,'')), r=h.get('r'), d=h.get('d');
- if(r&&d&&(!cloud||cloud.room!==r||cloud.db!==cleanDb(d)))connect(d,r,true);
+ if(r||d){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+ const dd=cleanDb(d);
+ if(r&&d&&(!dbOk(dd)||!roomOk(r))){setTimeout(()=>toast('공유 링크 주소가 올바르지 않아 연결하지 않았어요.'),1500); if(cloud)syncNow(); else setSync('off')}
+ else if(r&&d&&(!cloud||cloud.room!==r||cloud.db!==dd)){
+  if(cloud&&!confirm('공유 링크의 다른 공간으로 연결할까요?\n이 기기의 내용은 그 공간의 내용으로 바뀌어요.'))syncNow(); else connect(dd,r,true);
+ }
  else if(cloud)syncNow(); else setSync('off');
  setInterval(poll,8000);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()});
