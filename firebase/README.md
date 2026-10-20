@@ -7,7 +7,7 @@
 `database.rules.json`은 다음만 허용한다.
 
 - `rooms/` 아래만 읽고 쓸 수 있다 (앱이 쓰는 곳은 `rooms/<방>/data`, `updatedAt`, `imgs`, `imgsOrphan` 뿐).
-- 그것도 `us@to-in-one.app` 계정으로 로그인한 경우에만. `auth != null`만 쓰지 않는 이유:
+- 그것도 `toinone4321@gmail.com` 계정으로 로그인한 경우에만. `auth != null`만 쓰지 않는 이유:
   Firebase는 기본으로 아무나 웹 API 키로 새 계정을 만들 수 있어서, 로그인만 확인하면 남이 만든 계정도 통과한다.
 
 ## 적용하기
@@ -48,3 +48,10 @@
 
 앱이 쓰는 구글 주소: `identitytoolkit.googleapis.com`(로그인), `securetoken.googleapis.com`(로그인 유지).
 데이터베이스(`firebaseio.com`)는 API 키가 아니라 로그인 토큰으로 접근한다.
+
+## 로그인 계정 이메일
+
+예전 로그인 이메일 `us@to-in-one.app`은 아무도 등록하지 않은 도메인이라, 누가 그 도메인을 사서 비밀번호 재설정 메일을 받으면
+계정을 가져갈 수 있었다. 그래서 두 사람이 관리하는 Gmail(`toinone4321@gmail.com`, 2단계 인증 필수)로 옮겼다.
+앱의 `LOCK.email`, 이 규칙 파일, Firebase 콘솔 규칙의 이메일이 모두 같아야 한다.
+이 Gmail 계정이 곧 앱의 열쇠다 (재설정 메일이 여기로 온다).

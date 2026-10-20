@@ -4,8 +4,8 @@
     ".write": false,
     "rooms": {
       "$room": {
-        ".read": "auth != null && auth.token.email == 'us@to-in-one.app'",
-        ".write": "auth != null && auth.token.email == 'us@to-in-one.app'"
+        ".read": "auth != null && auth.token.email == 'toinone4321@gmail.com'",
+        ".write": "auth != null && auth.token.email == 'toinone4321@gmail.com'"
       }
     }
   }
