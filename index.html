@@ -400,6 +400,46 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 .pg-in{animation:pgin .38s cubic-bezier(.2,.8,.2,1) var(--pgd,0ms) both}
 @media (prefers-reduced-motion:reduce){.pg-in{animation:none}}
 </style>
+
+<style id="cmp-css">
+/* 업체 비교 */
+:root{--good:#2f7a55;--sub:#6B625C}
+.cmp-sub{font-size:13px;font-weight:600;color:var(--sub)}
+.cmp-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line)}
+.cmp-row:first-child{border-top:0}
+.cmp-row .nm{flex:0 0 40%;min-width:0;font-weight:700;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmp-bar{flex:1;min-width:0}.cmp-bar i{display:block;height:8px;border-radius:99px;background:var(--c1)}
+.cmp-row .pr{flex:none;font-family:var(--f-num);font-weight:800;font-size:15px;letter-spacing:-.03em}
+.cmp-acts{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.fav{color:var(--good)}
+#cmpv{position:fixed;inset:0;z-index:50;background:var(--pink);overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom,0px)}
+#cmpv.flex{display:block}
+.cv-h{position:sticky;top:0;left:0;z-index:4;background:var(--pink);padding:calc(14px + env(safe-area-inset-top,0px)) 16px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
+.cv-sum{padding:12px 16px 10px;font-size:13px;font-weight:600;color:var(--sub);word-break:keep-all}
+.cv-scroll{overflow-x:auto;padding:0 16px 6px}
+@media (min-width:640px){.cv-swipe{display:none}}
+.ctab{border-collapse:separate;border-spacing:0;font-size:13px;border-radius:20px;overflow:hidden;box-shadow:var(--shadow);background:#fff}
+.ctab th,.ctab td{padding:12px 10px;vertical-align:top;border-bottom:1px solid var(--line);background:#fff;width:140px;min-width:140px;max-width:220px;text-align:left;font-weight:500;word-break:keep-all;overflow-wrap:anywhere}
+.ctab .k{position:sticky;left:0;z-index:2;width:74px;min-width:74px;background:color-mix(in srgb,var(--pink) 45%,#fff);font-weight:800;font-size:12px;color:var(--sub);box-shadow:1px 0 0 var(--line)}
+.ctab tr:last-child>*{border-bottom:0}
+.ctab .fv{background:var(--bud)}
+.cv-img{display:block;width:100%;height:72px;object-fit:cover;border-radius:12px;margin-bottom:8px;background:var(--pink)}
+.cv-nm{font-weight:800;font-size:15px;line-height:1.25}
+.cv-fav{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:12px;font-weight:800;color:var(--sub)}
+.cv-fav[aria-pressed=true]{color:var(--good)}
+.cv-pr{font-family:var(--f-num);font-weight:800;font-size:17px;letter-spacing:-.03em}
+.cv-note{font-size:11px;font-weight:700;margin-top:4px;color:var(--sub)}
+.cv-good{color:var(--good)}.cv-bad{color:var(--rust)}
+.cv-li{display:block;font-weight:600;line-height:1.45;margin-bottom:3px}
+.cv-btns{display:flex;flex-direction:column;gap:8px;align-items:stretch}
+.cv-btns .pill{justify-content:center}
+.cv-tip{padding:14px 16px 28px;font-size:12px;font-weight:600;color:var(--sub)}
+.cv-empty{margin:24px 16px;padding:24px;text-align:center;font-weight:700;border:2px dashed rgba(43,37,34,.3);border-radius:20px}
+.gpick{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:1.5px solid rgba(43,37,34,.18);border-radius:14px;font-weight:700;font-size:15px;text-align:left;background:#fff}
+.gpick input{width:18px;height:18px;accent-color:var(--ink);flex:none}
+.archbox:not(:empty){margin-top:28px}
+.arch-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,.75);border-radius:16px;margin-top:8px}
+</style>
 </head>
 <body class="antialiased">
 <div id="bgfix" aria-hidden="true"></div><div id="bgveil" aria-hidden="true"></div>
@@ -572,6 +612,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
   </div>
 
   <div id="list" class="plist"></div>
+  <div id="archbox" class="archbox"></div>
 </section>
 
 <div id="edit" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
@@ -607,6 +648,10 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
           <button id="f-imgdel" type="button" class="absolute top-2 right-2 btn c-white px-2 py-1 text-[12px]">삭제</button>
         </div>
         <label class="btn c-white inline-block px-4 py-2 mt-3 cursor-pointer text-[13px]">또는 사진 직접 선택<input id="f-file" type="file" accept="image/*" class="hidden"></label>
+      </div>
+      <div id="f-pc" class="hidden flex flex-col gap-4">
+        <label>좋은 점<textarea id="f-pros" rows="2" placeholder="한 줄에 하나씩 (예: 드레스 수가 많음)"></textarea></label>
+        <label>아쉬운 점<textarea id="f-cons" rows="2" placeholder="한 줄에 하나씩 (예: 원본 추가금 있음)"></textarea></label>
       </div>
       <label>우리의 메모<textarea id="f-memo" rows="3" placeholder="견적, 일정, 기억할 내용"></textarea></label>
       <label>마감일 (선택)<input id="f-due" type="date"></label>
@@ -737,6 +782,31 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
     <div class="dlg-f"><button id="bg-reset" class="btn c-cream px-4 h-11 text-[15px] mr-auto">기본 사진</button><button data-close class="btn c-cream px-5 h-11 text-[15px]">취소</button><button id="bg-save" class="btn px-5 h-11 text-[15px]" style="background:var(--ink);color:#fff">저장</button></div>
   </div>
 </div>
+
+<div id="gdlg" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
+  <div class="dlg">
+    <div class="dlg-h"><h3 id="g-title" class="disp text-[22px] leading-none">COMPARE</h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div id="g-body" class="dlg-b"></div>
+    <div class="dlg-f">
+      <button id="g-undo" class="btn c-cream px-4 h-11 text-[15px] mr-auto hidden" style="color:#b91c1c">비교 풀기</button>
+      <button data-close class="btn c-cream px-5 h-11 text-[15px]">취소</button>
+      <button id="g-save" class="btn px-5 h-11 text-[15px]" style="background:var(--ink);color:#fff">묶기</button>
+    </div>
+  </div>
+</div>
+
+<div id="pickdlg" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
+  <div class="dlg">
+    <div class="dlg-h"><h3 class="disp text-[22px] leading-none">PICK ONE</h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div id="pick-body" class="dlg-b" style="font-weight:600;font-size:15px;line-height:1.55"></div>
+    <div class="dlg-f">
+      <button data-close class="btn c-cream px-5 h-11 text-[15px]">취소</button>
+      <button id="pick-ok" class="btn px-5 h-11 text-[15px]" style="background:var(--ink);color:#fff">정하기</button>
+    </div>
+  </div>
+</div>
+
+<div id="cmpv" class="hidden" role="dialog" aria-modal="true" aria-label="업체 비교표"></div>
 
 <div id="lb" class="hidden fixed inset-0 z-[60] bg-black/90 items-center justify-center p-4">
   <img id="lb-img" alt="" class="max-w-full max-h-full border-[3px] border-white object-contain">
@@ -882,8 +952,19 @@ let tt;function toast(m,label,fn){
  t.classList.remove('hidden');clearTimeout(tt);tt=setTimeout(()=>t.classList.add('hidden'),label?6000:2400);
 }
 
-const spent=c=>S.plans.filter(p=>!c||p.cat===c).reduce((a,p)=>a+(+p.fix||0),0);
-const planned=c=>S.plans.filter(p=>!c||p.cat===c).reduce((a,p)=>a+(+p.fix||+p.est||0),0);
+/* 업체 비교: 같은 카테고리 계획을 묶어 비교한다. 묶인 후보는 예산에 한 곳만 넣는다 (♥ 표시한 곳, 없으면 가장 비싼 곳). 고르지 않은 곳은 보관함(arch)으로.
+   비교 정보(grp 아이디·gname 이름·gbud 예산·gt 만든 시각)는 묶인 계획마다 함께 적어 둔다. 계획 단위로 동기화되니 예전 버전 앱이 섞여도 비교가 사라지지 않는다 */
+const cost=p=>+p.fix||+p.est||0;
+const GF=['grp','gname','gbud','gt'];
+const ungroup=p=>{GF.forEach(k=>delete p[k]);delete p.fav};
+const cmps=()=>{const m=new Map();S.plans.forEach(p=>{if(!p.grp||p.arch)return;const q=m.get(p.grp);if(!q||(p.u||0)>(q.u||0))m.set(p.grp,p)});return [...m.values()].map(p=>({id:p.grp,name:p.gname||'비교',bud:+p.gbud||0,cat:p.cat,t:p.gt||0}))};
+const grpOf=id=>cmps().find(g=>g.id===id);
+const inGrp=p=>p.grp&&!p.arch?grpOf(p.grp):null;
+const members=g=>S.plans.filter(p=>p.grp===g.id&&!p.arch);
+const counted=()=>{const out=[],best={};S.plans.forEach(p=>{if(p.arch)return;const g=inGrp(p);if(!g){out.push(p);return}const b=best[g.id];if(!b||(!!p.fav&&!b.fav)||(!!p.fav===!!b.fav&&cost(p)>cost(b)))best[g.id]=p});return out.concat(Object.values(best))};
+const pickOf=g=>counted().find(p=>p.grp===g.id);
+const spent=c=>counted().filter(p=>!c||p.cat===c).reduce((a,p)=>a+(+p.fix||0),0);
+const planned=c=>counted().filter(p=>!c||p.cat===c).reduce((a,p)=>a+cost(p),0);
 
 function dday(){
   const d=S.wdate;if(!d)return'날짜 선택';
@@ -917,7 +998,7 @@ function fitCells(){
 }
 function renderTop(){
  const total=num($('total').value)||S.total, used=spent(), pl=planned();
- const paid=S.plans.reduce((a,p)=>a+(p.dep||0),0), pct=total?used/total*100:0, ppct=total?pl/total*100:0;
+ const paid=counted().reduce((a,p)=>a+(p.dep||0),0), pct=total?used/total*100:0, ppct=total?pl/total*100:0;
  $('usage-desc').textContent=`실제 확정 비용 ${won(used)} · 납부 완료 ${won(paid)}`;
  $('pct').textContent=pl>used&&total?`확정 ${+pct.toFixed(1)}% · 예상 ${+ppct.toFixed(1)}%`:(+pct.toFixed(1))+'%';
  $('pct').classList.toggle('over',!!total&&pl>total);
@@ -937,7 +1018,7 @@ function renderTop(){
  $('wdate-txt').style.display=S.wdate?'':'none';
  fitTotal();
  $('grid').innerHTML=CATS.map((c,i)=>{
-  const f=spent(c), t=planned(c), e=Math.max(0,t-f), b=S.cat[c]||0, over=b>0&&t>b, n=S.plans.filter(p=>p.cat===c).length, al=won(t).length;
+  const f=spent(c), t=planned(c), e=Math.max(0,t-f), b=S.cat[c]||0, over=b>0&&t>b, n=counted().filter(p=>p.cat===c).length, al=won(t).length;
   const sub=e>0&&f>0?`확정 ${won(f)} · 예상 ${won(e)}`:e>0?'모두 예상 금액':n?'모두 확정 금액':'';
   const meta=!b?'예산 미설정':over?`예산 초과 ${won(t-b)}`:`예산 ${won(b)} 중 ${Math.round(t/b*100)}%`;
   const sc=b?Math.max(b,t):1;
@@ -979,20 +1060,24 @@ function masLayout(){
 addEventListener('resize',()=>{clearTimeout(masT);masT=setTimeout(masLayout,120)});
 function renderList(){
  const q=ui.q.trim().toLowerCase();
- let a=S.plans.filter(p=>(ui.cat==='all'||p.cat===ui.cat)&&(!ui.st.size||ui.st.has(p.status))&&(!q||(p.name+p.memo+p.link).toLowerCase().includes(q)));
+ const catOk=c=>ui.cat==='all'||c===ui.cat, stOk=p=>!ui.st.size||ui.st.has(p.status), qOk=p=>!q||(p.name+p.memo+p.link).toLowerCase().includes(q);
+ let a=S.plans.filter(p=>!p.arch&&!inGrp(p)&&catOk(p.cat)&&stOk(p)&&qOk(p));
+ const gs=cmps().filter(g=>catOk(g.cat)&&members(g).some(p=>stOk(p)&&(qOk(p)||g.name.toLowerCase().includes(q)))).sort((x,y)=>(y.t||0)-(x.t||0));
+ renderArch(catOk);
  if(ui.sort==='cost') a.sort((x,y)=>(y.fix||y.est)-(x.fix||x.est));
  else if(ui.sort==='due') a.sort((x,y)=>(x.due||'9').localeCompare(y.due||'9'));
  else if(ui.sort==='pri') a.sort((x,y)=>PRI.indexOf(y.pri||'보통')-PRI.indexOf(x.pri||'보통'));
  else a.sort((x,y)=>y.t-x.t);
- $('count').textContent=`(${a.length})`;
- $('sumline').textContent=a.length?`표시 중인 계획 합계 ${won(a.reduce((t,p)=>t+(p.fix||p.est||0),0))}`:'';
- if(!a.length){
+ $('count').textContent=`(${a.length+gs.length})`;
+ const sum=a.reduce((t,p)=>t+cost(p),0)+gs.reduce((t,g)=>t+cost(pickOf(g)||{}),0);
+ $('sumline').textContent=a.length||gs.length?`표시 중인 계획 합계 ${won(sum)}`:'';
+ if(!a.length&&!gs.length){
   $('list').innerHTML=`<div class="p-6 text-center text-sm font-bold break-keep" style="border:2px dashed rgba(43,37,34,.3);border-radius:20px">조건에 맞는 계획이 없어요.<br>+ 새 계획으로 추가해 보세요.</div>`;
   masLayout();
   return;
  }
  const doAnim=animList; animList=false;
- $('list').innerHTML=a.map((p,idx)=>{
+ $('list').innerHTML=gs.map((g,idx)=>cmpCard(g,idx,doAnim)).join('')+a.map((p,idx)=>{idx+=gs.length;
   const fixed=p.fix>0, cost=fixed?p.fix:p.est, dep=p.dep||0;
   let host=''; try{host=new URL(p.link).hostname.replace('www.','')}catch(e){}
   const tags=[(p.pri&&p.pri!=='보통')?`<span class="ptag">${p.pri==='긴급'?'!':'★'} ${p.pri}</span>`:'', dueTag(p)].filter(Boolean).join('');
@@ -1019,6 +1104,7 @@ function renderList(){
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
       <a href="${esc(p.link)}" target="_blank" rel="noopener noreferrer" class="min-w-0 truncate">${esc(host||p.link)}</a><span aria-hidden="true">↗</span></div>`:''}
     <div class="flex justify-end items-center gap-5 mt-auto pt-4">
+     <button data-act="cmp" class="und text-[15px]">비교</button>
      <button data-act="dup" class="und text-[15px]">복제</button>
      <button data-act="edit" class="und text-[15px]">수정</button>
      <button data-act="del" aria-label="삭제" class="grid place-items-center w-8 h-8">
@@ -1030,6 +1116,28 @@ function renderList(){
  }).join('');
  masLayout();
 }
+function cmpCard(g,idx,anim){
+ const ms=members(g), pk=pickOf(g), mx=Math.max(1,...ms.map(cost)), inB=ms.filter(p=>cost(p)&&cost(p)<=g.bud).length;
+ return `<article class="plan card cmpc ${anim?'rise':''}" style="--i:${Math.min(idx,8)}" data-grp="${g.id}">
+  <div class="chead"><span class="cpill ${CHD[g.cat]||'c-white'}">${GL[g.cat]||''} ${lab(g.cat)}</span><span class="pill sm" style="background:${STC['비교 중']}">비교 중 ${ms.length}곳</span></div>
+  <div class="cbody">
+   <div class="lbl mb-2" style="color:var(--sub)">COMPARE</div>
+   <h3 class="ttl mb-1">${esc(g.name)}</h3>
+   <p class="cmp-sub mb-3">${g.bud?`예산 ${won(g.bud)} · ${ms.length}곳 중 ${inB}곳이 예산 안`:`${ms.length}곳을 비교하고 있어요`}</p>
+   <div>${ms.map(p=>`<div class="cmp-row"><span class="nm">${esc(p.name)}${p.fav?' <span class="fav" aria-label="마음에 들어요">♥</span>':''}</span><span class="cmp-bar" aria-hidden="true"><i style="width:${(cost(p)/mx*100).toFixed(1)}%"></i></span><span class="pr">${won(cost(p))}</span></div>`).join('')}</div>
+   ${pk?`<p class="cmp-sub" style="margin-top:10px">예산 계산에는 ${esc(pk.name)} 금액만 들어가요.</p>`:''}
+   <div class="cmp-acts"><button type="button" class="pill sm on" data-gact="open">비교표 보기</button><button type="button" class="pill sm" data-gact="add">+ 업체 추가</button></div>
+  </div>
+ </article>`;
+}
+function renderArch(catOk){
+ const ar=S.plans.filter(p=>p.arch&&catOk(p.cat));
+ $('archbox').innerHTML=!ar.length?'':`<button type="button" class="und text-[14px]" data-arch="toggle" aria-expanded="${!!ui.arch}">보관함 ${ar.length} ${ui.arch?'접기':'보기'}</button>`+(!ui.arch?'':ar.map(p=>`<div class="arch-row">
+  <div class="min-w-0 flex-1"><div class="font-bold text-[15px] truncate">${esc(p.name)}</div><div class="cmp-sub">${typeof p.arch==='string'?`'${esc(p.arch)}'에서 고르지 않은 곳 · `:''}${won(cost(p))}</div></div>
+  <button type="button" class="pill sm" data-arch="back" data-id="${p.id}">꺼내기</button>
+  <button type="button" class="und text-[14px]" data-arch="del" data-id="${p.id}">삭제</button></div>`).join(''));
+}
+
 function renderVerse(){
  const v=(S.verse&&S.verse.text)?S.verse:DEFAULT_VERSE, el=$('verse-text');
  el.textContent='“'+v.text+'”';
@@ -1073,7 +1181,7 @@ function scrollToPlans() {
     });
 }
 
-let scrollYPos = 0, pendingRender = false;
+let scrollYPos = 0, pendingRender = false, cmpBack = null;
 const open_ = id => {
     const m = $(id);
     m.classList.remove('hidden');
@@ -1090,7 +1198,8 @@ const open_ = id => {
 };
 
 function closeAll() {
-    ['edit','alloc','backup','verse','bgdlg','lb','sdlg'].forEach(id => {
+    const back = cmpBack; cmpBack = null;   // 비교표에서 연 창을 닫으면 비교표로 돌아간다
+    ['edit','alloc','backup','verse','bgdlg','lb','sdlg','gdlg','pickdlg','cmpv'].forEach(id => {
         $(id).classList.add('hidden');
         $(id).classList.remove('flex');
     });
@@ -1103,8 +1212,9 @@ function closeAll() {
         document.body.classList.remove('locked');
         window.scrollTo(0, scrollYPos);
     }
-    editing = null;
+    editing = null; ePre = null;
     if (pendingRender) { pendingRender = false; render(); }
+    if (back && grpOf(back)) openCmp(back);
 }
 
 document.addEventListener('click', e => {
@@ -1132,13 +1242,27 @@ document.addEventListener('click', e => {
      return;
  }
  
+ const cv = e.target.closest('[data-cv]');
+ if (cv) { cmpAct(cv); return; }
+ const gj = e.target.closest('[data-gjoin]');
+ if (gj) { joinGroup(gj.dataset.gjoin); return; }
+ const ab = e.target.closest('[data-arch]');
+ if (ab) { archAct(ab); return; }
+ const gc = e.target.closest('.cmpc');
+ if (gc) {
+     const g = grpOf(gc.dataset.grp), b = e.target.closest('[data-gact]');
+     if (g) { if (b && b.dataset.gact === 'add') openEdit(null, { cat: g.cat, grp: g.id }); else openCmp(g.id); }
+     return;
+ }
+
  const card = e.target.closest('.plan');
  const act = e.target.closest('[data-act]');
  if (card && act) {
      const p = S.plans.find(x => x.id === card.dataset.id);
      if (act.dataset.act === 'cycle') { p.status = ST[(ST.indexOf(p.status)+1)%ST.length]; p.u = Date.now(); save(); render(); }
      if (act.dataset.act === 'edit') openEdit(p);
-     if (act.dataset.act === 'dup') { const c = JSON.parse(JSON.stringify(p)); c.id = uid(); c.t = Date.now(); c.u = Date.now(); c.name = p.name + ' (복사)'; c.status = ST[0]; S.plans.push(c); save(); render(); toast('복제했어요.'); }
+     if (act.dataset.act === 'cmp') openGroup(p);
+     if (act.dataset.act === 'dup') { const c = JSON.parse(JSON.stringify(p)); c.id = uid(); c.t = Date.now(); c.u = Date.now(); c.name = p.name + ' (복사)'; c.status = ST[0]; ungroup(c); delete c.arch; S.plans.push(c); save(); render(); toast('복제했어요.'); }
      if (act.dataset.act === 'del') { const snap = JSON.parse(JSON.stringify(p)); S.del[p.id] = Date.now(); S.plans = S.plans.filter(x => x !== p); save(); render(); toast('계획을 삭제했어요.', '되돌리기', () => { snap.u = Date.now(); delete S.del[snap.id]; S.plans.push(snap); save(); render(); }); }
      if (act.dataset.act === 'zoom') { lbOpen([p.img], 0); }
  }
@@ -1158,7 +1282,7 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => {
  if (e.key !== 'Escape') return;
  if (document.querySelector('.cs-list:not([hidden])')) return;
- const id = ['edit','alloc','backup','verse','bgdlg','lb','sdlg'].find(i => !$(i).classList.contains('hidden')); if (!id) { if (mfull) setFull(false); return; }
+ const id = ['edit','alloc','backup','verse','bgdlg','lb','sdlg','gdlg','pickdlg','cmpv'].find(i => !$(i).classList.contains('hidden')); if (!id) { if (mfull) setFull(false); return; }
  if (id === 'edit' && editSnap() !== editSnap0 && !confirm('저장하지 않은 변경 사항이 있어요. 닫을까요?')) return;
  closeAll();
 });
@@ -1260,15 +1384,16 @@ function enhanceSelect(sel, small) {
 }
 const csRefresh = () => document.querySelectorAll('select.sr').forEach(s => s._refresh && s._refresh());
 let editSnap0 = '';
-const editSnap = () => JSON.stringify([$('f-name').value, $('f-cat').value, $('f-status').value, $('f-est').value, $('f-fix').value, $('f-dep').value, $('f-pri').value, $('f-due').value, $('f-memo').value, $('f-link').value, curImg]);
+const editSnap = () => JSON.stringify([$('f-name').value, $('f-cat').value, $('f-status').value, $('f-est').value, $('f-fix').value, $('f-dep').value, $('f-pri').value, $('f-due').value, $('f-memo').value, $('f-link').value, $('f-pros').value, $('f-cons').value, curImg]);
 
-let editing = null, curImg = '';
+let editing = null, ePre = null, curImg = '';
 $('f-cat').innerHTML = CATS.map(c => `<option>${c}</option>`).join('');
 $('f-status').innerHTML = ST.map(c => `<option>${c}</option>`).join('');
 $('f-pri').innerHTML = PRI.map(c => `<option>${c}</option>`).join('');
 ['f-cat','f-status','f-pri'].forEach(id => enhanceSelect($(id)));
 enhanceSelect($('sort'), true);
-document.querySelectorAll('.cost').forEach(i => { i.addEventListener('input', () => { if (/[억만천백]/.test(i.value)) return; i.value = num(i.value).toLocaleString('ko-KR'); }); i.addEventListener('blur', () => { if (/[억만천백]/.test(i.value)) { i.value = krw(i.value).toLocaleString('ko-KR'); krUpdateAll(); } }); });
+const bindCost = i => { i.addEventListener('input', () => { if (/[억만천백]/.test(i.value)) return; i.value = num(i.value).toLocaleString('ko-KR'); }); i.addEventListener('blur', () => { if (/[억만천백]/.test(i.value)) { i.value = krw(i.value).toLocaleString('ko-KR'); krUpdateAll(); } }); };
+document.querySelectorAll('.cost').forEach(bindCost);
 
 function setImg(src){
     curImg = src; 
@@ -1276,13 +1401,15 @@ function setImg(src){
     $('f-imgbox').classList.toggle('hidden', !src);
 }
 
-function openEdit(p){
- editing = p || {}; 
+function openEdit(p, pre){
+ editing = p || {}; ePre = pre || null;
  $('edit-title').textContent = p ? 'EDIT OUR PLAN' : 'NEW OUR PLAN'; 
  $('f-del').classList.toggle('hidden', !p);
  $('f-name').value = p?.name || ''; 
- $('f-cat').value = p?.cat || (CATS.includes(ui.cat) ? ui.cat : CATS[0]); 
- $('f-status').value = p?.status || ST[0];
+ $('f-cat').value = p?.cat || pre?.cat || (CATS.includes(ui.cat) ? ui.cat : CATS[0]); 
+ $('f-status').value = p?.status || (pre?.grp ? '비교 중' : ST[0]);
+ $('f-pc').classList.toggle('hidden', !(p ? inGrp(p) : pre?.grp));
+ $('f-pros').value = p?.pros || ''; $('f-cons').value = p?.cons || '';
  $('f-est').value = (p?.est || 0).toLocaleString('ko-KR'); 
  $('f-fix').value = (p?.fix || 0).toLocaleString('ko-KR');
  $('f-dep').value = (p?.dep || 0).toLocaleString('ko-KR');
@@ -1310,11 +1437,13 @@ $('f-save').onclick = () => {
      due:$('f-due').value, memo:$('f-memo').value.trim(), link, img:curImg, dep:num($('f-dep').value), pri:$('f-pri').value
  };
  
+ if (!$('f-pc').classList.contains('hidden')) { d.pros = $('f-pros').value.trim(); d.cons = $('f-cons').value.trim(); }
  d.u = Date.now();
- if(editing.id) Object.assign(editing, d);
- else S.plans.push({ id:uid(), t:Date.now(), ...d });
+ const g = editing.id ? inGrp(editing) : (ePre && grpOf(ePre.grp)), moved = g && g.cat !== d.cat;
+ if(editing.id) { Object.assign(editing, d); if (moved) ungroup(editing); }
+ else S.plans.push({ id:uid(), t:Date.now(), ...(g && !moved ? gMeta(g) : {}), ...d });
  
- save(); closeAll(); render(); toast('저장했어요.');
+ save(); closeAll(); render(); toast(moved ? '저장했어요. 카테고리가 달라져서 비교에서는 뺐어요.' : '저장했어요.');
 };
 $('f-del').onclick = () => {
     if(!editing?.id) return;
@@ -1324,6 +1453,130 @@ $('f-del').onclick = () => {
     save(); closeAll(); render(); toast('삭제했어요.');
 };
 $('f-imgdel').onclick = () => setImg('');
+
+/* ===== 업체 비교 ===== */
+let gEdit = null, gFrom = null, pickP = null;
+const gMeta = g => ({ grp: g.id, gname: g.name, gbud: g.bud, gt: g.t });
+function fromCmp(fn){ cmpBack = ui.cmp; $('cmpv').classList.add('hidden'); $('cmpv').classList.remove('flex'); fn(); }
+function openGroup(p){
+ gEdit = null; gFrom = p;
+ const gs = cmps().filter(g => g.cat === p.cat && members(g).length), cands = S.plans.filter(x => x.cat === p.cat && !x.arch && !inGrp(x));
+ $('g-title').textContent = 'COMPARE';
+ $('g-body').innerHTML = (gs.length ? `<div>이미 있는 비교에 넣기<div class="flex flex-col gap-2 mt-2">${gs.map(g => `<button type="button" class="gpick" data-gjoin="${g.id}"><span class="min-w-0 flex-1 truncate">${esc(g.name)}</span><span class="cmp-sub">${members(g).length}곳</span></button>`).join('')}</div></div><hr class="rule">` : '')
+  + `<label>새 비교 이름<input id="g-name" class="fld" maxlength="40" placeholder="예: 스드메 고르기"></label>
+  <label>이 비교의 예산 (선택)<input id="g-bud" inputmode="numeric" class="cost fld" placeholder="0"></label>
+  <div>같이 비교할 계획<div class="flex flex-col gap-2 mt-2">${cands.map(x => `<label class="gpick"><input type="checkbox" value="${x.id}" ${x === p ? 'checked disabled' : ''}><span class="min-w-0 flex-1 truncate">${esc(x.name)}</span><span class="cmp-sub">${won(cost(x))}</span></label>`).join('')}</div>
+  ${cands.length < 2 ? `<p class="cmp-sub mt-2">${esc(lab(p.cat))}에 다른 계획이 아직 없어요. 비교를 만든 뒤 "+ 업체 추가"로 넣어도 돼요.</p>` : ''}</div>`;
+ $('g-undo').classList.add('hidden'); $('g-save').textContent = '묶기';
+ bindCost($('g-bud')); open_('gdlg');
+}
+function openGroupEdit(g){
+ gEdit = g; gFrom = null;
+ $('g-title').textContent = 'EDIT COMPARE';
+ $('g-body').innerHTML = `<label>비교 이름<input id="g-name" class="fld" maxlength="40" value="${esc(g.name)}"></label>
+  <label>이 비교의 예산 (선택)<input id="g-bud" inputmode="numeric" class="cost fld" value="${(g.bud || 0).toLocaleString('ko-KR')}"></label>
+  <p class="cmp-sub">비교를 풀면 묶여 있던 계획은 지워지지 않고 원래 카드로 돌아가요.</p>`;
+ $('g-undo').classList.remove('hidden'); $('g-save').textContent = '저장';
+ bindCost($('g-bud')); open_('gdlg');
+}
+function joinGroup(id){
+ const g = grpOf(id); if (!g || !gFrom) return;
+ Object.assign(gFrom, gMeta(g)); gFrom.u = Date.now(); if (ST.indexOf(gFrom.status) < 1) gFrom.status = '비교 중';
+ save(); closeAll(); render(); toast(`'${g.name}' 비교에 넣었어요.`);
+}
+$('g-save').onclick = () => {
+ const name = $('g-name').value.trim(), bud = num($('g-bud').value), now = Date.now();
+ if (!name) { toast('비교 이름을 입력해 주세요.'); $('g-name').focus(); return; }
+ if (gEdit) { members(gEdit).forEach(p => { p.gname = name; p.gbud = bud; p.u = now; }); save(); closeAll(); render(); toast('비교를 바꿨어요.'); return; }
+ const g = { id: uid(), name, cat: gFrom.cat, bud, t: now, u: now }, ids = [...$('g-body').querySelectorAll('input[type=checkbox]:checked')].map(i => i.value);
+ S.plans.forEach(p => { if (ids.includes(p.id)) { Object.assign(p, gMeta(g)); p.u = now; if (ST.indexOf(p.status) < 1) p.status = '비교 중'; } });
+ save(); closeAll(); render(); toast(`'${name}' 비교를 만들었어요.`);
+};
+$('g-undo').onclick = () => {
+ const g = gEdit; if (!g || !confirm(`'${g.name}' 비교를 풀까요?`)) return;
+ const now = Date.now();
+ members(g).forEach(p => { ungroup(p); p.u = now; });
+ cmpBack = null; save(); closeAll(); render(); toast('비교를 풀었어요.');
+};
+function openCmp(id){ ui.cmp = id; renderCmp(); open_('cmpv'); $('cmpv').scrollTop = 0; }
+function renderCmp(){
+ const g = grpOf(ui.cmp), v = $('cmpv'); if (!g) return;
+ const ms = members(g).sort((a, b) => (a.t || 0) - (b.t || 0)), pk = pickOf(g), pos = ms.map(cost).filter(x => x > 0), min = pos.length ? Math.min(...pos) : 0;
+ const row = (k, f) => `<tr><th class="k" scope="row">${k}</th>${ms.map(p => `<td class="${p.fav ? 'fv' : ''}">${f(p)}</td>`).join('')}</tr>`;
+ const lines = (t, c) => (t || '').split('\n').map(x => x.trim()).filter(Boolean).map(x => `<span class="cv-li ${c}">${esc(x)}</span>`).join('') || '<span class="cmp-sub">-</span>';
+ const note = p => { const c = cost(p), out = []; if (!c) return '금액 미정';
+  if (ms.length > 1 && c === min) out.push('<span class="cv-good">가장 저렴해요</span>');
+  if (g.bud) out.push(c > g.bud ? `<span class="cv-bad">예산보다 ${won(c - g.bud)} 많아요</span>` : c < g.bud ? `예산보다 ${won(g.bud - c)} 적어요` : '예산과 같아요');
+  return out.join('<br>'); };
+ const host = l => { try { return new URL(l).hostname.replace('www.', ''); } catch (e) { return l; } };
+ v.innerHTML = `<div class="cv-h">
+   <button data-close class="btn c-cream w-9 h-9 grid place-items-center shrink-0" aria-label="비교표 닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+   <div class="min-w-0 flex-1"><div class="lbl" style="font-size:10px;color:var(--sub)">COMPARE · ${esc(lab(g.cat))}</div><div class="font-extrabold truncate" style="font-size:20px;line-height:1.25">${esc(g.name)}</div></div>
+   <button type="button" class="pill sm" data-cv="set">설정</button><button type="button" class="pill sm on" data-cv="add">+ 업체</button></div>
+  ${!ms.length ? '<div class="cv-empty">비교할 계획이 없어요.<br>+ 업체로 후보를 넣어 보세요.</div>' : `
+  <p class="cv-sum">${g.bud ? `예산 ${won(g.bud)} · ` : ''}예산 계산에는 ${esc(pk.name)} 금액(${won(cost(pk))})만 들어가요.${ms.length > 2 ? '<span class="cv-swipe"> 옆으로 밀면 더 볼 수 있어요.</span>' : ''}</p>
+  <div class="cv-scroll"><table class="ctab">
+   <thead><tr><th class="k"></th>${ms.map(p => `<th scope="col" class="${p.fav ? 'fv' : ''}">${p.img ? `<img class="cv-img" src="${p.img}" alt="">` : ''}<div class="cv-nm">${esc(p.name)}</div>
+    <span class="pill sm mt-2" style="height:24px;font-size:11px;padding:0 9px;background:${STC[p.status] || '#fff'}">${esc(p.status)}</span><br>
+    <button type="button" class="cv-fav" data-cv="fav" data-id="${p.id}" aria-pressed="${!!p.fav}">${p.fav ? '♥' : '♡'} 마음에 들어요</button></th>`).join('')}</tr></thead>
+   <tbody>
+   ${row('가격', p => `<div class="cmp-sub" style="font-size:11px">${p.fix ? '확정' : '예상'}</div><div class="cv-pr">${won(cost(p))}</div><div class="cv-note">${note(p)}</div>`)}
+   ${row('계약금', p => p.dep ? `<span class="cv-pr" style="font-size:14px">${won(p.dep)}</span>` : '<span class="cmp-sub">-</span>')}
+   ${row('좋은 점', p => lines(p.pros, 'cv-good'))}
+   ${row('아쉬운 점', p => lines(p.cons, 'cv-bad'))}
+   ${row('메모', p => p.memo ? `<div class="whitespace-pre-wrap">${esc(p.memo)}</div>` : '<span class="cmp-sub">-</span>')}
+   ${row('링크', p => p.link ? `<a href="${esc(p.link)}" target="_blank" rel="noopener noreferrer" class="und">${esc(host(p.link))} ↗</a>` : '<span class="cmp-sub">-</span>')}
+   ${row('', p => `<div class="cv-btns"><button type="button" class="pill sm ${p.fav ? 'on' : ''}" data-cv="pick" data-id="${p.id}">이걸로 정하기</button><button type="button" class="pill sm" data-cv="edit" data-id="${p.id}">수정</button><button type="button" class="und text-[13px]" data-cv="out" data-id="${p.id}">비교에서 빼기</button></div>`)}
+   </tbody></table></div>
+  <p class="cv-tip">좋은 점과 아쉬운 점은 각 업체의 "수정"에서 한 줄에 하나씩 적을 수 있어요.</p>`}`;
+}
+function cmpAct(b){
+ const g = grpOf(ui.cmp); if (!g) return;
+ const a = b.dataset.cv, p = S.plans.find(x => x.id === b.dataset.id), now = Date.now();
+ if (a === 'add') return fromCmp(() => openEdit(null, { cat: g.cat, grp: g.id }));
+ if (a === 'set') return fromCmp(() => openGroupEdit(g));
+ if (!p) return;
+ if (a === 'edit') return fromCmp(() => openEdit(p));
+ if (a === 'pick') return fromCmp(() => openPick(p, g));
+ if (a === 'fav') {
+  const on = !p.fav;
+  members(g).forEach(x => { const want = on && x === p; if (!!x.fav === want) return; if (want) x.fav = true; else delete x.fav; x.u = now; });
+  save(); pendingRender = true; renderCmp(); return;
+ }
+ if (a === 'out') {
+  ungroup(p); p.u = now;
+  save(); pendingRender = true; toast(`'${p.name}'을(를) 비교에서 뺐어요.`);
+  if (grpOf(g.id)) renderCmp(); else closeAll();
+ }
+}
+function openPick(p, g){
+ pickP = p; const rest = members(g).filter(x => x !== p);
+ $('pick-body').innerHTML = `<div><b class="font-extrabold" style="font-size:19px">${esc(p.name)}</b>(으)로 정할까요?</div>
+  <div class="p-3 b3" style="background:var(--bud);font-size:14px">
+   <div>✓ ${esc(p.name)}은(는) <b>${ST.indexOf(p.status) < 2 ? '예약/계약' : esc(p.status)}</b> 상태의 일반 계획 카드로 돌아가요.</div>
+   ${rest.length ? `<div class="mt-2">✓ ${rest.map(x => esc(x.name)).join(', ')}은(는) 지우지 않고 <b>보관함</b>으로 옮겨요. 예산 합계에서는 빠져요.</div>` : ''}
+  </div>
+  <div class="cmp-sub">마음이 바뀌면 보관함에서 다시 꺼낼 수 있어요.</div>`;
+ open_('pickdlg');
+}
+$('pick-ok').onclick = () => {
+ const p = pickP, g = p && inGrp(p); if (!g) { closeAll(); return; }
+ const now = Date.now(), ms = members(g), snap = JSON.parse(JSON.stringify({ ms }));
+ ms.forEach(x => { x.u = now; ungroup(x); if (x === p) { if (ST.indexOf(x.status) < 2) x.status = '예약/계약'; } else x.arch = g.name; });
+ cmpBack = null; save(); closeAll(); render();
+ toast(`'${p.name}'(으)로 정했어요.`, '되돌리기', () => {
+  const t = Date.now();
+  snap.ms.forEach(o => { o.u = t; const i = S.plans.findIndex(x => x.id === o.id); if (i >= 0) S.plans[i] = o; });
+  save(); render();
+ });
+};
+function archAct(b){
+ const a = b.dataset.arch, p = S.plans.find(x => x.id === b.dataset.id);
+ if (a === 'toggle') { ui.arch = !ui.arch; renderList(); return; }
+ if (!p) return;
+ if (a === 'back') { delete p.arch; p.u = Date.now(); save(); render(); toast(`'${p.name}'을(를) 계획으로 꺼냈어요.`); }
+ if (a === 'del') { const snap = JSON.parse(JSON.stringify(p)); S.del[p.id] = Date.now(); S.plans = S.plans.filter(x => x !== p); save(); render(); toast('보관함에서 삭제했어요.', '되돌리기', () => { snap.u = Date.now(); delete S.del[snap.id]; S.plans.push(snap); save(); render(); }); }
+}
 
 $('f-extract').onclick = async () => {
     const url = $('f-link').value.trim();
@@ -1562,7 +1815,7 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>placePill(
 (function(){
  let x0=null,y0=0,mode=0,dx=0,secs=[],tabs=[],cur=-1,nb=null,W=1,vx=0,lx=0,lt=0,anim=false;
  const SKIP='input,textarea,select,[contenteditable],nav,#tabs,.cs-list,.sgtrack,#mapcard,#omap,.scal,#cal-grid,.dlg,#lb,#lock,.no-swipe';
- function busy(){return anim||document.body.classList.contains('lk')||(typeof mfull!=='undefined'&&mfull)||['edit','alloc','backup','verse','bgdlg','lb','sdlg'].some(i=>{const d=$(i);return d&&!d.classList.contains('hidden')})}
+ function busy(){return anim||document.body.classList.contains('lk')||(typeof mfull!=='undefined'&&mfull)||['edit','alloc','backup','verse','bgdlg','lb','sdlg','gdlg','pickdlg','cmpv'].some(i=>{const d=$(i);return d&&!d.classList.contains('hidden')})}
  function hScroll(el){for(;el&&el!==document.body;el=el.parentElement){const o=getComputedStyle(el).overflowX;if((o==='auto'||o==='scroll')&&el.scrollWidth>el.clientWidth+2)return true}return false}
  function setX(x,ms){secs.forEach(el=>{el.style.transition=ms?`transform ${ms}ms cubic-bezier(.25,.8,.25,1),opacity ${ms}ms`:'none';el.style.transform=x?`translate3d(${x}px,0,0)`:'';el.style.opacity=x?String(1-Math.min(.45,Math.abs(x)/W*.6)):''})}
  function clear(){secs.forEach(el=>{el.style.transition='';el.style.transform='';el.style.opacity='';el.style.willChange=''})}
@@ -2378,12 +2631,12 @@ function setSync(st){
  const t={off:'이 기기에만 저장돼요.',ok:'● 실시간 공유 중',busy:'동기화 중…',err:'연결이 불안정해요. 이 기기에는 저장돼 있어요.',offline:'오프라인이에요. 이 기기에 저장해 두었다가 연결되면 올려요.'}[st];
  $('sync-txt').textContent=t; const c=$('c-state'); if(c)c.textContent=t;
 }
-const anyOpen=()=>['edit','alloc','backup','verse','bgdlg','lb','sdlg'].some(id=>!$(id).classList.contains('hidden'));
+const anyOpen=()=>['edit','alloc','backup','verse','bgdlg','lb','sdlg','gdlg','pickdlg','cmpv'].some(id=>!$(id).classList.contains('hidden'));
 function applyRemote(m){
  const ch=cstr(m)!==cstr(dehyd(S)); S=hyd(m);
  if(editing&&editing.id){const f=S.plans.find(p=>p.id===editing.id); if(f)editing=f}
  if(!ch)return; persist();
- if(anyOpen()){pendingRender=true;return}
+ if(anyOpen()){pendingRender=true;if(!$('cmpv').classList.contains('hidden'))renderCmp();return}
  if(document.activeElement!==$('total'))$('total').value=(S.total||0).toLocaleString('ko-KR');
  $('wdate').value=S.wdate||''; render();
  imgFetch(imgMissing(S));
