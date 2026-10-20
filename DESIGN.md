@@ -1,0 +1,159 @@
+---
+version: alpha
+name: TO IN ONE 디자인 시스템
+description: 결혼 준비 PWA "TO IN ONE"의 디자인 언어. 따뜻한 크림 바탕 위에 흰 카드가 부드러운 그림자로 떠 있고, 소라·오트·샌드·블러시 네 가지 연한 톤은 분류와 데이터에만 쓴다. 행동(버튼·선택)은 진한 잉크색 하나로만 표현한다. 모든 모서리는 둥글고, 글씨는 굵고 촘촘하다.
+
+colors:
+  canvas: "#F7F3EC"        # --canvas, 전체 바탕(따뜻한 크림)
+  surface: "#FFFFFF"       # --cream, 카드·모달·입력칸
+  surface-soft: "#F1F6F2"  # --bud, 안내 카드·빈 상태
+  ink: "#2B2522"           # --ink, 본문·제목·주 버튼·선택 상태
+  muted: "#6B625C"         # 보조 글씨(날짜, 설명)
+  muted-soft: "#9A8F88"    # 더 약한 보조 글씨, 비활성
+  line: "rgba(43,37,34,.12)"
+  field-border: "rgba(43,37,34,.18)"
+  tab-pill: "#DDEBE2"      # --tabpill, 선택된 탭 알약
+  mint: "#CFEFE6"          # --mint, 모달 머리
+  sora: "#D8EAF5"          # --sora, "소라" 분류 전용(연한 소라색)
+  sage: "#D7E7DE"          # --c0, 보조 톤
+  oat: "#E8E4D8"           # --c1, 결혼식 준비
+  sand: "#F4E8CA"          # --c2, 혼수
+  blush: "#F1DCD0"         # --c3, 신혼여행
+  focus: "#B04A62"         # --rust, 포커스 링
+  danger: "#DC2626"        # 예산 초과, 기한 지남
+  danger-deep: "#B91C1C"
+
+typography:
+  family-sans: "'Plus Jakarta Sans','Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif"
+  family-serif: "'Noto Serif KR','Nanum Myeongjo',serif"   # 인용구 전용
+  display:   { fontSize: 46px, fontWeight: 800, letterSpacing: -0.04em }   # 큰 화면 96px
+  title:     { fontSize: 28px, fontWeight: 700, lineHeight: 1.2, letterSpacing: -0.03em }  # 380px 이하 24px
+  money:     { fontSize: 44px, fontWeight: 700, lineHeight: 1.1, letterSpacing: -0.045em }
+  item:      { fontSize: 15px, fontWeight: 800 }
+  body:      { fontSize: 16px, fontWeight: 500, letterSpacing: -0.01em }
+  meta:      { fontSize: 12px, fontWeight: 500 }
+  label:     { fontSize: 12px, fontWeight: 700, letterSpacing: 0.14em, textTransform: uppercase }
+  quote:     { fontSize: 24px, fontWeight: 400, lineHeight: 1.65, family: serif }
+
+rounded:
+  sm: 12px      # 썸네일
+  field: 14px   # 입력칸, 선택 상자
+  md: 16px      # 테두리 상자, 드롭다운 목록
+  cell: 20px    # 분류 칸
+  card: 24px    # 카드
+  dialog: 28px  # 모달
+  full: 999px   # 버튼, 알약, 탭, 태그, 진행 막대
+
+spacing:
+  gutter: 16px
+  card-pad: 20px
+  stack: 16px
+  section: 28px
+  container: 1100px
+
+elevation:
+  card: "0 10px 30px rgba(140,90,70,.10)"
+  menu: "0 12px 32px rgba(43,37,34,.22)"
+  dialog: "0 24px 60px rgba(43,37,34,.28)"
+  fab: "0 8px 20px rgba(43,37,34,.28)"
+---
+
+## 개요
+
+TO IN ONE은 두 사람이 함께 쓰는 결혼 준비 앱이다. 화면은 **따뜻한 크림 바탕**(`{colors.canvas}`) 위에 **흰 카드**(`{colors.surface}`)가 아주 옅은 갈색 그림자로 떠 있는 구조다. 차가운 회색이나 순백 바탕을 쓰지 않는다. 사진 배경을 깔 때도 크림 베일(55%)을 덮어 같은 온도를 유지한다.
+
+색은 두 갈래로만 쓴다.
+- **행동은 잉크 하나.** 주 버튼, 선택된 필터, 선택된 탭 글씨, 플로팅 버튼, 완료 체크는 모두 `{colors.ink}`다. 브랜드 포인트 색 버튼은 없다.
+- **분류와 데이터는 연한 네 톤.** 소라·오트·샌드·블러시는 담당자 태그, 예산 항목 칸, 사용 막대처럼 "무엇인지"를 구분할 때만 쓴다. 버튼 배경으로 쓰지 않는다.
+
+빨강(`{colors.danger}`)은 기한 지남과 예산 초과에만 쓴다. 장식으로 쓰지 않는다.
+
+**핵심 특징**
+- 모서리는 전부 둥글다. 각진 요소가 없다. 버튼·태그·탭은 완전한 알약형이다.
+- 그림자는 카드용 한 단계가 기본이다. 메뉴·모달처럼 위에 뜨는 것만 더 진하다.
+- 글씨는 굵다(본문 500, 항목명 800). 제목과 숫자는 자간을 좁혀 단단하게 보인다.
+- 한국어 줄바꿈은 `word-break: keep-all`로 단어 단위를 지킨다.
+
+## 색
+
+| 역할 | 토큰 | 값 | 쓰는 곳 |
+|---|---|---|---|
+| 바탕 | canvas | #F7F3EC | body, 갤러리 배경 |
+| 카드 | surface | #FFFFFF | 카드, 모달, 입력칸, 알약 기본 |
+| 부드러운 카드 | surface-soft | #F1F6F2 | "기본 할 일 불러오기" 같은 안내 카드 |
+| 글씨·행동 | ink | #2B2522 | 본문, 주 버튼, 선택 상태 |
+| 보조 글씨 | muted | #6B625C | 날짜, D-day, 설명 |
+| 선택 탭 | tab-pill | #DDEBE2 | 상단 탭의 선택 알약 |
+| 모달 머리 | mint | #CFEFE6 | 수정·추가 창 머리 |
+| 분류 | sora / oat / sand / blush | #D8EAF5 / #E8E4D8 / #F4E8CA / #F1DCD0 | 소라 / 결혼식 준비 / 혼수 / 신혼여행: 탭 알약, 분류 태그, 예산 4칸, 사용 막대 |
+| 포커스 | focus | #B04A62 | `:focus-visible` 3px 외곽선 |
+| 경고 | danger | #DC2626 | 기한 지남, 예산 초과 |
+
+"소라"가 들어간 곳(탭, 분류 태그, 예산 칸, 예산 막대)은 항상 소라색이다. 소라 탭이 선택되면 탭 알약도 소라색으로 바뀐다.
+
+담당자 태그 기본 매핑: 신랑(태인) = sage, 신부(가현) = sand, 같이 = blush.
+
+## 글꼴
+
+- 기본 글꼴은 Plus Jakarta Sans(영문·숫자) + Pretendard/Noto Sans KR(한글)이다.
+- 인용구에만 Noto Serif KR을 쓴다. 다른 곳에 세리프를 쓰지 않는다.
+- 금액은 `money` 스타일로 크게, 원 단위는 작게 붙인다.
+- 영문 라벨(`OUR BUDGET` 등)은 `label` 스타일: 대문자, 넓은 자간.
+
+## 레이아웃
+
+- 모바일 우선. 좌우 여백 16px, 최대 폭 1100px.
+- 섹션 머리는 "제목 + 오른쪽 개수" 한 줄, 그 아래 카드 묶음.
+- 한 카드 안의 여러 항목은 1px `{colors.line}` 구분선으로 나눈다. 항목마다 카드를 따로 만들지 않는다.
+- iOS 안전 영역(`env(safe-area-inset-*)`)을 지킨다.
+
+## 컴포넌트
+
+### 버튼
+- 주 버튼: ink 배경, 흰 글씨, 알약형, 굵게 700. 누르면 `scale(.97)`.
+- 보조 버튼: 흰 배경, 1px line 테두리, 알약형.
+- 플로팅 버튼(FAB): 52px 원, ink 배경, 오른쪽 아래 16px.
+
+### 알약 필터
+- 높이 40px(작은 것 30px), 흰 배경, 1px line 테두리.
+- 선택: ink 1.5px 안쪽 테두리(`pill.sel`) 또는 ink 배경 + 흰 글씨(`pill.on`).
+
+### 탭
+- 상단 가로 스크롤, 알약형. 선택된 탭 뒤로 tab-pill 색 알약이 미끄러져 이동한다.
+
+### 카드
+- 흰 배경, 24px 모서리, card 그림자, 테두리 없음.
+- 완료된 항목: 투명도 .6, 흑백 40%, 제목 취소선.
+
+### 체크리스트 항목
+- 왼쪽 원형 체크(빈 원 = 할 일, ink 원 + 흰 체크 = 완료).
+- 제목(item 굵기) 아래 한 줄 메타: 날짜 · D-day, 담당자 태그, 링크 알약.
+- 기한 지남은 날짜 줄을 danger로 쓰고 섹션 머리 개수도 danger.
+
+### 진행 막대
+- 알약형 트랙. 진행분은 sage, 남은 부분은 ink 10% 회색에 얇은 안쪽 테두리.
+- 예산 사용 막대는 분류 4톤으로 나누고, 예상 금액은 빗금 무늬로 구분한다. 초과 시 트랙 테두리 danger.
+
+### 모달
+- 최대 폭 420px, 28px 모서리, mint 머리, 아래 버튼 줄은 line 구분선 위에 오른쪽 정렬.
+- 입력칸: 흰 배경, 1.5px field-border, 14px 모서리, 16px 글씨(iOS 확대 방지). 포커스 시 테두리 ink.
+
+## 반응형
+
+- 380px 이하: 제목 24px, 3칸 그리드는 1칸.
+- 터치 대상은 최소 40px 높이(작은 알약 30px은 보조용만).
+- `prefers-reduced-motion`이면 전환 효과를 끈다.
+
+## 하지 말 것
+
+- 분류 색(소라·오트·샌드·블러시)을 버튼 배경으로 쓰지 않는다.
+- 새 강조색(진한 파랑, 보라 등)을 추가하지 않는다. 연한 소라색은 "소라" 분류에만 쓴다.
+- 각진 모서리, 진한 그림자, 회색 바탕을 쓰지 않는다.
+- 빨강을 장식으로 쓰지 않는다.
+
+## 참고한 것
+
+이 문서의 형식은 [awesome-design-md](https://github.com/VoltAgent/awesome-design-md)(MIT)의 DESIGN.md 구조를 따랐다. 색과 값은 모두 이 앱의 `index.html`에서 가져왔고(바탕색과 소라색만 새로 정함), 아래 원칙만 빌렸다.
+- Airbnb: 부드러운 둥근 카드, 알약형 버튼, 그림자 한 단계.
+- Claude·Oura: 차가운 흰색 대신 따뜻한 크림 바탕.
+- Oura: 흙빛·세이지 톤은 데이터와 분류에만 쓰고, 버튼에는 쓰지 않는 색 규율.
