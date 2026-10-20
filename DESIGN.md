@@ -28,12 +28,13 @@ typography:
   family-sans: "'Plus Jakarta Sans','Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif"
   family-serif: "'Noto Serif KR','Nanum Myeongjo',serif"   # 인용구 전용
   display:   { fontSize: 46px, fontWeight: 800, letterSpacing: -0.04em }   # 큰 화면 96px
-  title:     { fontSize: 28px, fontWeight: 700, lineHeight: 1.2, letterSpacing: -0.03em }  # 380px 이하 24px
+  title:     { fontSize: 24px, fontWeight: 700, lineHeight: 1.2, letterSpacing: -0.03em }  # 380px 이하 22px
   money:     { fontSize: 44px, fontWeight: 700, lineHeight: 1.1, letterSpacing: -0.045em }
-  item:      { fontSize: 15px, fontWeight: 800 }
+  item:      { fontSize: 15px, fontWeight: 700 }
+  control:   { fontWeight: 600 }   # 버튼, 알약, 탭, 밑줄 링크, 모달 라벨
   body:      { fontSize: 16px, fontWeight: 500, letterSpacing: -0.01em }
-  meta:      { fontSize: 12px, fontWeight: 500 }
-  label:     { fontSize: 12px, fontWeight: 700, letterSpacing: 0.14em, textTransform: uppercase }
+  meta:      { fontSize: 13px, fontWeight: 500 }   # 본문 최소 13px, 배지·영문 대문자 라벨만 11~12px
+  label:     { fontSize: 13px, fontWeight: 700, letterSpacing: 0.14em, textTransform: uppercase }
   quote:     { fontSize: 24px, fontWeight: 400, lineHeight: 1.65, family: serif }
 
 rounded:
@@ -61,13 +62,19 @@ elevation:
 
 ## 개요
 
-TO IN ONE은 두 사람이 함께 쓰는 결혼 준비 앱이다. 화면은 **따뜻한 크림 바탕**(`{colors.canvas}`) 위에 **흰 카드**(`{colors.surface}`)가 아주 옅은 갈색 그림자로 떠 있는 구조다. 차가운 회색이나 순백 바탕을 쓰지 않는다. 사진 배경을 깔 때도 크림 베일(55%)을 덮어 같은 온도를 유지한다.
+TO IN ONE은 두 사람이 함께 쓰는 결혼 준비 앱이다. 화면은 **따뜻한 크림 바탕**(`{colors.canvas}`) 위에 **흰 카드**(`{colors.surface}`)가 아주 옅은 갈색 그림자로 떠 있는 구조다. 차가운 회색이나 순백 바탕을 쓰지 않는다. 기본은 사진 없는 크림 바탕이고, 사용자가 배경 사진을 고르면 크림 베일(55%)을 덮어 같은 온도를 유지한다.
 
 색은 두 갈래로만 쓴다.
 - **행동은 잉크 하나.** 주 버튼, 선택된 필터, 선택된 탭 글씨, 플로팅 버튼, 완료 체크는 모두 `{colors.ink}`다. 브랜드 포인트 색 버튼은 없다.
 - **분류와 데이터는 연한 네 톤.** 소라·오트·샌드·블러시는 담당자 태그, 예산 항목 칸, 사용 막대처럼 "무엇인지"를 구분할 때만 쓴다. 버튼 배경으로 쓰지 않는다.
 
-빨강(`{colors.danger}`)은 기한 지남과 예산 초과에만 쓴다. 장식으로 쓰지 않는다.
+빨강(`{colors.danger}`)은 기한 지남, 예산 초과, 삭제에만 쓴다. 장식으로 쓰지 않는다.
+
+**굵기는 아껴 쓴다.** 800은 큰 숫자와 큰 제목(`.disp`, `.num`)에만, 700은 카드 제목과 항목명, 600은 버튼·알약·탭, 나머지는 500이다. 다 굵으면 무엇이 중요한지 안 보인다.
+
+**진행 상태는 색을 채우지 않고 점으로만 표시한다.** 흰 알약 안의 8px 점: 구상 중 #B8AFA8, 비교 중 #D49A1E, 예약/계약 #3E8E6E, 완료 ink. 분류 색과 헷갈리지 않게 하기 위해서다.
+
+**두 사람 구분색**: 태인 #B04A62(rust), 가현 #3F6F8F(진한 소라). 달력 일요일은 rust, 토요일은 진한 소라.
 
 **핵심 특징**
 - 모서리는 전부 둥글다. 각진 요소가 없다. 버튼·태그·탭은 완전한 알약형이다.
@@ -88,7 +95,8 @@ TO IN ONE은 두 사람이 함께 쓰는 결혼 준비 앱이다. 화면은 **�
 | 모달 머리 | mint | #CFEFE6 | 수정·추가 창 머리 |
 | 분류 | sora / oat / sand / blush | #D8EAF5 / #E8E4D8 / #F4E8CA / #F1DCD0 | 소라 / 결혼식 준비 / 혼수 / 신혼여행: 탭 알약, 분류 태그, 예산 4칸, 사용 막대 |
 | 포커스 | focus | #B04A62 | `:focus-visible` 3px 외곽선 |
-| 경고 | danger | #DC2626 | 기한 지남, 예산 초과 |
+| 경고 | danger | #DC2626 | 기한 지남, 예산 초과, 삭제 |
+| 두 번째 사람·토요일 | sora-deep | #3F6F8F | 이름 선택, 달력 토요일 |
 
 "소라"가 들어간 곳(탭, 분류 태그, 예산 칸, 예산 막대)은 항상 소라색이다. 분류 탭을 누르면 탭 알약이 그 분류의 예산 칸 색으로 바뀐다(소라=sora, 결혼식 준비=oat, 혼수=sand, 신혼여행=blush).
 
