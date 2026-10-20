@@ -1,0 +1,12 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rooms": {
+      "$room": {
+        ".read": "auth != null && auth.token.email == 'us@to-in-one.app'",
+        ".write": "auth != null && auth.token.email == 'us@to-in-one.app'"
+      }
+    }
+  }
+}
