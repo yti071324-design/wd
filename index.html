@@ -203,7 +203,7 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
 .quote{font-family:'Noto Serif KR','Nanum Myeongjo',serif;font-weight:400;font-size:24px;line-height:1.65;letter-spacing:-.02em;word-break:keep-all}
 .bgrid{display:block}.bleft{display:flex;flex-direction:column;gap:20px;padding:24px 24px 18px}
 .bkv{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:10px;font-size:14px;font-weight:500;color:#6B625C}.bkv b{font-weight:700;color:var(--ink)}
-.bkv>b:last-child{font-family:var(--f-num);font-size:17px;letter-spacing:-.03em}.bkv #pct{flex:none;white-space:nowrap;font-size:14px;color:var(--ink)}.bkv.over>*,.bkv #pct.over{color:#DC2626}
+.bkv>b:last-child{font-family:var(--f-num);font-size:17px;letter-spacing:-.03em}.bkv #pct{white-space:nowrap;font-size:13px;color:var(--ink);margin-left:4px}#usage-desc .bkv>b:last-child{font-size:15px}#usage-desc .bkv+.bkv{margin-top:6px}.bkv.over>*,.bkv #pct.over{color:#DC2626}
 .bfoot{grid-column:1/-1;display:flex;justify-content:flex-end;padding:0 24px 20px}
 .cname{display:flex;align-items:center;gap:6px}.cname .ic{width:18px;height:18px}
 .wday{position:relative;display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 16px;margin:0 0 16px;border-radius:999px;background:#fff;box-shadow:var(--shadow);font-size:14px;font-weight:700;cursor:pointer}
@@ -277,7 +277,7 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
  .smain .slist{grid-template-columns:minmax(0,1fr)}
 }
 @media (min-width:1000px) and (min-height:720px){
- .pside{position:sticky;top:min(85px,calc(100vh - var(--ph,0px) - 20px))}
+ .pside,.sside{position:sticky;top:min(85px,calc(100vh - var(--ph,0px) - 20px))}
 }
 main[data-page=story] [data-pg=plans],main[data-page=plans] [data-pg=story],main[data-view]:not([data-view=all]) .hero,main[data-view]:not([data-view=all]) #budget{display:none!important}
 main>nav{position:sticky;top:var(--hh,64px);z-index:39}
@@ -720,7 +720,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
       </div>
       <div>
         <div class="track mix"><div id="bar" class="mixbar"></div></div>
-        <div class="bkv"><span id="usage-desc"></span><span id="pct" class="num"></span></div>
+        <div id="usage-desc"></div>
         <div class="bkv"><span>남은 예산</span><b id="est-desc"></b></div>
         <div id="over-warn" class="mt-3 text-[13px] font-bold break-keep" style="display:none;color:#DC2626"></div>
       </div>
@@ -1162,9 +1162,10 @@ function renderTop(){
  const total=num($('total').value)||S.total, used=spent(), pl=planned();
  const paid=counted().reduce((a,p)=>a+(p.dep||0),0), ppct=total?pl/total*100:0;
  const over=!!total&&pl>total;
- $('usage-desc').innerHTML=`쓴 돈 <b>${won(used)}</b>`+(pl>used?` · 예상 포함 <b>${won(pl)}</b>`:'')+(paid?` · 납부 <b>${won(paid)}</b>`:'');
- $('pct').textContent=total?(+ppct.toFixed(1))+'%':'';
- $('pct').classList.toggle('over',over);
+ /* 쓴 돈·예상 포함·납부를 한 줄씩. 예산 대비 %는 예상(없으면 쓴 돈) 줄 이름 옆에 */
+ const pctTx=total?` <span id="pct" class="num ${over?'over':''}">${+ppct.toFixed(1)}%</span>`:'';
+ const ln=(k,v,p)=>`<div class="bkv"><span>${k}${p?pctTx:''}</span><b>${won(v)}</b></div>`;
+ $('usage-desc').innerHTML=ln('쓴 돈',used,pl<=used)+(pl>used?ln('예상 포함',pl,1):'')+(paid?ln('납부',paid,0):'');
  $('est-desc').previousElementSibling.textContent=over?'예산 초과':'남은 예산';
  $('est-desc').textContent=won(over?pl-total:total-pl);
  $('est-desc').parentElement.classList.toggle('over',over);
@@ -2724,8 +2725,8 @@ $('st-list').addEventListener('click',e=>{
 $('st-list').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.target.classList.contains('ct')){e.preventDefault();e.target.closest('[data-sid]').querySelector('[data-sact="csend"]').click()}});
 const pcMQ=matchMedia('(min-width:1000px)'), placeF=()=>{const f=document.querySelector('.frow'); if(pcMQ.matches)$('fslot').append(f); else $('list').before(f)};
 placeF();pcMQ.addEventListener('change',placeF);
-/* 사이드바가 화면보다 길면 아래쪽(검색·필터)이 보이게 붙는다 */
-new ResizeObserver(([e])=>e.target.style.setProperty('--ph',e.target.offsetHeight+'px')).observe(document.querySelector('.pside'));
+/* PC 왼쪽 사이드바(계획·일기장)는 스크롤을 따라 붙고, 화면보다 길면 아래쪽이 보이게 붙는다 */
+{const ro=new ResizeObserver(es=>es.forEach(e=>e.target.style.setProperty('--ph',e.target.offsetHeight+'px')));document.querySelectorAll('.pside,.sside').forEach(el=>ro.observe(el))}
 const sHH=()=>document.documentElement.style.setProperty('--hh',document.querySelector('header').offsetHeight+'px');
 sHH();addEventListener('resize',sHH);addEventListener('load',sHH);render();
 /* 팝업 배경이 부드럽게 나타나도록, 처음 열릴 때 막대가 자라나도록 */
