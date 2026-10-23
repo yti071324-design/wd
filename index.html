@@ -68,7 +68,6 @@ body{background:var(--canvas);-webkit-tap-highlight-color:transparent;overflow-x
 .money input{font:inherit;letter-spacing:inherit;color:inherit;background:transparent;border:0;outline:0;padding:0;width:100%;min-width:0}
 .money input::placeholder{font-size:.55em;color:rgba(0,0,0,.35)}
 .cell{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:18px 14px 16px;text-align:left;min-width:0;border-radius:20px;transition:box-shadow .18s,transform .12s}.cell.on{box-shadow:inset 0 0 0 var(--hl2) var(--ink)}
-.glyph{font-size:20px;line-height:1;margin-bottom:10px}
 .cname{font-weight:700;font-size:15px}
 .camt{white-space:nowrap;line-height:1.1}.camt.over{color:#dc2626}
 .cmeta{font-size:13px;font-weight:500;color:#3d322f}
@@ -111,7 +110,6 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
 #bgveil{background:var(--canvas);opacity:.55}
 #bg-range{width:100%;accent-color:#2B2522;height:28px}
 .ic{display:inline-block;width:1.1em;height:1.1em;vertical-align:-.2em;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.glyph .ic{width:24px;height:24px}
 /* 공유 상태: 점 + 글씨색. 초록=공유 중, 주황=반영 중, 빨강=공유 안 됨 */
 .sst{--st:#B91C1C;--sd:#DC2626;color:var(--st);display:inline-flex;align-items:center;gap:7px}
 .sst::before{content:'';width:8px;height:8px;border-radius:999px;background:var(--sd);flex-shrink:0}
@@ -151,6 +149,7 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
 .pe-b{padding:20px 18px 22px;gap:22px}
 .pe-sh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;font-weight:700;color:#6B625C;margin-bottom:8px}
 .pe-sh span{font-weight:600;color:var(--ink)}
+.pe-more{display:flex;gap:8px;flex-wrap:wrap}
 .pe-rc{background:var(--canvas);border-radius:20px;padding:6px}
 .pe-rr{display:flex;align-items:center;gap:10px;padding:6px 6px 6px 12px;min-height:56px}
 .pe-rr+.pe-rr{border-top:1px solid var(--line)}
@@ -186,19 +185,39 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
 .cbar i.est{background-color:rgba(43,37,34,.45)}
 .cbar.cover{box-shadow:inset 0 0 0 var(--hl) #dc2626}
 .cbar.cover i{background-color:#dc2626}.cbar.cover i.est{background-color:rgba(220,38,38,.55)}
-.csub{font-size:11.5px;font-weight:600;color:#5b504b;margin-top:-2px}
 .cmeta.over{color:#DC2626;font-weight:700}
 #pct.over{color:#DC2626}
 .quote{font-family:'Noto Serif KR','Nanum Myeongjo',serif;font-weight:400;font-size:24px;line-height:1.65;letter-spacing:-.02em;word-break:keep-all}
-.bgrid{display:block}.bleft{display:flex;flex-direction:column;gap:28px;padding:24px}
-.bhead{display:block}.bhead>div:first-child{min-width:0}
-.wday{display:inline-block;position:relative;cursor:pointer;border:0;background:transparent;padding:0;margin-top:20px}
+.bgrid{display:block}.bleft{display:flex;flex-direction:column;gap:20px;padding:24px 24px 18px}
+.bkv{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:10px;font-size:14px;font-weight:500;color:#6B625C}.bkv b{font-weight:700;color:var(--ink)}
+.bkv>b:last-child{font-family:var(--f-num);font-size:17px;letter-spacing:-.03em}.bkv #pct{flex:none;white-space:nowrap;font-size:14px;color:var(--ink)}.bkv.over>*,.bkv #pct.over{color:#DC2626}
+.bfoot{grid-column:1/-1;display:flex;justify-content:flex-end;padding:0 24px 20px}
+.cname{display:flex;align-items:center;gap:6px}.cname .ic{width:18px;height:18px}
+.wday{position:relative;display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 16px;margin:0 0 16px;border-radius:999px;background:#fff;box-shadow:var(--shadow);font-size:14px;font-weight:700;cursor:pointer}
+.wday .ic{width:16px;height:16px}.wday #dday{font-size:14px;letter-spacing:-.02em}
+.wday input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
 .bgcells{border-top:0;gap:12px;padding:0 24px 24px;grid-auto-rows:1fr}
 .plan{display:flex;flex-direction:column;cursor:pointer}.cbody{padding:20px;flex:1;display:flex;flex-direction:column}
-.plist{display:flex;flex-direction:column;gap:28px}
+.plist{display:flex;flex-direction:column;gap:20px}
+.lsec{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#6B625C;margin:0 4px 8px}
+.lcard{overflow:hidden}
+.lrow{display:flex;flex-direction:row;align-items:center;gap:12px;padding:14px 18px;border-top:1px solid var(--line);transition:background-color .12s}
+.lrow:first-child{border-top:0}
+.lrow:active{background-color:rgba(43,37,34,.04)}
+.lsw{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;overflow:hidden}
+.lsw .ic{width:18px;height:18px}.lsw img{width:100%;height:100%;object-fit:cover}
+.lmid{flex:1;min-width:0}
+.lnm{font-size:15px;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lmt{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:13px;font-weight:500;color:#6B625C;white-space:nowrap;overflow:hidden}
+.lmt>*{flex:none}.lmt .lmemo{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.lmt .dot{width:8px;height:8px;border-radius:50%;background:var(--d)}
+.lmt .due{font-weight:700;color:var(--ink)}.lmt .due.near{color:#DC2626}
+.lmt .pri{font-weight:700;color:var(--ink)}
+.lamt{flex:none;text-align:right;font-family:var(--f-num);font-weight:700;font-size:15px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lamt small{display:block;font-family:var(--f-body);font-size:12px;font-weight:600;letter-spacing:0;color:#9A8F88;margin-top:2px}
+.lamt .none{font-family:var(--f-body);font-size:13px;font-weight:600;letter-spacing:0;color:#9A8F88}
+.lrow.done .lnm{text-decoration:line-through}
 .frow{display:flex;flex-direction:column;gap:16px}.srch{width:100%}
-@media (min-width:640px){.plist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
-.plist.mas{grid-auto-rows:4px;row-gap:0!important;align-items:start}.plist.mas>.plan{margin-bottom:var(--mg,28px)}
 @media (min-width:1000px){
  .wrap{padding-left:24px;padding-right:24px}
  .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:56px;align-items:start;padding-top:56px}
@@ -207,11 +226,8 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
  .quote{font-size:32px}
  .bgrid{display:grid;grid-template-columns:1.05fr 1fr}
  .bleft{padding:32px}
- .bhead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.bhead>div:first-child{flex:1}
- .wday{border:0;background:transparent;padding:0;margin-top:0;text-align:right}
  .bgcells{border-left:0;padding:32px 32px 32px 8px;gap:14px}
  .cell{padding:24px 20px 20px}
- .plist{grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
  .frow{flex-direction:row;justify-content:space-between;align-items:center}
  .srch{width:320px;flex-shrink:0}.sgrp{justify-content:flex-end;flex:1}
  .dlg{max-width:560px}
@@ -407,14 +423,12 @@ main[data-page=plans]{padding-bottom:96px}
  @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
  @keyframes toastin{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
  @keyframes pulse{0%,100%{transform:scale(1)}40%{transform:scale(1.025)}}
- .plan.rise{animation:rise .42s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*45ms)}
+ .lgrp.rise{animation:rise .42s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*45ms)}
  .dlg{animation:pop .26s cubic-bezier(.2,.8,.2,1)}
  .ov{animation:fadein .2s ease}
  .boot .cbar i,.boot #bar,.boot #share-bar{transform-origin:left;animation:grow .7s cubic-bezier(.2,.8,.2,1) .15s both}
  #toast:not(.hidden){animation:toastin .22s ease}
  @media (hover:hover){
-  .plan{transition:transform .22s,box-shadow .22s}
-  .plan:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(140,90,70,.16)}
   .pill,.btn,.tab{transition:filter .15s,transform .1s}
   .pill:hover,.tab:hover{filter:brightness(.96)}
  }
@@ -549,6 +563,11 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 <section data-pg="plans" class="wrap pt-9 pb-8 hero">
   <div>
     <h1 class="disp h1 text-[56px] leading-[.9] mb-5">TAEIN&<br>GAHYUN.</h1>
+    <label class="wday">
+      <input type="date" id="wdate" aria-label="결혼식 날짜">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span id="wdate-txt"></span><span id="dday" class="num">날짜 선택</span>
+    </label>
     <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[14px] font-bold" style="padding-left:0">
       <span id="sync-txt" class="sst" data-st="off" role="status">공유 안 됨 · 이 기기에만 저장돼요.</span>
       <button id="backup-open" class="und">공유 · 백업</button>
@@ -638,36 +657,21 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 </section>
 
 <section id="budget" data-pg="plans" class="wrap pb-10">
-  <div class="card bgrid overflow-hidden" style="background:var(--bud)">
+  <div class="card bgrid overflow-hidden">
     <div class="bleft">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
-      <div class="bhead">
-        <div>
-          <div class="lbl mb-3">OUR BUDGET</div>
-          <label class="money"><span aria-hidden="true">₩</span><input id="total" inputmode="numeric" aria-label="총 예산" placeholder="예산 입력"></label>
-          <p id="usage-desc" class="text-[14px] font-medium mt-2"></p>
-        </div>
-        <label class="wday">
-          <input type="date" id="wdate" aria-label="결혼식 날짜" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-          <div class="lbl mb-2" style="font-size:12px">WEDDING DAY</div>
-          <div id="dday" class="num text-[30px] leading-none mb-2">날짜 선택</div>
-          <div id="wdate-txt" class="text-[13px] font-bold mb-2"></div>
-          <div class="und text-[13px]">날짜 변경 ✎</div>
-        </label>
+      <div>
+        <div class="lbl mb-3">OUR BUDGET</div>
+        <label class="money"><span aria-hidden="true">₩</span><input id="total" inputmode="numeric" aria-label="총 예산" placeholder="예산 입력"></label>
       </div>
       <div>
-        <div class="flex justify-between items-baseline mb-2"><span class="lbl" style="font-size:14px">BUDGET USAGE</span><span id="pct" class="num text-[15px]">0%</span></div>
         <div class="track mix"><div id="bar" class="mixbar"></div></div>
-        <div id="share-leg" class="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-[13px] font-bold"></div>
-        <div class="flex justify-between items-baseline mt-3">
-          <span id="goal" class="text-[15px] font-medium"></span>
-          <button id="alloc-open" class="und text-[15px]">예산 수정</button>
-        </div>
-        <div id="est-desc" class="text-[13px] font-medium mt-1 text-[#3d322f]"></div>
-        <div id="over-warn" class="b3 c-blush px-3 py-2 mt-3 text-[13px] font-bold" style="display:none"></div>
+        <div class="bkv"><span id="usage-desc"></span><span id="pct" class="num"></span></div>
+        <div class="bkv"><span>남은 예산</span><b id="est-desc"></b></div>
+        <div id="over-warn" class="mt-3 text-[13px] font-bold break-keep" style="display:none;color:#DC2626"></div>
       </div>
     </div>
     <div id="grid" class="bgcells grid grid-cols-2"></div>
+    <div class="bfoot"><button id="alloc-open" class="und text-[14px]">예산 수정</button></div>
   </div>
 </section>
 
@@ -749,6 +753,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
         <div class="pe-sh">메모</div>
         <textarea id="f-memo" rows="3" class="pe-memo" placeholder="견적, 일정, 기억할 내용" aria-label="우리의 메모"></textarea>
       </section>
+      <div id="f-more" class="pe-more hidden"><button type="button" id="f-cmp" class="pill sm">비교에 묶기</button><button type="button" id="f-dup" class="pill sm">복제하기</button></div>
     </div>
     <div class="dlg-f">
       <button id="f-del" class="btn c-cream px-4 h-11 text-[15px] hidden mr-auto" style="color:#DC2626">삭제</button>
@@ -1066,14 +1071,6 @@ function dday(){
   return k>0?'D-'+k:k===0?'D-DAY':'D+'+(-k);
 }
 
-function dueTag(p){
-  if(!p.due)return'';
-  const n=new Date(); n.setHours(0,0,0,0);
-  const k=Math.round((new Date(p.due+'T00:00:00')-n)/864e5);
-  const late=k<0&&p.status!=='완료';
-  return `<span class="ptag" style="background:${late?'#fca5a5':'#fff'};color:#111">${p.due.slice(5).replace('-','/')} ${k===0?'오늘':k>0?'D-'+k:'지남'}</span>`;
-}
-
 function fitTotal(){
  const el=$('total'), box=el.closest('.money'), txt='₩'+(el.value||'0');
  const c=fitTotal.c||(fitTotal.c=document.createElement('canvas').getContext('2d'));
@@ -1091,35 +1088,31 @@ function fitCells(){
 }
 function renderTop(){
  const total=num($('total').value)||S.total, used=spent(), pl=planned();
- const paid=counted().reduce((a,p)=>a+(p.dep||0),0), pct=total?used/total*100:0, ppct=total?pl/total*100:0;
- $('usage-desc').textContent=`실제 확정 비용 ${won(used)} · 납부 완료 ${won(paid)}`;
- $('pct').textContent=pl>used&&total?`확정 ${+pct.toFixed(1)}% · 예상 ${+ppct.toFixed(1)}%`:(+pct.toFixed(1))+'%';
- $('pct').classList.toggle('over',!!total&&pl>total);
- $('goal').textContent=`총 목표 ${won(total)}`;
- $('est-desc').textContent=total&&pl>total?`예상 포함 ${won(pl)} · 예산 초과 ${won(pl-total)}`:`예상 포함 ${won(pl)} · 남은 예산 ${won(total-pl)}`;
- const ow=$('over-warn');
- if(total&&pl>total){ow.textContent=`예상 포함 금액이 총 예산을 ${won(pl-total)} 넘었어요. 예산이나 계획을 조정해 보세요.`;ow.style.display=''}else ow.style.display='none';
+ const paid=counted().reduce((a,p)=>a+(p.dep||0),0), ppct=total?pl/total*100:0;
+ const over=!!total&&pl>total;
+ $('usage-desc').innerHTML=`쓴 돈 <b>${won(used)}</b>`+(pl>used?` · 예상 포함 <b>${won(pl)}</b>`:'')+(paid?` · 납부 <b>${won(paid)}</b>`:'');
+ $('pct').textContent=total?(+ppct.toFixed(1))+'%':'';
+ $('pct').classList.toggle('over',over);
+ $('est-desc').previousElementSibling.textContent=over?'예산 초과':'남은 예산';
+ $('est-desc').textContent=won(over?pl-total:total-pl);
+ $('est-desc').parentElement.classList.toggle('over',over);
  const SC={'소라':'#D8EAF5','결혼식준비':'#E8E4D8','혼수':'#F4E8CA','신혼여행':'#F1DCD0'};
- const segs=[]; let sum=0, hasEst=false;
- CATS.forEach(c=>{const f=spent(c), e=Math.max(0,planned(c)-f); if(f>0){segs.push([f,SC[c],0]);sum+=f} if(e>0){segs.push([e,SC[c],1]);sum+=e;hasEst=true}});
- const base=Math.max(total||0,sum)||1;
+ const segs=[]; let sum=0;
+ CATS.forEach(c=>{const f=spent(c), e=Math.max(0,planned(c)-f); if(f>0){segs.push([f,SC[c],0]);sum+=f} if(e>0){segs.push([e,SC[c],1]);sum+=e}});
  $('bar').innerHTML=segs.map(([v,col,est])=>`<i class="${est?'est':''}" style="flex:${v};background-color:${col}"></i>`).join('')+(total>sum?`<i style="flex:${total-sum}"></i>`:'');
  $('bar').parentElement.classList.toggle('over',!!total&&pl>total);
- $('share-leg').innerHTML=CATS.filter(c=>planned(c)>0).map(c=>`<span><i class="sw" style="background:${SC[c]}"></i>${lab(c)} ${Math.round(planned(c)/base*100)}%</span>`).join('')+(hasEst?'<span><i class="sw est-sw"></i>예상 금액</span>':'');
- $('dday').textContent=dday();
- $('wdate-txt').textContent=S.wdate?fmtDate(S.wdate):'';
+ $('wdate-txt').textContent=S.wdate?fmtDate(S.wdate)+' ·':'';
+ $('dday').textContent=S.wdate?dday():'결혼식 날짜 정하기';
  $('wdate-txt').style.display=S.wdate?'':'none';
  fitTotal();
  $('grid').innerHTML=CATS.map((c,i)=>{
-  const f=spent(c), t=planned(c), e=Math.max(0,t-f), b=S.cat[c]||0, over=b>0&&t>b, n=counted().filter(p=>p.cat===c).length, al=won(t).length;
-  const sub=e>0&&f>0?`확정 ${won(f)} · 예상 ${won(e)}`:e>0?'모두 예상 금액':n?'모두 확정 금액':'';
-  const meta=!b?'예산 미설정':over?`예산 초과 ${won(t-b)}`:`예산 ${won(b)} 중 ${Math.round(t/b*100)}%`;
+  const f=spent(c), t=planned(c), e=Math.max(0,t-f), b=S.cat[c]||0, over=b>0&&t>b, al=won(t).length;
+  const meta=!b?'예산 미설정':over?`예산 초과 ${won(t-b)}`:`${Math.round(t/b*100)}% · 예산 ${won(b)}`;
   const sc=b?Math.max(b,t):1;
   return `<button data-cat="${c}" class="cell tile-${i} ${ui.cat===c?'on':''}">
-  <span class="glyph">${GL[c]}</span><span class="cname">${lab(c)}</span>
+  <span class="cname">${GL[c]} ${lab(c)}</span>
   <span class="num camt ${over?'over':''}" style="font-size:${(innerWidth>=1000?[30,27,23]:[22,20,17])[al<=10?0:al<=12?1:2]}px">${won(t)}</span>
-  ${sub?`<span class="csub">${sub}</span>`:''}
-  <span class="cmeta ${over?'over':''}">${n}개 항목 · ${meta}</span>
+  <span class="cmeta ${over?'over':''}">${meta}</span>
   ${b?`<span class="cbar ${over?'cover':''}" aria-hidden="true"><i style="width:${(f/sc*100).toFixed(1)}%"></i><i class="est" style="width:${(e/sc*100).toFixed(1)}%"></i></span>`:''}</button>`;
  }).join('');
  fitCells();
@@ -1138,19 +1131,6 @@ function renderNav(){
 }
 
 let animList=true;
-/* PC·태블릿: 카드 높이에 맞춰 칸 수를 계산해 빈틈 없이 쌓기 */
-var masRO=null,masT=0;
-function masSpan(el){const L=$('list'); const g=parseFloat(getComputedStyle(L).columnGap)||28; el.style.setProperty('--mg',g+'px'); el.style.gridRowEnd='span '+Math.max(1,Math.ceil((el.offsetHeight+g)/4))}
-function masLayout(){
- const L=$('list'); if(!L)return;
- const on=matchMedia('(min-width:640px)').matches&&L.querySelector('.plan');
- L.classList.toggle('mas',!!on);
- if(masRO)masRO.disconnect();
- if(!on){L.querySelectorAll('.plan').forEach(el=>el.style.gridRowEnd='');return}
- if(!masRO&&window.ResizeObserver)masRO=new ResizeObserver(es=>es.forEach(e=>masSpan(e.target)));
- L.querySelectorAll('.plan').forEach(el=>{masSpan(el); if(masRO)masRO.observe(el)});
-}
-addEventListener('resize',()=>{clearTimeout(masT);masT=setTimeout(masLayout,120)});
 function renderList(){
  const q=ui.q.trim().toLowerCase();
  const catOk=c=>ui.cat==='all'||c===ui.cat, stOk=p=>!ui.st.size||ui.st.has(p.status), qOk=p=>!q||(p.name+p.memo+p.link).toLowerCase().includes(q);
@@ -1166,61 +1146,33 @@ function renderList(){
  $('sumline').textContent=a.length||gs.length?`표시 중인 계획 합계 ${won(sum)}`:'';
  if(!a.length&&!gs.length){
   $('list').innerHTML=`<div class="p-6 text-center text-sm font-bold break-keep" style="border:2px dashed rgba(43,37,34,.3);border-radius:20px">조건에 맞는 계획이 없어요.<br>+ 새 계획으로 추가해 보세요.</div>`;
-  masLayout();
   return;
  }
  const doAnim=animList; animList=false;
- $('list').innerHTML=gs.map((g,idx)=>cmpCard(g,idx,doAnim)).join('')+a.map((p,idx)=>{idx+=gs.length;
-  const fixed=p.fix>0, cost=fixed?p.fix:p.est, dep=p.dep||0;
-  let host=''; try{host=new URL(p.link).hostname.replace('www.','')}catch(e){}
-  const tags=[(p.pri&&p.pri!=='보통')?`<span class="ptag">${p.pri==='긴급'?'!':'★'} ${p.pri}</span>`:'', dueTag(p)].filter(Boolean).join('');
-  return `<article class="plan card ${p.status==='완료'?'done':''} ${doAnim?'rise':''}" style="--i:${Math.min(idx,8)}" data-id="${p.id}">
-   <div class="chead">
-    <span class="cpill ${CHD[p.cat]}">${GL[p.cat]} ${lab(p.cat)}</span>
-    <button data-act="cycle" class="pill sm stp" style="--d:${STC[p.status]}" aria-label="상태 변경: ${p.status}">${p.status}</button>
-   </div>
-   ${p.img?`<div class="relative c-white" style="margin:14px 20px 0;border-radius:16px;overflow:hidden">
-     <img src="${p.img}" alt="${esc(p.name)}" class="block w-full h-auto cursor-zoom-in" data-act="zoom">
-     <button data-act="zoom" class="absolute bottom-2 right-2 btn c-white px-3 py-1 text-[13px] font-bold" style="box-shadow:0 2px 8px rgba(0,0,0,.18)">이미지 보기 ↗</button>
-    </div>`:''}
-   <div class="cbody">
-    ${tags?`<div class="flex gap-2 flex-wrap items-center mb-3">${tags}</div>`:''}
-    <h3 class="ttl mb-5">${esc(p.name)}</h3>
-    <hr class="rule mb-4">
-    <div class="text-[13px] font-bold mb-1">${fixed?'확정 비용':'예상 비용'}</div>
-    ${cost?`<div class="num leading-none mb-4" style="font-size:${won(cost).length<=10?32:won(cost).length<=12?29:won(cost).length<=14?26:22}px;letter-spacing:-.04em">${won(cost)}</div>`:`<div class="text-[15px] font-medium mb-4" style="color:#6B625C">아직 금액이 없어요</div>`}
-    ${fixed&&p.est?`<div class="text-[13px] font-medium mb-2">예상 ${won(p.est)} 대비 ${p.fix-p.est>0?'+':''}${won(p.fix-p.est)}</div>`:''}
-    ${dep?`<div class="text-[13px] font-bold mb-2">계약금 ${won(dep)}${fixed?` · 잔금 ${won(Math.max(0,p.fix-dep))}`:''}</div>`:''}
-    <hr class="rule mb-4">
-    ${p.memo?`<p class="text-[16px] font-medium leading-[1.6] mb-4 break-keep whitespace-pre-wrap">${esc(p.memo)}</p>`:''}
-    ${p.link?`<div class="flex items-center gap-2 text-[15px] font-bold mb-5">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
-      <a href="${esc(p.link)}" target="_blank" rel="noopener noreferrer" class="min-w-0 truncate">${esc(host||p.link)}</a><span aria-hidden="true">↗</span></div>`:''}
-    <div class="flex justify-end items-center gap-5 mt-auto pt-4">
-     <button data-act="cmp" class="und text-[15px]">비교</button>
-     <button data-act="dup" class="und text-[15px]">복제</button>
-     <button data-act="edit" class="und text-[15px]">수정</button>
-     <button data-act="del" aria-label="삭제" class="grid place-items-center w-8 h-8">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
-     </button>
-    </div>
-   </div>
-  </article>`;
- }).join('');
- masLayout();
+ const sec=(lab,n,rows,i)=>`<section class="lgrp ${doAnim?'rise':''}" style="--i:${i}">${gs.length&&a.length?`<div class="lsec"><span>${lab} ${n}</span></div>`:''}<div class="card lcard">${rows}</div></section>`;
+ $('list').innerHTML=(gs.length?sec('비교 중',gs.length,gs.map(cmpRow).join(''),0):'')+(a.length?sec('계획',a.length,a.map(planRow).join(''),1):'');
 }
-function cmpCard(g,idx,anim){
- const ms=members(g), pk=pickOf(g), mx=Math.max(1,...ms.map(cost)), inB=ms.filter(p=>cost(p)&&cost(p)<=g.bud).length;
- return `<article class="plan card cmpc ${anim?'rise':''}" style="--i:${Math.min(idx,8)}" data-grp="${g.id}">
-  <div class="chead"><span class="cpill ${CHD[g.cat]||'c-white'}">${GL[g.cat]||''} ${lab(g.cat)}</span><span class="pill sm stp" style="--d:${STC['비교 중']}">비교 중 ${ms.length}곳</span></div>
-  <div class="cbody">
-   <div class="lbl mb-2" style="color:var(--sub)">COMPARE</div>
-   <h3 class="ttl mb-1">${esc(g.name)}</h3>
-   <p class="cmp-sub mb-3">${g.bud?`예산 ${won(g.bud)} · ${ms.length}곳 중 ${inB}곳이 예산 안`:`${ms.length}곳을 비교하고 있어요`}</p>
-   <div>${ms.map(p=>`<div class="cmp-row"><span class="nm">${esc(p.name)}${p.fav?' <span class="fav" aria-label="마음에 들어요">♥</span>':''}</span><span class="cmp-bar" aria-hidden="true"><i style="width:${(cost(p)/mx*100).toFixed(1)}%"></i></span><span class="pr">${won(cost(p))}</span></div>`).join('')}</div>
-   ${pk?`<p class="cmp-sub" style="margin-top:10px">예산 계산에는 ${esc(pk.name)} 금액만 들어가요.</p>`:''}
-   <div class="cmp-acts"><button type="button" class="pill sm on" data-gact="open">비교표 보기</button><button type="button" class="pill sm" data-gact="add">+ 업체 추가</button></div>
-  </div>
+function dueTxt(p){
+ if(!p.due)return'';
+ const n=new Date(); n.setHours(0,0,0,0);
+ const k=Math.round((new Date(p.due+'T00:00:00')-n)/864e5), act=p.status!=='완료';
+ return `<span class="due ${act&&k<=7?'near':''}">${p.due.slice(5).replace('-','/')} ${k===0?'오늘':k>0?'D-'+k:'지남'}</span>`;
+}
+function planRow(p){
+ const fixed=p.fix>0, c=fixed?p.fix:p.est, memo=(p.memo||'').split('\n')[0].trim();
+ const meta=[`<i class="dot" style="--d:${STC[p.status]}"></i><span>${p.status}</span>`, dueTxt(p), p.pri&&p.pri!=='보통'?`<span class="pri">${p.pri==='긴급'?'!':'★'} ${p.pri}</span>`:'', memo?`<span class="lmemo">${esc(memo)}</span>`:''].filter(Boolean).join('<span aria-hidden="true">·</span>');
+ return `<article class="plan lrow ${p.status==='완료'?'done':''}" data-id="${p.id}" role="button" tabindex="0" aria-label="${esc(p.name)} 수정">
+  <span class="lsw ${CHD[p.cat]}" title="${lab(p.cat)}">${p.img?`<img src="${p.img}" alt="">`:GL[p.cat]}</span>
+  <div class="lmid"><div class="lnm">${esc(p.name)}</div><div class="lmt">${meta}</div></div>
+  <div class="lamt">${c?`${won(c)}<small>${fixed?'확정':'예상'}</small>`:'<span class="none">금액 없음</span>'}</div>
+ </article>`;
+}
+function cmpRow(g){
+ const ms=members(g), pk=pickOf(g), fav=ms.find(p=>p.fav);
+ return `<article class="plan lrow cmpc" data-grp="${g.id}" role="button" tabindex="0" aria-label="${esc(g.name)} 비교표 보기">
+  <span class="lsw ${CHD[g.cat]||'c-white'}" title="${lab(g.cat)}">${GL[g.cat]||''}</span>
+  <div class="lmid"><div class="lnm">${esc(g.name)}</div><div class="lmt"><i class="dot" style="--d:${STC['비교 중']}"></i><span>${ms.length}곳 비교</span>${fav?`<span aria-hidden="true">·</span><span class="lmemo">♥ ${esc(fav.name)}</span>`:''}</div></div>
+  <div class="lamt">${pk&&cost(pk)?`${won(cost(pk))}<small>${g.bud?`예산 ${won(g.bud)}`:'예산 기준'}</small>`:'<span class="none">금액 없음</span>'}</div>
  </article>`;
 }
 function renderArch(catOk){
@@ -1356,18 +1308,7 @@ document.addEventListener('click', e => {
  }
 
  const card = e.target.closest('.plan');
- const act = e.target.closest('[data-act]');
- if (card && act) {
-     const p = S.plans.find(x => x.id === card.dataset.id);
-     if (act.dataset.act === 'cycle') { p.status = ST[(ST.indexOf(p.status)+1)%ST.length]; p.u = Date.now(); save(); render(); }
-     if (act.dataset.act === 'edit') openEdit(p);
-     if (act.dataset.act === 'cmp') openGroup(p);
-     if (act.dataset.act === 'dup') { const c = JSON.parse(JSON.stringify(p)); c.id = uid(); c.t = Date.now(); c.u = Date.now(); c.name = p.name + ' (복사)'; c.status = ST[0]; ungroup(c); delete c.arch; S.plans.push(c); save(); render(); toast('복제했어요.'); }
-     if (act.dataset.act === 'del') { const snap = JSON.parse(JSON.stringify(p)); S.del[p.id] = Date.now(); S.plans = S.plans.filter(x => x !== p); save(); render(); toast('계획을 삭제했어요.', '되돌리기', () => { snap.u = Date.now(); delete S.del[snap.id]; S.plans.push(snap); save(); render(); }); }
-     if (act.dataset.act === 'zoom') { lbOpen([p.img], 0); }
- }
- 
- if (card && !act && !e.target.closest('a,button,img,input,select,textarea,label')) {
+ if (card && !e.target.closest('a,button,input,select,textarea,label')) {
      const pc = S.plans.find(y => y.id === card.dataset.id);
      if (pc) { openEdit(pc); return; }
  }
@@ -1536,6 +1477,7 @@ function openEdit(p, pre){
  editing = p || {}; ePre = pre || null;
  $('edit-title').textContent = p ? 'EDIT OUR PLAN' : 'NEW OUR PLAN'; 
  $('f-del').classList.toggle('hidden', !p);
+ $('f-more').classList.toggle('hidden', !p); $('f-cmp').classList.toggle('hidden', !p || !!inGrp(p));
  $('f-name').value = p?.name || ''; 
  $('f-cat').value = p?.cat || pre?.cat || (CATS.includes(ui.cat) ? ui.cat : CATS[0]); 
  $('f-status').value = p?.status || (pre?.grp ? '비교 중' : ST[0]);
@@ -1582,6 +1524,17 @@ $('f-del').onclick = () => {
     S.del[editing.id] = Date.now();
     S.plans = S.plans.filter(p => p !== editing);
     save(); closeAll(); render(); toast('삭제했어요.');
+};
+$('f-dup').onclick = () => {
+    const p = editing; if (!p?.id) return;
+    if (editSnap() !== editSnap0 && !confirm('저장하지 않은 변경 사항은 빼고 복제할까요?')) return;
+    closeAll(); const c = JSON.parse(JSON.stringify(p)); c.id = uid(); c.t = Date.now(); c.u = Date.now(); c.name = p.name + ' (복사)'; c.status = ST[0]; ungroup(c); delete c.arch; S.plans.push(c); save(); render(); toast('복제했어요.');
+};
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('lrow')) { e.preventDefault(); e.target.click(); } });
+$('f-cmp').onclick = () => {
+    const p = editing; if (!p?.id) return;
+    if (editSnap() !== editSnap0 && !confirm('저장하지 않은 변경 사항이 있어요. 닫고 비교로 넘어갈까요?')) return;
+    closeAll(); openGroup(p);
 };
 $('f-imgdel').onclick = () => setImg('');
 
