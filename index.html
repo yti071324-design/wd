@@ -277,7 +277,7 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
  .smain .slist{grid-template-columns:minmax(0,1fr)}
 }
 @media (min-width:1000px) and (min-height:720px){
- .pside{position:sticky;top:min(85px,calc(100vh - var(--ph,0px) - 20px))}
+ .pside,.sside{position:sticky;top:min(85px,calc(100vh - var(--ph,0px) - 20px))}
 }
 main[data-page=story] [data-pg=plans],main[data-page=plans] [data-pg=story],main[data-view]:not([data-view=all]) .hero,main[data-view]:not([data-view=all]) #budget{display:none!important}
 main>nav{position:sticky;top:var(--hh,64px);z-index:39}
@@ -2724,8 +2724,8 @@ $('st-list').addEventListener('click',e=>{
 $('st-list').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.target.classList.contains('ct')){e.preventDefault();e.target.closest('[data-sid]').querySelector('[data-sact="csend"]').click()}});
 const pcMQ=matchMedia('(min-width:1000px)'), placeF=()=>{const f=document.querySelector('.frow'); if(pcMQ.matches)$('fslot').append(f); else $('list').before(f)};
 placeF();pcMQ.addEventListener('change',placeF);
-/* 사이드바가 화면보다 길면 아래쪽(검색·필터)이 보이게 붙는다 */
-new ResizeObserver(([e])=>e.target.style.setProperty('--ph',e.target.offsetHeight+'px')).observe(document.querySelector('.pside'));
+/* PC 왼쪽 사이드바(계획·일기장)는 스크롤을 따라 붙고, 화면보다 길면 아래쪽이 보이게 붙는다 */
+{const ro=new ResizeObserver(es=>es.forEach(e=>e.target.style.setProperty('--ph',e.target.offsetHeight+'px')));document.querySelectorAll('.pside,.sside').forEach(el=>ro.observe(el))}
 const sHH=()=>document.documentElement.style.setProperty('--hh',document.querySelector('header').offsetHeight+'px');
 sHH();addEventListener('resize',sHH);addEventListener('load',sHH);render();
 /* 팝업 배경이 부드럽게 나타나도록, 처음 열릴 때 막대가 자라나도록 */
