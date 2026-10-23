@@ -237,9 +237,15 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
  .hero>*+*{margin-top:0}
  .hero .h1{font-size:96px}
  .quote{font-size:32px}
- .bgrid{display:grid;grid-template-columns:1.05fr 1fr}
- .bleft{padding:32px}
- .bgcells{border-left:0;padding:32px 32px 32px 8px;gap:14px}
+ .bgrid{display:grid;grid-template-columns:1.05fr 1fr;grid-template-rows:1fr auto}
+ .bleft{padding:32px 32px 0;grid-column:1;grid-row:1;justify-content:space-between}
+ .bgcells{border-left:0;padding:32px 32px 32px 8px;gap:14px;grid-column:2;grid-row:1/3}
+ .bfoot{grid-column:1;grid-row:2;justify-content:flex-start;padding:16px 32px 32px}
+ #cmpv{--cvp:max(24px,calc((100vw - 1100px)/2 + 24px))}
+ #cmpv :is(.cv-h,.cv-sum,.cv-scroll,.cv-tip){padding-left:var(--cvp);padding-right:var(--cvp)}
+ #cmpv .cv-sb{left:var(--cvp);margin-left:var(--cvp);margin-right:var(--cvp);width:calc(100vw - 2*var(--cvp))}
+ #cmpv .ctab th,#cmpv .ctab td{width:200px;min-width:200px;max-width:280px;padding:14px 14px}
+ #cmpv .ctab .k{width:96px;min-width:96px}
  .cell{padding:24px 20px 20px}
  .frow{flex-direction:row;justify-content:space-between;align-items:center}
  .srch{width:320px;flex-shrink:0}.sgrp{justify-content:flex-end;flex:1}
