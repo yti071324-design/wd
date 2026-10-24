@@ -1943,7 +1943,7 @@ function pgAnim(from){
  const to=tabIdx(); if(from===to)return;
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
  const dir=to>from?1:-1, sw=swipeDir; swipeDir=0;
- document.querySelectorAll('main > section').forEach((el,i)=>{
+ document.querySelectorAll('main > [data-pg]').forEach((el,i)=>{
   if(!el.offsetParent&&getComputedStyle(el).display==='none')return;
   el.classList.remove('pg-in'); el.style.setProperty('--pgx',(sw?Math.round(dir*Math.min(innerWidth*.55,320)):dir*22)+'px'); el.style.setProperty('--pgd',sw?'0ms':Math.min(i,3)*40+'ms');
   void el.offsetWidth; el.classList.add('pg-in');
@@ -1999,7 +1999,7 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>placePill(
    if(Math.abs(ddx)<7&&Math.abs(ddy)<7)return;
    if(Math.abs(ddx)<=Math.abs(ddy)*1.15){x0=null;return}      // 세로 스크롤은 그대로
    tabs=[...$('tabs').querySelectorAll('button.tab')]; cur=tabs.findIndex(b=>b.classList.contains('on')); if(cur<0){x0=null;return}
-   secs=[...document.querySelectorAll('main > section')].filter(el=>getComputedStyle(el).display!=='none');
+   secs=[...document.querySelectorAll('main > [data-pg]')].filter(el=>getComputedStyle(el).display!=='none');
    secs.forEach(el=>{el.classList.remove('pg-in');el.style.willChange='transform'}); W=innerWidth||1; mode=1;
   }
   if(e.cancelable)e.preventDefault();
