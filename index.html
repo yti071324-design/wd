@@ -1401,10 +1401,10 @@ $('logo').onclick = () => {
  if (ui.page === 'plans' && ui.cat === 'all') { window.scrollTo({top: 0, behavior: 'smooth'}); return; }
  const from = tabIdx(); ui.cat = 'all'; ui.page = 'plans'; try { localStorage.setItem('to-in-one-page', 'plans'); } catch (x) {} animList = true; render(); window.scrollTo(0, 0); pgAnim(from); window.dispatchEvent(new Event('scroll'));
 };
-$('total').addEventListener('input', e => { if (/[억만천백]/.test(e.target.value)) return; e.target.value = num(e.target.value).toLocaleString('ko-KR'); S.total = num(e.target.value); S.mu = Date.now(); save(); renderTop(); });
-$('total').addEventListener('blur', e => { if (/[억만천백]/.test(e.target.value)) { const n = krw(e.target.value); e.target.value = n.toLocaleString('ko-KR'); S.total = n; S.mu = Date.now(); save(); renderTop(); } });
+$('total').addEventListener('input', e => { if (/[억만천백]/.test(e.target.value)) return; e.target.value = num(e.target.value).toLocaleString('ko-KR'); S.total = num(e.target.value); S.tu = S.mu = Date.now(); save(); renderTop(); });
+$('total').addEventListener('blur', e => { if (/[억만천백]/.test(e.target.value)) { const n = krw(e.target.value); e.target.value = n.toLocaleString('ko-KR'); S.total = n; S.tu = S.mu = Date.now(); save(); renderTop(); } });
 $('wdate').addEventListener('click', () => { try { if ($('wdate').showPicker) $('wdate').showPicker(); } catch (e) {} });
-$('wdate').onchange = e => { S.wdate = e.target.value; S.mu = Date.now(); save(); renderTop(); };
+$('wdate').onchange = e => { S.wdate = e.target.value; S.wu = S.mu = Date.now(); save(); renderTop(); };
 $('q').oninput = e => { ui.q = e.target.value; renderList(); };
 $('sort').onchange = e => { ui.sort = e.target.value; animList = true; renderList(); };
 
@@ -1582,6 +1582,10 @@ $('f-save').onclick = () => {
  
  if (!$('f-pc').classList.contains('hidden')) { d.pros = $('f-pros').value.trim(); d.cons = $('f-cons').value.trim(); }
  d.u = Date.now();
+ if (editing.id && !S.plans.includes(editing)) {   // 수정창을 연 사이 다른 기기에서 지운 계획
+     if (!confirm('그사이 다른 기기에서 이 계획을 지웠어요.\n다시 살려서 저장할까요?')) { closeAll(); render(); return; }
+     delete S.del[editing.id]; delete editing.arch; S.plans.push(editing);
+ }
  const g = editing.id ? inGrp(editing) : (ePre && grpOf(ePre.grp)), moved = g && g.cat !== d.cat;
  if(editing.id) { Object.assign(editing, d); if (moved) ungroup(editing); }
  else S.plans.push({ id:uid(), t:Date.now(), ...(g && !moved ? gMeta(g) : {}), ...d });
@@ -1809,7 +1813,7 @@ function allocRest(){
     $('alloc-rest').style.color = d<0 ? '#dc2626' : '';
 }
 $('alloc-fields').addEventListener('input', e => { if(e.target.dataset.a){ e.target.value=num(e.target.value).toLocaleString('ko-KR'); allocRest(); }});
-$('alloc-save').onclick = () => { document.querySelectorAll('[data-a]').forEach(i=>S.cat[i.dataset.a]=num(i.value)); S.mu = Date.now(); save(); closeAll(); render(); };
+$('alloc-save').onclick = () => { document.querySelectorAll('[data-a]').forEach(i=>S.cat[i.dataset.a]=num(i.value)); S.cu = S.mu = Date.now(); save(); closeAll(); render(); };
 
 /* 백업 글: 사진 원본(수 MB) 대신 사진 번호(@아이디)만 담아 가볍게 만든다. 모바일에서 창이 멈추던 원인 */
 function backupText() {
@@ -1827,12 +1831,11 @@ $('b-copy').onclick = async () => {
     catch(e) { document.execCommand('copy'); toast('선택된 내용을 복사해 주세요.'); }
 };
 $('b-load').onclick = () => {
-    try {
-        const d = JSON.parse($('b-text').value);
-        if(!Array.isArray(d.plans) || typeof d.cat!=='object') throw 0;
-        if(!confirm('현재 데이터가 불러온 내용으로 바뀌어요. 계속할까요?')) return;
-        d.bg = S.bg; d.bgu = S.bgu; d.gk = S.gk; d.gku = S.gku; if (!d.verse) { d.verse = S.verse; d.vu = S.vu; } if (!Array.isArray(d.todos)) d.todos = S.todos || []; S = hyd(d); S.del = S.del||{}; S.mu = Date.now(); save(); init(); closeAll(); toast('불러왔어요.'); const miss = imgMissing(S); if (miss.length) imgFetch(miss);
-    } catch(e) { toast('백업 내용을 읽을 수 없어요. 형식을 확인해 주세요.'); }
+    let d;
+    try { d = JSON.parse($('b-text').value); if (!d || !Array.isArray(d.plans) || typeof d.cat !== 'object') throw 0; }
+    catch(e) { toast('백업 내용을 읽을 수 없어요. 형식을 확인해 주세요.'); return; }
+    if (!confirm('이 백업 내용으로 되살릴까요?\n백업에 있던 계획·일기가 그때 내용으로 돌아와요. 백업 이후에 새로 만든 항목은 그대로 남아요.')) return;
+    restoreData(d); toast('불러왔어요.');
 };
 
 /* ===== 전체 백업 파일: 데이터 + 사진(원본) 한 파일 ===== */
@@ -1858,6 +1861,16 @@ async function fullBackup(){
  }catch(e){st.textContent='백업 파일을 만들지 못했어요. 다시 시도해 주세요.'}
  finally{btn.disabled=false}
 }
+/* 백업 되살리기: 백업에 든 항목은 지금 고친 것으로 쳐서(u=지금) 공유 중에도 다음 동기화 때 되돌아가지 않게 한다.
+   백업에 없는 값(글 백업에는 배경·지도 키가 없다)은 지금 것을 그대로 둔다 */
+function restoreData(data){
+ const now=Date.now(), d=normS(JSON.parse(JSON.stringify(data)));
+ ['plans','diary','cmts','todos','wish'].forEach(k=>(d[k]||[]).forEach(x=>{if(x)x.u=now}));
+ d.del={}; d.mu=d.tu=d.wu=d.cu=now;
+ [['verse','vu'],['bg','bgu'],['names','nmu'],['ann','anu'],['gk','gku']].forEach(([k,u])=>{d[u]=d[k]?now:0});
+ S=hyd(merge(d,dehyd(S))); imgRemote=null; seenS=null; save(); init(); closeAll();
+ const miss=imgMissing(S); if(miss.length)imgFetch(miss);
+}
 async function fullRestore(f){
  const st=$('fb-state'); let o=null;
  try{o=JSON.parse(await f.text())}catch(e){toast('백업 파일을 읽을 수 없어요.');return}
@@ -1866,12 +1879,7 @@ async function fullRestore(f){
  if(!confirm(`${wl}백업으로 되살릴까요?\n백업에 있던 계획·일기·사진이 그때 내용으로 돌아와요. 백업 이후에 새로 만든 항목은 그대로 남아요.`))return;
  st.textContent='되살리는 중…';
  Object.entries(o.imgs||{}).forEach(([id,v])=>{if(typeof v==='string'&&v.slice(0,11)==='data:image/'){IMGC.set(id,v);IMGR.set(v,id);idbPut(id,v)}});
- const now=Date.now(), d=normS(JSON.parse(JSON.stringify(o.data)));
- ['plans','diary','cmts','todos','wish'].forEach(k=>(d[k]||[]).forEach(x=>{if(x)x.u=now}));
- d.del={}; d.mu=d.vu=d.bgu=d.nmu=d.anu=now;
- if(d.gk)d.gku=now; else {d.gk=S.gk;d.gku=S.gku}
- S=hyd(merge(d,dehyd(S))); imgRemote=null; seenS=null; save(); init(); closeAll();
- const miss=imgMissing(S); if(miss.length)imgFetch(miss);
+ restoreData(o.data);
  toast('백업으로 되살렸어요.'); st.textContent='';
 }
 $('fb-save').onclick=fullBackup;
@@ -1893,16 +1901,18 @@ function init() {
 load(); init(); imgBoot();
 /* ===== 금액 도우미: '450만', '1.5억', '3천만' 입력 / 아래에 한글 금액 표시 ===== */
 function krw(str){
- const t=String(str).replace(/[,\s원₩]/g,''); let total=0,section=0,pending=null,m; const re=/(\d+(?:\.\d+)?)|([억만천백])/g;
+ const t=String(str).replace(/[,\s원₩]/g,''); let total=0,section=0,pending=null,big='',m; const re=/(\d+(?:\.\d+)?)|([억만천백])/g;
  while((m=re.exec(t))){
   if(m[1]){ if(pending!==null)section+=pending; pending=parseFloat(m[1]); }
   else{
    const u=m[2];
    if(u==='천'||u==='백'){ section+=(pending===null?1:pending)*(u==='천'?1000:100); pending=null; }
-   else{ const v=section+(pending||0)||1; total+=v*(u==='억'?1e8:1e4); section=0; pending=null; }
+   else{ const v=section+(pending||0)||1; total+=v*(u==='억'?1e8:1e4); section=0; pending=null; big=u; }
   }
  }
- return Math.round(total+section+(pending||0));
+ let rest=section+(pending||0);
+ if(big==='억'&&rest>0&&rest<1e4)rest*=1e4;   // '1억 5천', '2억 3500'은 흔히 만 단위를 줄여 쓴 것
+ return Math.round(total+rest);
 }
 function krLabel(n){
  if(!n||n<0)return '';
@@ -2794,12 +2804,13 @@ const cstr=d=>{const x=JSON.parse(JSON.stringify(normS(JSON.parse(JSON.stringify
 const ml=(x,y,del)=>{const m=new Map();[...y,...x].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))};
 function merge(a,b){
  a=normS(a);b=normS(b);
- const w=(a.mu||0)>=(b.mu||0)?a:b, del={...b.del};
+ /* 총 예산·결혼식 날짜·카테고리 예산은 따로 비교한다 (tu·wu·cu). 예전 버전이 쓴 데이터에는 이 칸이 없으니 mu로 대신 */
+ const st=(x,k)=>x[k]!=null?+x[k]||0:(x.mu||0), pk=k=>st(a,k)>=st(b,k)?a:b, wt=pk('tu'), wd=pk('wu'), wc=pk('cu'), del={...b.del};
  for(const k in a.del)del[k]=Math.max(del[k]||0,a.del[k]);
  const map=new Map();
  [...b.plans,...a.plans].forEach(p=>{const q=map.get(p.id);if(!q||(p.u||0)>=(q.u||0))map.set(p.id,p)});
  const vw=(a.vu||0)>=(b.vu||0)?a:b, gw=(a.bgu||0)>=(b.bgu||0)?a:b, kw=(a.gku||0)>=(b.gku||0)?a:b, nw=(a.nmu||0)>=(b.nmu||0)?a:b, aw=(a.anu||0)>=(b.anu||0)?a:b;
- return {total:w.total,wdate:w.wdate||'',cat:w.cat,mu:w.mu||0,verse:vw.verse,vu:vw.vu||0,bg:gw.bg,bgu:gw.bgu||0,gk:kw.gk||'',gku:kw.gku||0,names:nw.names||null,nmu:nw.nmu||0,ann:aw.ann||null,anu:aw.anu||0,del,todos:(()=>{const m=new Map();[...b.todos,...a.todos].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))})(),plans:[...map.values()].filter(p=>!(del[p.id]>(p.u||0))),diary:ml(a.diary,b.diary,del),cmts:ml(a.cmts,b.cmts,del),wish:ml(a.wish,b.wish,del)};
+ return {total:wt.total,wdate:wd.wdate||'',cat:wc.cat,mu:Math.max(a.mu||0,b.mu||0),tu:st(wt,'tu'),wu:st(wd,'wu'),cu:st(wc,'cu'),verse:vw.verse,vu:vw.vu||0,bg:gw.bg,bgu:gw.bgu||0,gk:kw.gk||'',gku:kw.gku||0,names:nw.names||null,nmu:nw.nmu||0,ann:aw.ann||null,anu:aw.anu||0,del,todos:(()=>{const m=new Map();[...b.todos,...a.todos].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))})(),plans:[...map.values()].filter(p=>!(del[p.id]>(p.u||0))),diary:ml(a.diary,b.diary,del),cmts:ml(a.cmts,b.cmts,del),wish:ml(a.wish,b.wish,del)};
 }
 function setSync(st){
  if(st==='err'&&navigator.onLine===false)st='offline';
@@ -2824,8 +2835,9 @@ async function syncNow(){
   await authReady();
   const [rd,ru]=await Promise.all([fetch(curl('/data')),fetch(curl('/updatedAt'))]); if(!rd.ok||!ru.ok)throw 0;
   const rdata=await rd.json(), rts=await ru.json(), remote=rdata?{data:rdata,updatedAt:rts}:null;
-  const L=dehyd(S), m=(remote&&remote.data)?merge(L,remote.data):normS(L);
-  applyRemote(m);
+  /* 공유 링크로 막 들어온 기기(join)는 첫 동기화에서 공유 공간 내용을 그대로 받는다. 이 기기의 샘플 계획이 섞여 올라가지 않게 */
+  const L=dehyd(S), m=(remote&&remote.data)?(cloud.join?normS(remote.data):merge(L,remote.data)):normS(L);
+  applyRemote(m); if(cloud.join){delete cloud.join;saveCloud()}
   const out=dehyd(S);
   await imgUpload(out);
   if(!remote||!remote.data||cstr(out)!==cstr(remote.data)){
@@ -2844,14 +2856,7 @@ async function poll(){
  catch(e){setSync('err')}
 }
 async function connect(db,room,joining){
- cloud={db:cleanDb(db),room}; imgRemote=null; saveCloud(); renderCloudUI(); setSync('busy');
- if(joining){
-  try{
-   await authReady();
-   const [rd,ru]=await Promise.all([fetch(curl('/data')),fetch(curl('/updatedAt'))]); if(!rd.ok||!ru.ok)throw 0; const rdata=await rd.json(), rts=await ru.json();
-   if(rdata){S=hyd(normS(rdata));persist();lastTs=rts||0;init();setSync('ok');imgFetch(imgMissing(S));return}
-  }catch(e){setSync('err');return}
- }
+ cloud={db:cleanDb(db),room}; if(joining)cloud.join=1; imgRemote=null; saveCloud(); renderCloudUI(); setSync('busy');
  await syncNow();
 }
 const shareLink=()=>location.href.split('#')[0]+'#r='+cloud.room+'&d='+encodeURIComponent(cloud.db);
@@ -2887,7 +2892,17 @@ function cloudInit(){
 }
 addEventListener('online',()=>{if(cloud&&cloudStarted)syncNow()});
 addEventListener('offline',()=>{if(cloud)setSync('err')});
-if('serviceWorker' in navigator&&(location.protocol==='https:'||/^(localhost|127\.0\.0\.1)$/.test(location.hostname))){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+if('serviceWorker' in navigator&&(location.protocol==='https:'||/^(localhost|127\.0\.0\.1)$/.test(location.hostname))){
+ addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});
+ /* 새 버전: sw.js가 새 화면을 받아 두고 알려 주면 바로 바꿀 수 있게. 앱을 오래 켜 둔 채로 다시 보면 30분에 한 번 새 버전을 확인한다 */
+ navigator.serviceWorker.addEventListener('message',e=>{if(e.data==='toinone-new')toast('새 버전이 있어요.','새로고침',()=>location.reload())});
+ let swChk=Date.now();
+ document.addEventListener('visibilitychange',()=>{
+  if(document.hidden||Date.now()-swChk<18e5)return; swChk=Date.now();
+  const c=navigator.serviceWorker.controller; if(c)c.postMessage('toinone-check');
+  navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).catch(()=>{});
+ });
+}
 function startCloud(){if(cloudStarted){if(cloud)syncNow()} else cloudInit()}
 if(authOn()&&!authRt)lockShow(); else cloudInit();
 addEventListener('resize',()=>{fitTotal();fitCells()});
