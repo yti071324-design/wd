@@ -115,8 +115,11 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
 .sst::before{content:'';width:8px;height:8px;border-radius:999px;background:var(--sd);flex-shrink:0}
 .sst[data-st=ok]{--st:#2F7A5C;--sd:#3E8E6E}
 .sst[data-st=busy]{--st:#B4651E;--sd:#E08A2E}
-.vref::after{content:'✎';display:inline-block;margin-left:5px;font-size:12px;color:#9A8F88}.vref.empty{color:#6B625C}
-.quote.long{font-size:20px}.quote.xl{font-size:17px}
+.vcard{position:relative;display:block;width:100%;text-align:center;padding:32px 24px 30px;background:#fff;transition:transform .12s}.vcard::before{content:'';position:absolute;inset:8px;border:1px solid #E8E4D8;border-radius:18px;pointer-events:none}.vcard:active{transform:scale(.98)}
+.vorn{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px}.vorn i{width:28px;height:1px;background:rgba(43,37,34,.18)}
+.vcard .quote{display:block;font-size:22px}
+.vref{display:block;margin-top:18px;font-size:13px;font-weight:700;letter-spacing:.14em;color:#6B625C}.vref::after{content:'✎';display:inline-block;margin-left:6px;letter-spacing:0;font-size:11px;color:#9A8F88}.vref.empty{color:#9A8F88}
+.vcard .quote.long{font-size:20px}.vcard .quote.xl{font-size:17px}
 .sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0!important;padding:0!important;margin:0!important}
 .cs{position:relative;margin-top:6px}.cs.sm{margin-top:0}
 .cs-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;background:#fff;border:var(--hl) solid rgba(43,37,34,.18);border-radius:14px;padding:11px 14px;font:500 16px/1.4 var(--f-body);color:var(--ink);text-align:left;cursor:pointer}
@@ -236,7 +239,7 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
  .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:56px;align-items:start;padding-top:56px}
  .hero>*+*{margin-top:0}
  .hero .h1{font-size:96px}
- .quote{font-size:32px}
+ .vcard .quote{font-size:28px}.vcard .quote.long{font-size:24px}.vcard .quote.xl{font-size:20px}
  .bgrid{display:grid;grid-template-columns:1.05fr 1fr;grid-template-rows:1fr auto}
  .bleft{padding:32px 32px 0;grid-column:1;grid-row:1;justify-content:space-between}
  .bgcells{border-left:0;padding:32px 32px 32px 8px;gap:14px;grid-column:2;grid-row:1/3}
@@ -467,7 +470,7 @@ main[data-page=plans]{padding-bottom:96px}
 .pill:active,.tab:active,.cv-fav:active,.sview button:active,#who-btns button:active{transform:scale(.95)}
 .cell:active,.cmpc:active{transform:scale(.98)}
 .und:active{filter:brightness(.7)}
-@media (prefers-reduced-motion:reduce){.sbar,.pill,.tab,.cell,.cmpc,.cv-fav,.und{transition:none}.cv-fav.popnow .h{animation:none}}
+@media (prefers-reduced-motion:reduce){.vcard,.sbar,.pill,.tab,.cell,.cmpc,.cv-fav,.und{transition:none}.cv-fav.popnow .h{animation:none}}
 @keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
  @keyframes fadein{from{opacity:0}to{opacity:1}}
  @keyframes tick{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
@@ -625,17 +628,11 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
       <button id="bg-open" class="und">배경 사진</button>
     </div>
   </div>
-  <div class="card p-6 relative overflow-hidden">
-    <div class="absolute -top-5 -right-5 w-20 h-20 c-blush b3 rounded-full"></div>
-    <div class="lbl mb-6" style="font-size:12px">OUR VERSE</div>
-    <p id="verse-text" class="quote relative"></p>
-    <div class="mt-6 flex flex-wrap justify-between items-end relative gap-3">
-      <div class="flex items-center gap-x-4 gap-y-1 flex-wrap">
-        <button id="verse-ref" type="button" class="und vref text-[14px]" aria-label="구절 바꾸기"></button>
-      </div>
-      <div class="w-8 h-8 c-oat b3 rotate-45 shrink-0"></div>
-    </div>
-  </div>
+  <button id="verse-open" type="button" class="card vcard" aria-label="구절 바꾸기">
+    <span class="vorn" aria-hidden="true"><i></i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9A8F88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><i></i></span>
+    <span id="verse-text" class="quote"></span>
+    <span id="verse-ref" class="vref"></span>
+  </button>
 </section>
 
 <section id="story" data-pg="story" class="wrap pb-14 pt-4">
@@ -1258,7 +1255,7 @@ function renderArch(catOk){
 
 function renderVerse(){
  const v=(S.verse&&S.verse.text)?S.verse:DEFAULT_VERSE, el=$('verse-text');
- el.textContent='“'+v.text+'”';
+ el.textContent=v.text;
  el.classList.toggle('long',v.text.length>70&&v.text.length<=130);
  el.classList.toggle('xl',v.text.length>130);
  $('verse-ref').textContent=v.ref||'출처 적기'; $('verse-ref').classList.toggle('empty',!v.ref);
@@ -1411,7 +1408,7 @@ $('wdate').onchange = e => { S.wdate = e.target.value; S.mu = Date.now(); save()
 $('q').oninput = e => { ui.q = e.target.value; renderList(); };
 $('sort').onchange = e => { ui.sort = e.target.value; animList = true; renderList(); };
 
-$('verse-ref').onclick = () => { const v = (S.verse && S.verse.text) ? S.verse : DEFAULT_VERSE; $('v-text').value = v.text; $('v-ref').value = v.ref || ''; open_('verse'); };
+$('verse-open').onclick = () => { const v = (S.verse && S.verse.text) ? S.verse : DEFAULT_VERSE; $('v-text').value = v.text; $('v-ref').value = v.ref || ''; open_('verse'); };
 $('v-save').onclick = () => {
  const t = $('v-text').value.trim().replace(/^[“"'‘]+|[”"'’]+$/g, '').trim();
  if (!t) { toast('구절 내용을 입력해 주세요.'); $('v-text').focus(); return; }
