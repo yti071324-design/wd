@@ -589,6 +589,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 .gpick{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:var(--hl) solid rgba(43,37,34,.18);border-radius:14px;font-weight:700;font-size:15px;text-align:left;background:#fff}
 .gpick input{width:18px;height:18px;accent-color:var(--ink);flex:none}
 .archbox:not(:empty){margin-top:28px}
+.binbox:not(:empty){margin-top:12px}
 .arch-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,.75);border-radius:16px;margin-top:8px}
 </style>
 </head>
@@ -753,6 +754,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 
   <div id="list" class="plist"></div>
   <div id="archbox" class="archbox"></div>
+  <div id="binbox" class="archbox binbox"></div>
 </section>
 </div>
 
@@ -1024,7 +1026,7 @@ const seed=()=>({
 
 let S, ui={cat:'all',st:new Set(),q:'',sort:'new',page:(()=>{let x='';try{x=localStorage.getItem('to-in-one-page')}catch(e){}return 'plans'})()};
 function migCat(d){if(!d)return d;const O='결혼준비',N='결혼식준비';(Array.isArray(d.plans)?d.plans:Object.values(d.plans||{})).forEach(p=>{if(p&&p.cat===O)p.cat=N});if(d.cat&&Object.prototype.hasOwnProperty.call(d.cat,O)){if(d.cat[N]==null)d.cat[N]=d.cat[O];delete d.cat[O]}return d}
-function load(){try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){} if(!S)S=seed(); migCat(S); S.del=S.del||{}; S.mu=S.mu||0; S.todos=Array.isArray(S.todos)?S.todos:[]; S.diary=Array.isArray(S.diary)?S.diary:[]; S.cmts=Array.isArray(S.cmts)?S.cmts:[]}
+function load(){try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){} if(!S)S=seed(); migCat(S); S.del=S.del||{}; S.mu=S.mu||0; S.todos=Array.isArray(S.todos)?S.todos:[]; S.bin=binAlive(Array.isArray(S.bin)?S.bin:[]); S.diary=Array.isArray(S.diary)?S.diary:[]; S.cmts=Array.isArray(S.cmts)?S.cmts:[]}
 /* ===== 사진 따로 저장: 데이터에는 '@아이디'만 두고, 사진은 IndexedDB(이 기기)와 Firebase /imgs(공유)에 한 장씩 ===== */
 var IMGC=new Map(), IMGR=new Map(), imgDbP=null, idbOK=false, imgRemote=null, imgFetching=new Set();
 var IMG_PH='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 3%22%3E%3Crect width=%224%22 height=%223%22 fill=%22%23F3E6E1%22/%3E%3C/svg%3E';
@@ -1048,6 +1050,7 @@ function mapImgs(d,f){
  if(!d)return d; const o=Object.assign({},d);
  if(Array.isArray(d.plans))o.plans=d.plans.map(p=>p&&p.img?Object.assign({},p,{img:f(p.img)}):p);
  if(Array.isArray(d.diary))o.diary=d.diary.map(e=>{if(!e||(!e.img&&!Array.isArray(e.imgs)))return e; const x=Object.assign({},e); if(e.img)x.img=f(e.img); if(Array.isArray(e.imgs))x.imgs=e.imgs.map(f); return x});
+ if(Array.isArray(d.bin))o.bin=d.bin.map(b=>b&&b.p&&b.p.img?Object.assign({},b,{p:Object.assign({},b.p,{img:f(b.p.img)})}):b);
  if(d.bg&&d.bg.img)o.bg=Object.assign({},d.bg,{img:f(d.bg.img)});
  return o;
 }
@@ -1130,6 +1133,24 @@ const inGrp=p=>p.grp&&!p.arch?grpOf(p.grp):null;
 const members=g=>S.plans.filter(p=>p.grp===g.id&&!p.arch);
 const counted=()=>{const out=[],best={};S.plans.forEach(p=>{if(p.arch)return;const g=inGrp(p);if(!g){out.push(p);return}const b=best[g.id];if(!b||(!!p.fav&&!b.fav)||(!!p.fav===!!b.fav&&cost(p)>cost(b)))best[g.id]=p});return out.concat(Object.values(best))};
 const pickOf=g=>counted().find(p=>p.grp===g.id);
+/* 최근 지운 계획: 지운 계획의 내용을 bin에 BIN_DAYS일 동안 남겨 두고 둘 다 꺼낼 수 있게 한다.
+   bin 항목 아이디는 'b'+계획 아이디. 꺼내면 그 아이디에 del 표시를 남겨 다른 기기에서도 빠지게 한다 */
+const BIN_DAYS=14;
+const binAlive=a=>{const lim=Date.now()-BIN_DAYS*864e5;return a.filter(b=>b&&b.p&&(+b.at||0)>lim)};
+function delPlan(p){
+ const now=Date.now(), snap=JSON.parse(JSON.stringify(p)), b={id:'b'+p.id,pid:p.id,at:now,u:now,p:snap};
+ S.del[p.id]=now; S.plans=S.plans.filter(x=>x!==p);
+ S.bin=(S.bin||[]).filter(x=>x.id!==b.id); S.bin.push(b);
+ return b;
+}
+function restorePlan(b){
+ const now=Date.now(), p=JSON.parse(JSON.stringify(b.p));
+ S.del[b.id]=now; delete S.del[b.pid]; S.bin=(S.bin||[]).filter(x=>x.id!==b.id);
+ if(S.plans.some(x=>x.id===b.pid))return null;
+ p.u=now; if(p.grp&&!S.plans.some(x=>x.grp===p.grp&&!x.arch))ungroup(p);
+ S.plans.push(p); return p;
+}
+const binList=()=>binAlive(S.bin||[]).filter(b=>!S.plans.some(x=>x.id===b.pid)).sort((a,b)=>b.at-a.at);
 const spent=c=>counted().filter(p=>!c||p.cat===c).reduce((a,p)=>a+(+p.fix||0),0);
 const planned=c=>counted().filter(p=>!c||p.cat===c).reduce((a,p)=>a+cost(p),0);
 
@@ -1206,7 +1227,7 @@ function renderList(){
  const catOk=c=>ui.cat==='all'||c===ui.cat, stOk=p=>!ui.st.size||ui.st.has(p.status), qOk=p=>!q||(p.name+p.memo+p.link).toLowerCase().includes(q);
  let a=S.plans.filter(p=>!p.arch&&!inGrp(p)&&catOk(p.cat)&&stOk(p)&&qOk(p));
  const gs=cmps().filter(g=>catOk(g.cat)&&members(g).some(p=>stOk(p)&&(qOk(p)||g.name.toLowerCase().includes(q)))).sort((x,y)=>(y.t||0)-(x.t||0));
- renderArch(catOk);
+ renderArch(catOk); renderBin(catOk);
  if(ui.sort==='cost') a.sort((x,y)=>(y.fix||y.est)-(x.fix||x.est));
  else if(ui.sort==='due') a.sort((x,y)=>(x.due||'9').localeCompare(y.due||'9'));
  else if(ui.sort==='pri') a.sort((x,y)=>PRI.indexOf(y.pri||'보통')-PRI.indexOf(x.pri||'보통'));
@@ -1244,6 +1265,18 @@ function cmpRow(g){
   <div class="lmid"><div class="lnm">${esc(g.name)}</div><div class="lmt"><i class="dot" style="--d:${STC['비교 중']}"></i><span>${ms.length}곳 비교</span>${fav?`<span aria-hidden="true">·</span><span class="lmemo">♥ ${esc(fav.name)}</span>`:''}</div></div>
   <div class="lamt">${pk&&cost(pk)?`${won(cost(pk))}<small>${g.bud?`예산 ${won(g.bud)}`:'예산 기준'}</small>`:'<span class="none">금액 없음</span>'}</div>
  </article>`;
+}
+function renderBin(catOk){
+ const bl=binList().filter(b=>catOk(b.p.cat)), day=864e5, now=Date.now();
+ $('binbox').innerHTML=!bl.length?'':`<button type="button" class="und text-[14px]" data-bin="toggle" aria-expanded="${!!ui.bin}">최근 지운 계획 ${bl.length} ${ui.bin?'접기':'보기'}</button>`+(!ui.bin?'':`<p class="cmp-sub mt-2">지운 지 ${BIN_DAYS}일이 지나면 완전히 사라져요.</p>`+bl.map(b=>{const ago=Math.floor((now-b.at)/day), left=Math.max(1,Math.ceil((b.at+BIN_DAYS*day-now)/day));return `<div class="arch-row">
+  <div class="min-w-0 flex-1"><div class="font-bold text-[15px] truncate">${esc(b.p.name)}</div><div class="cmp-sub">${ago?`${ago}일 전`:'오늘'} 지움 · ${left}일 남음</div></div>
+  <button type="button" class="pill sm" data-bin="back" data-id="${b.id}">꺼내기</button></div>`}).join(''));
+}
+function binAct(el){
+ if (el.dataset.bin === 'toggle') { ui.bin = !ui.bin; renderList(); return; }
+ const b = (S.bin || []).find(x => x.id === el.dataset.id); if (!b) return;
+ const p = restorePlan(b); save(); render();
+ toast(p ? (p.arch ? `'${p.name}'을(를) 보관함으로 꺼냈어요.` : `'${p.name}'을(를) 계획으로 꺼냈어요.`) : '이미 계획에 있어요.');
 }
 function renderArch(catOk){
  const ar=S.plans.filter(p=>p.arch&&catOk(p.cat));
@@ -1370,6 +1403,8 @@ document.addEventListener('click', e => {
  if (gj) { joinGroup(gj.dataset.gjoin); return; }
  const ab = e.target.closest('[data-arch]');
  if (ab) { archAct(ab); return; }
+ const bb = e.target.closest('[data-bin]');
+ if (bb) { binAct(bb); return; }
  const gc = e.target.closest('.cmpc');
  if (gc) {
      const g = grpOf(gc.dataset.grp), b = e.target.closest('[data-gact]');
@@ -1585,6 +1620,7 @@ $('f-save').onclick = () => {
  if (editing.id && !S.plans.includes(editing)) {   // 수정창을 연 사이 다른 기기에서 지운 계획
      if (!confirm('그사이 다른 기기에서 이 계획을 지웠어요.\n다시 살려서 저장할까요?')) { closeAll(); render(); return; }
      delete S.del[editing.id]; delete editing.arch; S.plans.push(editing);
+     S.del['b'+editing.id] = Date.now(); S.bin = (S.bin || []).filter(x => x.pid !== editing.id);
  }
  const g = editing.id ? inGrp(editing) : (ePre && grpOf(ePre.grp)), moved = g && g.cat !== d.cat;
  if(editing.id) { Object.assign(editing, d); if (moved) ungroup(editing); }
@@ -1594,10 +1630,9 @@ $('f-save').onclick = () => {
 };
 $('f-del').onclick = () => {
     if(!editing?.id) return;
-    if(!confirm('이 계획을 삭제할까요?')) return;
-    S.del[editing.id] = Date.now();
-    S.plans = S.plans.filter(p => p !== editing);
-    save(); closeAll(); render(); toast('삭제했어요.');
+    const b = delPlan(editing);
+    save(); closeAll(); render();
+    toast('삭제했어요. 2주 동안 다시 꺼낼 수 있어요.', '되돌리기', () => { restorePlan(b); save(); render(); });
 };
 $('f-dup').onclick = () => {
     const p = editing; if (!p?.id) return;
@@ -1651,11 +1686,18 @@ $('g-save').onclick = () => {
  save(); closeAll(); render(); toast(`'${name}' 비교를 만들었어요.`);
 };
 $('g-undo').onclick = () => {
- const g = gEdit; if (!g || !confirm(`'${g.name}' 비교를 풀까요?`)) return;
- const now = Date.now();
- members(g).forEach(p => { ungroup(p); p.u = now; });
- cmpBack = null; save(); closeAll(); render(); toast('비교를 풀었어요.');
+ const g = gEdit; if (!g) return;
+ const now = Date.now(), ms = members(g), snap = grpSnap(ms);
+ ms.forEach(p => { ungroup(p); p.u = now; });
+ cmpBack = null; save(); closeAll(); render(); toast(`'${g.name}' 비교를 풀었어요.`, '되돌리기', () => grpBack(snap));
 };
+/* 비교 빼기·풀기 되돌리기: 비교 정보(GF·fav)만 따로 남겼다가 다시 붙인다 */
+const grpSnap = ps => ps.map(p => ({ id: p.id, f: Object.fromEntries([...GF, 'fav'].filter(k => p[k] != null).map(k => [k, p[k]])) }));
+function grpBack(snap){
+ const now = Date.now();
+ snap.forEach(o => { const p = S.plans.find(x => x.id === o.id); if (!p || p.arch) return; ungroup(p); Object.assign(p, o.f); p.u = now; });
+ save(); render(); if (!$('cmpv').classList.contains('hidden')) renderCmp();
+}
 function openCmp(id){ ui.cmp = id; renderCmp(); open_('cmpv'); $('cmpv').scrollTop = 0; }
 function renderCmp(){
  const g = grpOf(ui.cmp), v = $('cmpv'); if (!g) return;
@@ -1705,8 +1747,9 @@ function cmpAct(b){
   return;
  }
  if (a === 'out') {
+  const snap = grpSnap([p]);
   ungroup(p); p.u = now;
-  save(); pendingRender = true; toast(`'${p.name}'을(를) 비교에서 뺐어요.`);
+  save(); pendingRender = true; toast(`'${p.name}'을(를) 비교에서 뺐어요.`, '되돌리기', () => grpBack(snap));
   if (grpOf(g.id)) renderCmp(); else closeAll();
  }
 }
@@ -1736,7 +1779,7 @@ function archAct(b){
  if (a === 'toggle') { ui.arch = !ui.arch; renderList(); return; }
  if (!p) return;
  if (a === 'back') { delete p.arch; p.u = Date.now(); save(); render(); toast(`'${p.name}'을(를) 계획으로 꺼냈어요.`); }
- if (a === 'del') { const snap = JSON.parse(JSON.stringify(p)); S.del[p.id] = Date.now(); S.plans = S.plans.filter(x => x !== p); save(); render(); toast('보관함에서 삭제했어요.', '되돌리기', () => { snap.u = Date.now(); delete S.del[snap.id]; S.plans.push(snap); save(); render(); }); }
+ if (a === 'del') { const b = delPlan(p); save(); render(); toast('보관함에서 삭제했어요.', '되돌리기', () => { restorePlan(b); save(); render(); }); }
 }
 
 $('f-extract').onclick = async () => {
@@ -2798,9 +2841,9 @@ $('lk-form').addEventListener('submit',async e=>{
 });
 $('lk-now').onclick=()=>{if(!confirm('이 기기를 잠글까요? 다시 열 때 비밀번호가 필요해요.'))return; authClear(); closeAll(); lockShow('잠갔어요.')};
 const curl=(p='',q='')=>{const a=[]; if(q)a.push(q); if(authOn()&&authIdt&&dbOk(cloud.db))a.push('auth='+encodeURIComponent(authIdt)); return `${cloud.db}/rooms/${cloud.room}${p}.json`+(a.length?'?'+a.join('&'):'')};
-const normS=d=>{d=d||{};migCat(d);d.plans=Array.isArray(d.plans)?d.plans:Object.values(d.plans||{});d.cat=d.cat||{};d.del=d.del||{};d.mu=d.mu||0;d.vu=d.vu||0;d.bgu=d.bgu||0;d.gku=d.gku||0;d.gk=d.gk||'';d.nmu=d.nmu||0;d.anu=d.anu||0;d.diary=(Array.isArray(d.diary)?d.diary:Object.values(d.diary||{})).filter(Boolean);d.cmts=(Array.isArray(d.cmts)?d.cmts:Object.values(d.cmts||{})).filter(Boolean);d.todos=(Array.isArray(d.todos)?d.todos:Object.values(d.todos||{})).filter(Boolean);d.wish=(Array.isArray(d.wish)?d.wish:Object.values(d.wish||{})).filter(Boolean);return d};
+const normS=d=>{d=d||{};migCat(d);d.plans=Array.isArray(d.plans)?d.plans:Object.values(d.plans||{});d.cat=d.cat||{};d.del=d.del||{};d.mu=d.mu||0;d.vu=d.vu||0;d.bgu=d.bgu||0;d.gku=d.gku||0;d.gk=d.gk||'';d.nmu=d.nmu||0;d.anu=d.anu||0;d.diary=(Array.isArray(d.diary)?d.diary:Object.values(d.diary||{})).filter(Boolean);d.cmts=(Array.isArray(d.cmts)?d.cmts:Object.values(d.cmts||{})).filter(Boolean);d.todos=(Array.isArray(d.todos)?d.todos:Object.values(d.todos||{})).filter(Boolean);d.wish=(Array.isArray(d.wish)?d.wish:Object.values(d.wish||{})).filter(Boolean);d.bin=(Array.isArray(d.bin)?d.bin:Object.values(d.bin||{})).filter(Boolean);return d};
 const canon=v=>{if(Array.isArray(v))return v.map(canon);if(v&&typeof v==='object'){const o={};Object.keys(v).sort().forEach(k=>{const c=canon(v[k]);if(!(c&&typeof c==='object'&&!Object.keys(c).length))o[k]=c});return o}return v};
-const cstr=d=>{const x=JSON.parse(JSON.stringify(normS(JSON.parse(JSON.stringify(d||{})))));x.plans.sort((a,b)=>a.id<b.id?-1:1);x.todos.sort((a,b)=>a.id<b.id?-1:1);['diary','cmts','wish'].forEach(k=>x[k].sort((a,b)=>a.id<b.id?-1:1));return JSON.stringify(canon(x))};
+const cstr=d=>{const x=JSON.parse(JSON.stringify(normS(JSON.parse(JSON.stringify(d||{})))));x.plans.sort((a,b)=>a.id<b.id?-1:1);x.todos.sort((a,b)=>a.id<b.id?-1:1);['diary','cmts','wish','bin'].forEach(k=>x[k].sort((a,b)=>a.id<b.id?-1:1));return JSON.stringify(canon(x))};
 const ml=(x,y,del)=>{const m=new Map();[...y,...x].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))};
 function merge(a,b){
  a=normS(a);b=normS(b);
@@ -2810,7 +2853,7 @@ function merge(a,b){
  const map=new Map();
  [...b.plans,...a.plans].forEach(p=>{const q=map.get(p.id);if(!q||(p.u||0)>=(q.u||0))map.set(p.id,p)});
  const vw=(a.vu||0)>=(b.vu||0)?a:b, gw=(a.bgu||0)>=(b.bgu||0)?a:b, kw=(a.gku||0)>=(b.gku||0)?a:b, nw=(a.nmu||0)>=(b.nmu||0)?a:b, aw=(a.anu||0)>=(b.anu||0)?a:b;
- return {total:wt.total,wdate:wd.wdate||'',cat:wc.cat,mu:Math.max(a.mu||0,b.mu||0),tu:st(wt,'tu'),wu:st(wd,'wu'),cu:st(wc,'cu'),verse:vw.verse,vu:vw.vu||0,bg:gw.bg,bgu:gw.bgu||0,gk:kw.gk||'',gku:kw.gku||0,names:nw.names||null,nmu:nw.nmu||0,ann:aw.ann||null,anu:aw.anu||0,del,todos:(()=>{const m=new Map();[...b.todos,...a.todos].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))})(),plans:[...map.values()].filter(p=>!(del[p.id]>(p.u||0))),diary:ml(a.diary,b.diary,del),cmts:ml(a.cmts,b.cmts,del),wish:ml(a.wish,b.wish,del)};
+ return {total:wt.total,wdate:wd.wdate||'',cat:wc.cat,mu:Math.max(a.mu||0,b.mu||0),tu:st(wt,'tu'),wu:st(wd,'wu'),cu:st(wc,'cu'),verse:vw.verse,vu:vw.vu||0,bg:gw.bg,bgu:gw.bgu||0,gk:kw.gk||'',gku:kw.gku||0,names:nw.names||null,nmu:nw.nmu||0,ann:aw.ann||null,anu:aw.anu||0,del,todos:(()=>{const m=new Map();[...b.todos,...a.todos].forEach(t=>{const q=m.get(t.id);if(!q||(t.u||0)>=(q.u||0))m.set(t.id,t)});return [...m.values()].filter(t=>!(del[t.id]>(t.u||0)))})(),plans:[...map.values()].filter(p=>!(del[p.id]>(p.u||0))),diary:ml(a.diary,b.diary,del),cmts:ml(a.cmts,b.cmts,del),wish:ml(a.wish,b.wish,del),bin:binAlive(ml(a.bin,b.bin,del))};
 }
 function setSync(st){
  if(st==='err'&&navigator.onLine===false)st='offline';
