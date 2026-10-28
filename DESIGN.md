@@ -33,8 +33,8 @@ typography:
   item:      { fontSize: 15px, fontWeight: 700 }
   control:   { fontWeight: 600 }   # 버튼, 알약, 탭, 밑줄 링크, 모달 라벨
   body:      { fontSize: 16px, fontWeight: 500, letterSpacing: -0.01em }
-  meta:      { fontSize: 13px, fontWeight: 500 }   # 본문 최소 13px, 배지·영문 대문자 라벨만 11~12px
-  label:     { fontSize: 13px, fontWeight: 700, letterSpacing: 0.14em, textTransform: uppercase }
+  meta:      { fontSize: 13px, fontWeight: 500 }   # 본문 최소 13px, 배지만 11~12px
+  label:     { fontSize: 15px, fontWeight: 700, letterSpacing: -0.02em }
   quote:     { fontSize: 24px, fontWeight: 400, lineHeight: 1.65, family: serif }
 
 rounded:
@@ -109,7 +109,7 @@ TO IN ONE은 두 사람이 함께 쓰는 결혼 준비 앱이다. 화면은 **�
 - 기본 글꼴은 Plus Jakarta Sans(영문·숫자) + Pretendard/Noto Sans KR(한글)이다.
 - 인용구에만 Noto Serif KR을 쓴다. 다른 곳에 세리프를 쓰지 않는다.
 - 금액은 `money` 스타일로 크게, 원 단위는 작게 붙인다.
-- 영문 라벨(`OUR BUDGET` 등)은 `label` 스타일: 대문자, 넓은 자간.
+- 영문 대문자 라벨(OUR BUDGET, WISH LIST 등)은 쓰지 않는다. 내용만 봐도 뭔지 알면 라벨을 달지 않고, 창 위쪽 작은 제목도 아래에 큰 제목이나 이름 입력칸이 있으면 비운다. 한글에는 넓은 자간을 주지 않는다.
 
 ## 레이아웃
 
@@ -126,6 +126,7 @@ TO IN ONE은 두 사람이 함께 쓰는 결혼 준비 앱이다. 화면은 **�
 - 플로팅 버튼(FAB): 52px 원, ink 배경, 오른쪽 아래 16px.
 
 ### 알약 필터
+- 계획 목록 위: 모바일은 검색칸 옆에 정렬, 다음 줄에 상태 4개. PC는 검색·상태·정렬 한 줄. 필터는 항상 목록 바로 위에 둔다.
 - 높이 40px(작은 것 30px), 흰 배경, 1px line 테두리.
 - 선택: ink 1.5px 안쪽 테두리(`pill.sel`) 또는 ink 배경 + 흰 글씨(`pill.on`).
 
@@ -136,9 +137,9 @@ TO IN ONE은 두 사람이 함께 쓰는 결혼 준비 앱이다. 화면은 **�
 - 흰 배경, 24px 모서리, card 그림자, 테두리 없음.
 - 완료된 항목: 투명도 .6, 흑백 40%, 제목 취소선.
 
-### 구절 카드 (OUR VERSE)
+### 구절 카드
 - 청첩장처럼 가운데 정렬. 흰 카드 안쪽 8px에 1px oat(#E8E4D8) 테두리를 한 겹 더 두르고, 위에 선-하트-선 장식(muted-soft)을 둔다.
-- 구절은 quote(세리프), 출처는 label 스타일(넓은 자간, muted) 뒤에 작은 ✎.
+- 구절은 quote(세리프), 출처는 13px 굵게 muted, 자간 없이, 뒤에 작은 ✎.
 - 따로 버튼 없이 카드 전체를 누르면 구절 수정 창이 열린다. 누르면 98%.
 - 분류 색은 쓰지 않는다(세이지·블러시 바탕은 안내 카드나 신혼여행 분류로 읽힌다).
 
@@ -148,7 +149,7 @@ TO IN ONE은 두 사람이 함께 쓰는 결혼 준비 앱이다. 화면은 **�
 - 기한 지남은 날짜 줄을 danger로 쓰고 섹션 머리 개수도 danger.
 
 ### 진행 막대
-- 알약형 트랙. 진행분은 sage, 예산 막대의 남은 부분은 연한 오트(#EFEBE3)에 line색 얇은 안쪽 테두리. 회색 트랙은 쓰지 않는다.
+- 알약형 트랙. 진행분은 sage, 예산 막대는 높이 10px, 테두리 없이 남은 부분만 연한 오트(#EFEBE3). 칸 사이는 2px 흰 틈, 아주 적은 금액도 최소 6px는 보이게 한다. 회색 트랙은 쓰지 않는다.
 - 예산 사용 막대는 분류 4톤으로 나누고, 예상 금액은 빗금 무늬로 구분한다. 초과 시 트랙 테두리 danger.
 
 ### 모달

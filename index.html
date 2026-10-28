@@ -34,18 +34,18 @@ body{background:var(--canvas);-webkit-tap-highlight-color:transparent;overflow-x
 :focus-visible{outline:3px solid var(--rust);outline-offset:2px}
 .disp{font-family:var(--f-disp);font-weight:800;letter-spacing:-.04em}
 .num{font-family:var(--f-num);font-weight:800;letter-spacing:-.03em}
-.lbl{font-family:var(--f-num);font-weight:700;font-size:13px;line-height:1;letter-spacing:.14em;text-transform:uppercase}
+.lbl{font-weight:700;font-size:15px;line-height:1.2;letter-spacing:-.02em}
 .und{text-decoration:underline;text-decoration-thickness:var(--hl);text-underline-offset:4px;font-weight:600}
 .b3{border:1px solid var(--line);border-radius:16px}.bb3{border-bottom:1px solid var(--line)}
 .b3.rounded-full,.rotate-45.b3{border:0}.b3.rounded-full{border-radius:9999px}.rotate-45.b3{border-radius:8px}
 .lbl.b3{border:0;border-radius:999px}
 .card{border:0;border-radius:24px;box-shadow:var(--shadow);background:#fff}
 .track{height:16px;background:#fff;border-radius:999px;padding:3px;overflow:hidden}.track>div{border-radius:999px;height:100%}
-.track.mix{height:26px;background:#EFEBE3;box-shadow:inset 0 0 0 var(--hl) var(--line)}
+.track.mix{height:10px;padding:0;background:#EFEBE3}
 .track.mix.over{box-shadow:inset 0 0 0 2px #dc2626}
 .mixbar{display:flex;width:100%;height:100%;border-radius:999px;overflow:hidden}
-.mixbar i{display:block;min-width:0;height:100%}
-.mixbar i+i{border-left:var(--hl) solid rgba(43,37,34,.35)}
+.mixbar i{display:block;min-width:6px;height:100%}
+.mixbar i+i{border-left:2px solid #fff}
 .mixbar i.est{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.7) 0 4px,transparent 4px 8px)}
 .est-sw{background-color:#fff;background-image:repeating-linear-gradient(135deg,rgba(43,37,34,.55) 0 2px,transparent 2px 5px)}
 #logo{display:flex;flex-direction:column;align-items:flex-start;gap:7px;border:0;background:transparent;box-shadow:none;border-radius:0;padding:0;text-align:left}
@@ -118,7 +118,7 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
 .vcard{position:relative;display:block;width:100%;text-align:center;padding:32px 24px 30px;background:#fff;transition:transform .12s}.vcard::before{content:'';position:absolute;inset:8px;border:1px solid #E8E4D8;border-radius:18px;pointer-events:none}.vcard:active{transform:scale(.98)}
 .vorn{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px}.vorn i{width:28px;height:1px;background:rgba(43,37,34,.18)}
 .vcard .quote{display:block;font-size:22px}
-.vref{display:block;margin-top:18px;font-size:13px;font-weight:700;letter-spacing:.14em;color:#6B625C}.vref::after{content:'✎';display:inline-block;margin-left:6px;letter-spacing:0;font-size:11px;color:#9A8F88}.vref.empty{color:#9A8F88}
+.vref{display:block;margin-top:18px;font-size:13px;font-weight:700;letter-spacing:0;color:#6B625C}.vref::after{content:'✎';display:inline-block;margin-left:6px;letter-spacing:0;font-size:11px;color:#9A8F88}.vref.empty{color:#9A8F88}
 .vcard .quote.long{font-size:20px}.vcard .quote.xl{font-size:17px}
 .sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0!important;padding:0!important;margin:0!important}
 .cs{position:relative;margin-top:6px}.cs.sm{margin-top:0}
@@ -132,7 +132,7 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
 /* 계획 입력 창 */
 .pe-h{background:var(--mint);padding:14px 20px 18px}
 .pe-top{display:flex;justify-content:space-between;align-items:center}
-.pe-top .lbl{font-size:12px;color:rgba(43,37,34,.62)}
+.pe-top .lbl{font-size:15px;color:var(--ink)}
 .pe-name{display:block;width:100%;background:transparent;border:0;border-bottom:1px solid rgba(43,37,34,.22);border-radius:0!important;padding:6px 0 10px;margin-top:6px;outline:0;font:700 26px/1.25 var(--f-body)!important;letter-spacing:-.035em;color:var(--ink)}
 .pe-name::placeholder{color:#9A8F88}
 .pe-name:focus{border-bottom-color:var(--ink)}
@@ -233,7 +233,9 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
 .lamt small{display:block;font-family:var(--f-body);font-size:12px;font-weight:600;letter-spacing:0;color:#9A8F88;margin-top:2px}
 .lamt .none{font-family:var(--f-body);font-size:13px;font-weight:600;letter-spacing:0;color:#9A8F88}
 .lrow.done .lnm{text-decoration:line-through}
-.frow{display:flex;flex-direction:column;gap:16px}.srch{width:100%}
+.frow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 8px;align-items:center}.srch{min-width:0}
+#sort{height:40px;padding:0 6px}
+#stchips{grid-column:1/-1}
 @media (min-width:1000px){
  .wrap{padding-left:24px;padding-right:24px}
  .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:56px;align-items:start;padding-top:56px}
@@ -250,8 +252,9 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
  #cmpv .ctab th,#cmpv .ctab td{width:200px;min-width:200px;max-width:280px;padding:14px 14px}
  #cmpv .ctab .k{width:96px;min-width:96px}
  .cell{padding:24px 20px 20px}
- .frow{flex-direction:row;justify-content:space-between;align-items:center}
- .srch{width:320px;flex-shrink:0}.sgrp{justify-content:flex-end;flex:1}
+ .frow{grid-template-columns:240px minmax(0,1fr) auto;gap:12px}
+ #stchips{grid-column:2;grid-row:1}
+ #sort{grid-column:3;grid-row:1}
  .dlg{max-width:560px}
  .hbar{height:64px;display:flex;align-items:center;padding-top:0;padding-bottom:0}
  body main>nav{top:65px;height:0;border:0!important;background:none!important;z-index:41}
@@ -261,6 +264,8 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
  .pcols{display:grid;grid-template-columns:340px minmax(0,1fr);gap:28px;align-items:start;max-width:1100px;margin:0 auto;padding:0 24px}
  .pcols .wrap{max-width:none;padding-left:0;padding-right:0}
  .pside{min-width:0}
+ main[data-view]:not([data-view=all]) .pcols{display:block}
+ main[data-view]:not([data-view=all]) .pside{display:none}
  #budget{padding-bottom:0}
  .pside .bgrid{display:block}
  .pside .bleft{padding:24px 22px 0;gap:16px}
@@ -271,9 +276,6 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
  .pside .cmeta{display:none}
  .pside .cbar{grid-column:1/-1;height:4px;margin-top:8px}
  .pside .bfoot{padding:12px 22px 22px;justify-content:flex-start}
- #fslot .frow{margin:16px 0 0;padding:18px;border:0;border-radius:24px;background:#fff;box-shadow:var(--shadow);flex-direction:column;align-items:stretch;gap:12px}
- #fslot .srch{width:100%}
- #fslot .sgrp{justify-content:flex-start;flex-wrap:wrap}
  #plans{padding-top:0}
  .scols{display:grid;grid-template-columns:360px minmax(0,1fr);gap:28px;align-items:start}
  .sside,.smain{min-width:0}
@@ -285,7 +287,7 @@ body #bgfix,body #bgveil{top:0;left:0;right:0;bottom:auto;height:100vh;height:10
 main[data-page=story] [data-pg=plans],main[data-page=plans] [data-pg=story],main[data-view]:not([data-view=all]) .hero,main[data-view]:not([data-view=all]) #budget{display:none!important}
 main>nav{position:sticky;top:var(--hh,64px);z-index:39}
 .slist{display:grid;gap:20px;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));align-items:start}
-.smon{grid-column:1/-1;justify-self:start;font:700 13px var(--f-num);letter-spacing:.14em;color:var(--ink);margin-top:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.smon{grid-column:1/-1;justify-self:start;font:700 13px var(--f-num);letter-spacing:-.01em;color:var(--ink);margin-top:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .scard{padding:0;overflow:hidden;min-width:0}
 .simg{display:block;width:100%;height:auto;max-height:440px;object-fit:contain;background:var(--canvas);cursor:zoom-in}
 .sgal{position:relative;background:var(--canvas)}
@@ -405,7 +407,7 @@ body.hasbg .hero .h1{text-shadow:0 0 .02em var(--canvas),0 0 .02em var(--canvas)
 @media (min-width:1000px){.cal-d{aspect-ratio:auto;height:84px}}
 @media (min-width:640px){.cal-d{font-size:13px;padding:7px}.cal-d .an{width:22px;height:22px;right:5px;top:5px}.cal-d .an .ic{width:13px;height:13px}}
 .wish{margin:0 0 16px;padding:16px 18px;min-width:0}
-.wh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.wh{display:flex;justify-content:flex-end;align-items:center;margin-bottom:8px}.wh:has(#wi-dtog.hidden){display:none}
 .wcnt{margin-left:8px;font-family:var(--f-num);font-weight:700;font-size:13px;color:#6B625C}
 .wdt{font-size:13px;color:#6B625C}
 .wlist,.wdone{list-style:none;margin:0;padding:0}
@@ -494,7 +496,7 @@ main[data-page=plans]{padding-bottom:96px}
 #omap{touch-action:pan-x pan-y;position:relative;z-index:0;isolation:isolate;height:300px;background:#E9E4DF}
 #mapcard.full #omap{touch-action:none;flex:1;height:auto}
 #pk-map{position:relative;height:260px;border-radius:14px;overflow:hidden;background:#E9E4DF;touch-action:none;isolation:isolate}
-.mc-h{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 10px}
+.mc-h{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 10px}.mc-cnt{font-size:13px;font-weight:600;color:#6B625C}
 #mc-count{color:#6B625C;margin-left:8px;font:700 13px var(--f-num)}
 @media (min-width:768px){#omap{height:400px}}
 #mapcard.full{position:fixed;inset:0;z-index:46;margin:0;border-radius:0;display:flex;flex-direction:column}
@@ -638,7 +640,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 
 <section id="story" data-pg="story" class="wrap pb-14 pt-4">
   <div class="flex justify-between items-start mb-5">
-    <div><h2 class="disp text-[30px] leading-none pt-2">OUR DIARY <span id="st-count" style="color:#9A8F88"></span></h2><div id="st-sub" class="text-[13px] font-bold mt-3"></div></div>
+    <div><h2 class="disp text-[30px] leading-none pt-2">일기장 <span id="st-count" style="color:#9A8F88"></span></h2><div id="st-sub" class="text-[13px] font-bold mt-3"></div></div>
     <button id="st-add" class="btn flex items-center gap-2 px-4 h-11 text-[15px] shrink-0" style="background:var(--ink);color:#fff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>새 일기</button>
   </div>
   <div class="scols"><div class="sside">
@@ -675,7 +677,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
     <p class="who-hint">바꾸면 지금까지 남긴 댓글·하트의 이름도 함께 바뀌고, 상대방 화면에도 적용돼요.</p>
   </div>
   <div id="wish" class="card wish">
-    <div class="wh"><div><span class="lbl">WISH LIST</span><span id="wi-count" class="wcnt"></span></div><button id="wi-dtog" type="button" class="und wdt hidden"></button></div>
+    <div class="wh"><span id="wi-count" hidden></span><button id="wi-dtog" type="button" class="und wdt hidden"></button></div>
     <ul id="wi-list" class="wlist"></ul>
     <div class="wadd">
       <input id="wi-text" class="fld" maxlength="60" placeholder="함께 하고 싶은 것 (예: 제주 한 달 살기)" aria-label="하고 싶은 것">
@@ -690,7 +692,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
     <ul id="wi-done" class="wdone hidden"></ul>
   </div>
   <div id="mapcard" class="card">
-    <div class="mc-h"><div><span class="lbl">OUR MAP</span><span id="mc-count"></span></div><button id="mc-full" class="und text-[14px]" type="button">크게 보기</button><button id="mc-set" class="und text-[14px] hidden" type="button">지도 설정</button></div>
+    <div class="mc-h"><span id="mc-count" class="mc-cnt"></span><button id="mc-full" class="und text-[14px]" type="button">크게 보기</button><button id="mc-set" class="und text-[14px] hidden" type="button">지도 설정</button></div>
     <div id="omap" class="hidden"></div>
     <div id="mc-chips"></div>
     <div id="mc-hint" class="mc-hint"></div>
@@ -713,7 +715,6 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
   <div class="card bgrid overflow-hidden">
     <div class="bleft">
       <div>
-        <div class="lbl mb-3">OUR BUDGET</div>
         <label class="money"><span aria-hidden="true">₩</span><input id="total" inputmode="numeric" aria-label="총 예산" placeholder="예산 입력"></label>
       </div>
       <div>
@@ -727,7 +728,6 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
     <div class="bfoot"><button id="alloc-open" class="und text-[14px]">예산 수정</button></div>
   </div>
 </section>
-<div id="fslot"></div>
 </aside>
 
 <section id="plans" class="wrap pb-12 pt-4">
@@ -744,12 +744,10 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" type="search" placeholder="계획, 메모, 링크 검색" aria-label="검색" class="w-full outline-none bg-transparent font-medium placeholder-[#9a8f88]">
     </label>
-    <div class="sgrp flex gap-2 items-start">
-      <div id="stchips" class="flex gap-2 flex-wrap"></div>
-      <select id="sort" aria-label="정렬" class="b3 c-cream font-bold text-[13px] h-[30px] px-1 outline-none">
-        <option value="new">최신순</option><option value="cost">비용순</option><option value="due">마감순</option><option value="pri">중요도순</option>
-      </select>
-    </div>
+    <select id="sort" aria-label="정렬" class="b3 c-cream font-bold text-[13px] outline-none">
+      <option value="new">최신순</option><option value="cost">비용순</option><option value="due">마감순</option><option value="pri">중요도순</option>
+    </select>
+    <div id="stchips" class="flex gap-2 flex-wrap"></div>
   </div>
 
   <div id="list" class="plist"></div>
@@ -761,8 +759,8 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 <div id="edit" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
   <div class="dlg pe">
     <div class="pe-h">
-      <div class="pe-top"><h3 id="edit-title" class="lbl">NEW OUR PLAN</h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div>
-      <input id="f-name" class="pe-name" placeholder="무엇을 준비하나요?" aria-label="계획 이름" autocomplete="off">
+      <div class="pe-top"><label for="f-name" id="edit-title" class="pe-sh" style="margin:0">계획 이름</label><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div>
+      <input id="f-name" class="pe-name" autocomplete="off">
       <div class="pe-chips">
         <select id="f-cat" aria-label="카테고리"></select>
         <select id="f-status" aria-label="진행 상태"></select>
@@ -774,7 +772,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
       <section>
         <div class="pe-sh">비용<span id="f-rest"></span></div>
         <div class="pe-rc">
-          <label class="pe-rr"><span>예상</span><span class="pe-amt"><input id="f-est" inputmode="numeric" class="cost" placeholder="예: 450만"><i>원</i></span></label>
+          <label class="pe-rr"><span>예상</span><span class="pe-amt"><input id="f-est" inputmode="numeric" class="cost" placeholder="0"><i>원</i></span></label>
           <label class="pe-rr"><span>확정</span><span class="pe-amt"><input id="f-fix" inputmode="numeric" class="cost" placeholder="0"><i>원</i></span></label>
           <label class="pe-rr"><span>계약금</span><span class="pe-amt"><input id="f-dep" inputmode="numeric" class="cost" placeholder="0"><i>원</i></span></label>
         </div>
@@ -808,14 +806,14 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
       </section>
       <section>
         <div class="pe-sh">메모</div>
-        <textarea id="f-memo" rows="3" class="pe-memo" placeholder="견적, 일정, 기억할 내용" aria-label="우리의 메모"></textarea>
+        <textarea id="f-memo" rows="3" class="pe-memo" aria-label="메모"></textarea>
       </section>
       <div id="f-more" class="pe-more hidden"><button type="button" id="f-cmp" class="pill sm">비교에 묶기</button><button type="button" id="f-dup" class="pill sm">복제하기</button></div>
     </div>
     <div class="dlg-f">
       <button id="f-del" class="btn c-cream px-4 h-11 text-[15px] hidden mr-auto" style="color:#DC2626">삭제</button>
       <button data-close class="btn c-cream px-5 h-11 text-[15px]">취소</button>
-      <button id="f-save" class="btn px-5 h-11 text-[15px] font-bold" style="background:var(--ink);color:#fff">우리 계획 저장</button>
+      <button id="f-save" class="btn px-5 h-11 text-[15px] font-bold" style="background:var(--ink);color:#fff">저장</button>
     </div>
   </div>
 </div>
@@ -823,7 +821,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 <div id="sdlg" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
   <div class="dlg">
     <div class="pe-h">
-      <div class="pe-top"><h3 id="sdlg-title" class="lbl">NEW STORY</h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+      <div class="pe-top"><h3 id="sdlg-title" class="lbl"></h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
       <input id="s-title" class="pe-name" maxlength="60" placeholder="어떤 하루였나요?" aria-label="제목" autocomplete="off">
       <div class="pe-chips">
         <label class="pe-due"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span id="s-date-txt"></span><input id="s-date" type="date" aria-label="날짜"></label>
@@ -863,7 +861,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 
 <div id="alloc" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4">
   <div class="dlg">
-    <div class="pe-h"><div class="pe-top"><h3 class="lbl">BUDGET SPLIT</h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div><p class="pe-ttl">분류별 예산</p></div>
+    <div class="pe-h"><div class="pe-top"><h3 class="lbl"></h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div><p class="pe-ttl">분류별 예산</p></div>
     <div class="dlg-b"><div id="alloc-fields" class="flex flex-col gap-4"></div><p id="alloc-rest" class="text-[13px] font-bold"></p></div>
     <div class="dlg-f"><button data-close class="btn c-cream px-5 h-11 text-[15px]">취소</button><button id="alloc-save" class="btn px-5 h-11 text-[15px]" style="background:var(--ink);color:#fff">저장</button></div>
   </div>
@@ -872,7 +870,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 <div id="backup" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
   <div class="dlg">
     <div class="pe-h">
-      <div class="pe-top"><h3 class="lbl">SHARE &amp; BACKUP</h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div>
+      <div class="pe-top"><h3 class="lbl"></h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div>
       <p id="c-state" class="bk-st sst" data-st="off" role="status"></p>
       <p id="bk-sub" class="bk-sub"></p>
     </div>
@@ -920,7 +918,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 
 <div id="verse" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
   <div class="dlg">
-    <div class="pe-h"><div class="pe-top"><h3 class="lbl">OUR VERSE</h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div><p class="pe-ttl">우리의 구절</p></div>
+    <div class="pe-h"><div class="pe-top"><h3 class="lbl"></h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div><p class="pe-ttl">우리의 구절</p></div>
     <div class="dlg-b">
       <label>구절 내용<textarea id="v-text" rows="4" maxlength="200" placeholder="마음에 새기고 싶은 말씀이나 문장을 적어 주세요"></textarea></label>
       <label>출처 (선택)<input id="v-ref" class="fld" maxlength="40" placeholder="예: 고린도전서 13:4"></label>
@@ -931,11 +929,11 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 
 <div id="bgdlg" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
   <div class="dlg">
-    <div class="pe-h"><div class="pe-top"><h3 class="lbl">OUR PHOTO</h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div><p class="pe-ttl">배경 사진</p></div>
+    <div class="pe-h"><div class="pe-top"><h3 class="lbl"></h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div><p class="pe-ttl">배경 사진</p></div>
     <div class="dlg-b">
       <div id="bgp" class="relative b3 overflow-hidden" style="height:170px;background-size:cover;background-position:center 50%">
         <div id="bgp-veil" class="absolute inset-0" style="background:var(--canvas)"></div>
-        <div class="relative p-4"><div class="disp text-[34px] leading-[.9]">Together<br>We Plan.</div></div>
+        <div class="relative p-4"><div class="disp text-[34px] leading-[.9]">TAEIN&amp;<br>GAHYUN.</div></div>
       </div>
       <label class="btn c-white h-11 px-4 flex items-center justify-center text-[15px] cursor-pointer">사진 고르기<input id="bg-file" type="file" accept="image/*" class="hidden"></label>
       <div>
@@ -954,7 +952,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 
 <div id="gdlg" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
   <div class="dlg">
-    <div class="pe-h"><div class="pe-top"><h3 id="g-title" class="lbl">COMPARE</h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><p class="pe-ttl" id="g-ttl">비교로 묶기</p></div>
+    <div class="pe-h"><div class="pe-top"><h3 id="g-title" class="lbl"></h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><p class="pe-ttl" id="g-ttl">비교로 묶기</p></div>
     <div id="g-body" class="dlg-b"></div>
     <div class="dlg-f">
       <button id="g-undo" class="btn c-cream px-4 h-11 text-[15px] mr-auto hidden" style="color:#DC2626">비교 풀기</button>
@@ -966,7 +964,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 
 <div id="pickdlg" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
   <div class="dlg">
-    <div class="pe-h"><div class="pe-top"><h3 class="lbl">PICK ONE</h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><p class="pe-ttl">하나로 정하기</p></div>
+    <div class="pe-h"><div class="pe-top"><h3 class="lbl"></h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><p class="pe-ttl">하나로 정하기</p></div>
     <div id="pick-body" class="dlg-b" style="font-weight:600;font-size:15px;line-height:1.55"></div>
     <div class="dlg-f">
       <button data-close class="btn c-cream px-5 h-11 text-[15px]">취소</button>
@@ -1580,7 +1578,7 @@ $('f-link-tile').onclick = () => {
 
 function openEdit(p, pre){
  editing = p || {}; ePre = pre || null;
- $('edit-title').textContent = p ? 'EDIT OUR PLAN' : 'NEW OUR PLAN'; 
+  
  $('f-del').classList.toggle('hidden', !p);
  $('f-more').classList.toggle('hidden', !p); $('f-cmp').classList.toggle('hidden', !p || !!inGrp(p));
  $('f-name').value = p?.name || ''; 
@@ -1654,7 +1652,7 @@ function fromCmp(fn){ cmpBack = ui.cmp; $('cmpv').classList.add('hidden'); $('cm
 function openGroup(p){
  gEdit = null; gFrom = p;
  const gs = cmps().filter(g => g.cat === p.cat && members(g).length), cands = S.plans.filter(x => x.cat === p.cat && !x.arch && !inGrp(x));
- $('g-title').textContent = 'COMPARE'; $('g-ttl').textContent = '비교로 묶기';
+ $('g-ttl').textContent = '비교로 묶기';
  $('g-body').innerHTML = (gs.length ? `<div>이미 있는 비교에 넣기<div class="flex flex-col gap-2 mt-2">${gs.map(g => `<button type="button" class="gpick" data-gjoin="${g.id}"><span class="min-w-0 flex-1 truncate">${esc(g.name)}</span><span class="cmp-sub">${members(g).length}곳</span></button>`).join('')}</div></div><hr class="rule">` : '')
   + `<label>새 비교 이름<input id="g-name" class="fld" maxlength="40" placeholder="예: 스드메 고르기"></label>
   <div><div class="pe-sh">이 비교의 예산<span>선택</span></div><label class="pe-amt" style="border:var(--hl) solid rgba(43,37,34,.18)"><input id="g-bud" inputmode="numeric" class="cost" aria-label="이 비교의 예산" placeholder="0"><i>원</i></label></div>
@@ -1665,7 +1663,7 @@ function openGroup(p){
 }
 function openGroupEdit(g){
  gEdit = g; gFrom = null;
- $('g-title').textContent = 'EDIT COMPARE'; $('g-ttl').textContent = '비교 설정';
+ $('g-ttl').textContent = '비교 설정';
  $('g-body').innerHTML = `<label>비교 이름<input id="g-name" class="fld" maxlength="40" value="${esc(g.name)}"></label>
   <div><div class="pe-sh">이 비교의 예산<span>선택</span></div><label class="pe-amt" style="border:var(--hl) solid rgba(43,37,34,.18)"><input id="g-bud" inputmode="numeric" class="cost" aria-label="이 비교의 예산" placeholder="0" value="${g.bud ? g.bud.toLocaleString('ko-KR') : ''}"><i>원</i></label></div>
   <p class="cmp-sub">비교를 풀면 묶여 있던 계획은 지워지지 않고 원래 카드로 돌아가요.</p>`;
@@ -1711,7 +1709,7 @@ function renderCmp(){
  const host = l => { try { return new URL(l).hostname.replace('www.', ''); } catch (e) { return l; } };
  v.innerHTML = `<div class="cv-h">
    <button data-close class="btn c-cream w-9 h-9 grid place-items-center shrink-0" aria-label="비교표 닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-   <div class="min-w-0 flex-1"><div class="lbl" style="font-size:11px;color:var(--sub)">COMPARE · ${esc(lab(g.cat))}</div><div class="font-extrabold truncate" style="font-size:20px;line-height:1.25">${esc(g.name)}</div></div>
+   <div class="min-w-0 flex-1"><div style="font-size:13px;font-weight:600;color:var(--sub)">${esc(lab(g.cat))}</div><div class="font-extrabold truncate" style="font-size:20px;line-height:1.25">${esc(g.name)}</div></div>
    <button type="button" class="pill sm" data-cv="set">설정</button><button type="button" class="pill sm on" data-cv="add">+ 업체</button></div>
   ${!ms.length ? '<div class="cv-empty">비교할 계획이 없어요.<br>+ 업체로 후보를 넣어 보세요.</div>' : `
   <p class="cv-sum">${g.bud ? `예산 ${won(g.bud)} · ` : ''}예산 계산에는 ${esc(pk.name)} 금액(${won(cost(pk))})만 들어가요.${ms.length > 2 ? '<span class="cv-swipe"> 옆으로 밀면 더 볼 수 있어요.</span>' : ''}</p>
@@ -1967,7 +1965,7 @@ function krUpdateAll(){
  document.querySelectorAll('input.cost').forEach(i=>{const k=i.nextElementSibling; if(k&&k.classList.contains('kr'))k.textContent=krLabel(/[억만천백]/.test(i.value)?krw(i.value):num(i.value))});
  const t=$('total'),tk=$('total-kr'); if(t&&tk)tk.textContent=krLabel(/[억만천백]/.test(t.value)?krw(t.value):num(t.value));
 }
-document.querySelectorAll('input.cost').forEach(i=>{i.insertAdjacentHTML('afterend','<div class="kr"></div>'); if(!i.placeholder)i.placeholder='예: 450만'; i.addEventListener('input',krUpdateAll)});
+document.querySelectorAll('input.cost').forEach(i=>{i.insertAdjacentHTML('afterend','<div class="kr"></div>'); i.addEventListener('input',krUpdateAll)});
 $('total').closest('.money').insertAdjacentHTML('afterend','<div id="total-kr" class="kr"></div>');
 $('total').addEventListener('input',krUpdateAll);
 krUpdateAll();
@@ -2123,7 +2121,7 @@ function renderAnn(){
   return;
  }
  const days=st&&st<=today?Math.round((today-st)/864e5)+1:0, td=ev.filter(e=>e.k===0), up=ev.filter(e=>e.k>0).slice(0,3);
- v.innerHTML=`<div class="ann-top"><div class="min-w-0">${days?`<div class="lbl" style="font-size:12px;margin-bottom:8px">TOGETHER</div><div class="ann-days"> ${days.toLocaleString('ko-KR')}일</div><div class="ann-since">${ymd(st)}부터</div>`:`<div class="lbl" style="font-size:12px">OUR DAYS</div>`}</div><button type="button" class="und ann-edit" data-ann="edit">기념일 설정</button></div>`+
+ v.innerHTML=`<div class="ann-top"><div class="min-w-0">${days?`<div class="ann-days"> ${days.toLocaleString('ko-KR')}일</div><div class="ann-since">${ymd(st)}부터</div>`:''}</div><button type="button" class="und ann-edit" data-ann="edit">기념일 설정</button></div>`+
   (td.length?`<div class="ann-today">${AIC('year')} 오늘은 ${td.map(e=>esc(e.name)).join(', ')}이에요!</div>`:'')+
   (up.length?`<ul class="ann-up">${up.map(e=>`<li><span class="ic2" style="background:${AB(e.ic)}">${AIC(e.ic)}</span><span class="nm">${esc(e.name)}</span><span class="dt">${ymd(e.d)}</span><span class="dd">D-${e.k.toLocaleString('ko-KR')}</span></li>`).join('')}</ul>`:'');
 }
@@ -2442,7 +2440,7 @@ $('s-date').addEventListener('click',()=>{try{$('s-date').showPicker&&$('s-date'
 $('s-pchip').onclick=()=>{const p=$('s-place'); p.scrollIntoView({block:'center',behavior:'smooth'}); setTimeout(()=>p.focus(),200)};
 function openStory(en){
  sWish=null; sEd=en||null;sImgs=en?imgsOf(en).slice(0,SMAX):[];sBusy=0;sImg=sImgs[0]||'';
- $('sdlg-title').textContent=en?'EDIT STORY':'NEW STORY'; $('s-del').classList.toggle('hidden',!en);
+ $('s-del').classList.toggle('hidden',!en);
  $('s-date').value=en?en.date:new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
  $('s-title').value=en?en.title||'':''; $('s-text').value=en?en.text||'':''; sDateTxt(); sShow(); sPlaceInit(en); open_('sdlg');
  if(!en&&matchMedia('(hover:hover) and (pointer:fine)').matches)setTimeout(()=>$('s-title').focus(),60);
@@ -2773,8 +2771,6 @@ $('st-list').addEventListener('click',e=>{
  }
 });
 $('st-list').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.target.classList.contains('ct')){e.preventDefault();e.target.closest('[data-sid]').querySelector('[data-sact="csend"]').click()}});
-const pcMQ=matchMedia('(min-width:1000px)'), placeF=()=>{const f=document.querySelector('.frow'); if(pcMQ.matches)$('fslot').append(f); else $('list').before(f)};
-placeF();pcMQ.addEventListener('change',placeF);
 /* PC 왼쪽 사이드바(계획·일기장)는 스크롤을 따라 붙고, 화면보다 길면 아래쪽이 보이게 붙는다 */
 {const ro=new ResizeObserver(es=>es.forEach(e=>e.target.style.setProperty('--ph',e.target.offsetHeight+'px')));document.querySelectorAll('.pside,.sside').forEach(el=>ro.observe(el))}
 const sHH=()=>document.documentElement.style.setProperty('--hh',document.querySelector('header').offsetHeight+'px');
@@ -2804,7 +2800,7 @@ function lockShow(msg){
  document.body.classList.add('lk'); $('lock').classList.remove('hidden'); $('lk-msg').textContent=msg||''; $('lk-pw').value='';
  $('lk-user').value=LOCK.email; setTimeout(()=>{try{$('lk-pw').focus()}catch(e){}},50);
 }
-function lockHide(){document.body.classList.remove('lk'); $('lock').classList.add('hidden'); $('lk-msg').textContent=''}
+function lockHide(){document.body.classList.remove('lk'); $('lock').classList.add('hidden'); $('lk-msg').textContent=''; placePill(true)} // 잠긴 동안엔 탭 너비가 0이라 알약을 못 놓았음
 function lockErr(code){
  code=String(code||'');
  if(/INVALID_PASSWORD|INVALID_LOGIN_CREDENTIALS|EMAIL_NOT_FOUND|MISSING_PASSWORD/.test(code))return '비밀번호가 맞지 않아요.';
