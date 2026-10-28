@@ -759,8 +759,8 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
 <div id="edit" class="hidden fixed inset-0 z-50 bg-black/60 items-center justify-center p-4" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
   <div class="dlg pe">
     <div class="pe-h">
-      <div class="pe-top"><h3 id="edit-title" class="lbl"></h3><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div>
-      <input id="f-name" class="pe-name" placeholder="무엇을 준비하나요?" aria-label="계획 이름" autocomplete="off">
+      <div class="pe-top"><label for="f-name" id="edit-title" class="pe-sh" style="margin:0">계획 이름</label><button data-close class="btn c-cream w-9 h-9 grid place-items-center" aria-label="닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div>
+      <input id="f-name" class="pe-name" autocomplete="off">
       <div class="pe-chips">
         <select id="f-cat" aria-label="카테고리"></select>
         <select id="f-status" aria-label="진행 상태"></select>
@@ -772,9 +772,9 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
       <section>
         <div class="pe-sh">비용<span id="f-rest"></span></div>
         <div class="pe-rc">
-          <label class="pe-rr"><span>예상</span><span class="pe-amt"><input id="f-est" inputmode="numeric" class="cost" placeholder="예: 450만"><i>원</i></span></label>
-          <label class="pe-rr"><span>확정</span><span class="pe-amt"><input id="f-fix" inputmode="numeric" class="cost" placeholder="0"><i>원</i></span></label>
-          <label class="pe-rr"><span>계약금</span><span class="pe-amt"><input id="f-dep" inputmode="numeric" class="cost" placeholder="0"><i>원</i></span></label>
+          <label class="pe-rr"><span>예상</span><span class="pe-amt"><input id="f-est" inputmode="numeric" class="cost"><i>원</i></span></label>
+          <label class="pe-rr"><span>확정</span><span class="pe-amt"><input id="f-fix" inputmode="numeric" class="cost"><i>원</i></span></label>
+          <label class="pe-rr"><span>계약금</span><span class="pe-amt"><input id="f-dep" inputmode="numeric" class="cost"><i>원</i></span></label>
         </div>
       </section>
       <section>
@@ -806,7 +806,7 @@ body.lk main,body.lk #fab,body.lk #toast{display:none!important}
       </section>
       <section>
         <div class="pe-sh">메모</div>
-        <textarea id="f-memo" rows="3" class="pe-memo" placeholder="견적, 일정, 기억할 내용" aria-label="우리의 메모"></textarea>
+        <textarea id="f-memo" rows="3" class="pe-memo" aria-label="메모"></textarea>
       </section>
       <div id="f-more" class="pe-more hidden"><button type="button" id="f-cmp" class="pill sm">비교에 묶기</button><button type="button" id="f-dup" class="pill sm">복제하기</button></div>
     </div>
@@ -1965,7 +1965,7 @@ function krUpdateAll(){
  document.querySelectorAll('input.cost').forEach(i=>{const k=i.nextElementSibling; if(k&&k.classList.contains('kr'))k.textContent=krLabel(/[억만천백]/.test(i.value)?krw(i.value):num(i.value))});
  const t=$('total'),tk=$('total-kr'); if(t&&tk)tk.textContent=krLabel(/[억만천백]/.test(t.value)?krw(t.value):num(t.value));
 }
-document.querySelectorAll('input.cost').forEach(i=>{i.insertAdjacentHTML('afterend','<div class="kr"></div>'); if(!i.placeholder)i.placeholder='예: 450만'; i.addEventListener('input',krUpdateAll)});
+document.querySelectorAll('input.cost').forEach(i=>{i.insertAdjacentHTML('afterend','<div class="kr"></div>'); i.addEventListener('input',krUpdateAll)});
 $('total').closest('.money').insertAdjacentHTML('afterend','<div id="total-kr" class="kr"></div>');
 $('total').addEventListener('input',krUpdateAll);
 krUpdateAll();
